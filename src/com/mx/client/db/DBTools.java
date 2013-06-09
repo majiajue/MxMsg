@@ -29,7 +29,7 @@ public class DBTools {
 	 * 
 	 * @return 数据库的连接
 	 */
-	
+
 	public static Connection getH2SQLConnection() {
 		try {
 			Class.forName(H2_DRIVER);
@@ -40,8 +40,8 @@ public class DBTools {
 		Connection conn = null;
 		try {
 			// 自动创建驱动程序的实例且自动调用DriverManager来注册它
-			conn = DriverManager.getConnection(H2_URL, H2_USERNAME,
-					H2_PASSWORD);
+			conn = DriverManager
+					.getConnection(H2_URL, H2_USERNAME, H2_PASSWORD);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -59,9 +59,13 @@ public class DBTools {
 	public static void excuteSql(String sql) throws SQLException {
 		connection = getH2SQLConnection();
 		try {
+			connection.setAutoCommit(true);
 			statement = connection.createStatement();
-			statement.execute(sql);
-			connection.commit();
+			//statement.execute(sql);
+			int a=statement.executeUpdate(sql);
+			System.out.println(a);
+			System.out.println("执行成功");
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -78,44 +82,71 @@ public class DBTools {
 		}
 
 	}
-   public static ResultSet findData(String sql){
-	   connection = getH2SQLConnection();
-	   PreparedStatement ps =null;
-	   try {
-		ps = connection.prepareStatement(sql);
-		resultSet = ps.executeQuery();
-		
-	} catch (SQLException e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}finally{
-		if(resultSet!=null)
-			try {
-				resultSet.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+
+	public static int findData(String sql) {
+		connection = getH2SQLConnection();
+		PreparedStatement ps = null;
+		int a=0;
+		try {
+			ps = connection.prepareStatement(sql);
+			resultSet = ps.executeQuery();
+			resultSet.last();
+			a= resultSet.getRow();
+            System.out.println("==="+a);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+			return 0;
+		} finally {
+			if(resultSet!=null){
+				
+				try {
+					resultSet.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-		if(ps!=null){
-			try {
-				ps.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace(); 
+			if (ps != null) {
+				try {
+					ps.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+
+			if (connection != null) {
+
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
 		}
-		
-		if(connection!=null){
-			
-			try {
-				connection.close();
-			} catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		return a;
 	}
-	   return resultSet;
-   }
+
+	public static String TABLE_WONDERLAND = "wonderland_";
+
+	public static String COL_KEY = "KEY";
+	public static String COL_vALUE = "VALUE";
+
+	public static void CreateUserProfile(String MyPeerid) {
+
+		String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_WONDERLAND
+				+ MyPeerid + " (ID INT PRIMARY KEY AUTO_INCREMENT, "
+				+ COL_KEY + " VARCHAR2(255) NOT NULL, " + COL_vALUE
+				+ " VARCHAR2(4000) NOT NULL)";
+		try {
+			excuteSql(sql);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+	}
 
 }

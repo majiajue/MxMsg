@@ -1,10 +1,14 @@
 package com.mx.client.webtools;
 
 import java.io.IOException;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.http.client.ClientProtocolException;
@@ -20,7 +24,9 @@ public class SConfig {
 	public String sessionkey = "";
 	private String m_psk;// 放在内存中的密钥
 	private String ApplicationPSKey="";
-   
+	private static final String KEY_ALGORITHM = "RSA";
+	private static final String DEFAULT_SEED = "2C87BA8BC9A364D8CB0C8AB926039E06";
+
 	public String getApplicationPSKey() {
 		return ApplicationPSKey;
 	}
@@ -240,7 +246,59 @@ public class SConfig {
 		}
 		return result;
 	}
+	public KeyPair updateSelfEncryptKey(String peerid) throws CryptorException {
+		KeyPair kp = null;
 
+		try {
+			KeyPairGenerator keygen = KeyPairGenerator.getInstance(KEY_ALGORITHM);
+			// 初始化随机产生器
+			SecureRandom secureRandom = new SecureRandom();
+			secureRandom.setSeed(DEFAULT_SEED.getBytes());
+			keygen.initialize(1024, secureRandom);
+
+			kp = keygen.genKeyPair();
+			//saveKey(peerid, kp);
+			// StorageManager.GetInstance().getUserProfile().keyupdatetime =
+			// System.currentTimeMillis() + "";
+			// StorageManager.GetInstance().getUserProfile().Save();
+			// savePeerKey(name, kp.getPublic());
+			//LOG.System.out("Generate the new Private/Publick KeyPair successful.");
+		} catch (NoSuchAlgorithmException e) {
+			throw new CryptorException(e);
+		}
+		return kp;
+	}
+	
+	/**
+	 * 将本地的公钥上传到服务器上
+	 * 
+	 * @param ctx
+	 *            应用环境上下文
+	 * @param uid
+	 *            公钥标识
+	 * @throws CryptorException
+	 *             当公钥内容本身出错时的异常
+	 * @throws IOException
+	 *             当公钥传输过程中的出错异常
+	 */
+	public KeyPair updatePublicKeyToServer(String peerid) throws CryptorException, IOException {
+		KeyPair kp = null;
+		kp = updateSelfEncryptKey(peerid);
+		PublicKey key = kp.getPublic();
+		System.out.println("key"+key);
+		//LOG.d("wsl", "pubkeyis:" + key);
+		String encode_key = new String(Base64.encodeBase64(PubkeyUtils.getEncodedPublic(key)));
+		//LOG.d("comet", "pubkeyis:" + encode_key);
+		try {
+			SPubkey.getInstance().postPubKey(encode_key);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		// LOG.v("wjy",
+		// "getUpdatePubkeyTime(String peerid)====="+getUpdatePubkeyTime(peerid));
+		return kp;
+	}
 	public static void main(String[] args) {
 		System.out.println(SUtil.toSHAString64("123456", null));
 	}

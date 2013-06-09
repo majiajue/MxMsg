@@ -2,13 +2,13 @@ package com.mx.client.db;
 
 public class DBDataSQL {
 	// message database
-	  public final static String _id = "_id";
+	  public final static String _id = "ID";
 		/**
-		 * TABLE message { _id INTEGER PRIMARY KEY AUTOINCREMENT； M_peerid VARCHAR2(255) NOT
-		 * NULL; 对方的peerid M_msg VARCHAR2(255) NOT NULL; 消息的内容 M_msg_extra INTEGER NOT
-		 * NULL;消息的类型id M_direction VARCHAR2(255) NOT NULL; 消息是收到的还是发出的 M_status INTEGER NOT
+		 * TABLE message { _id INT PRIMARY KEY AUTOINCREMENT； M_peerid VARCHAR2(255) NOT
+		 * NULL; 对方的peerid M_msg VARCHAR2(255) NOT NULL; 消息的内容 M_msg_extra INT NOT
+		 * NULL;消息的类型id M_direction VARCHAR2(255) NOT NULL; 消息是收到的还是发出的 M_status INT NOT
 		 * NULL ; 消息的发送状态，成功或失败或者等待接收等 M_msgtime VARCHAR2(255) NOT NULL: 消息产生的时间 M_unread
-		 * INTEGER NOT NULL; 标记消息是否未读 }
+		 * INT NOT NULL; 标记消息是否未读 }
 		 */
 		public final static String TB_MESSAGE = "tb_message";
 		public final static String COL_MES_PEERID = "M_peerid";// 对方的peerid
@@ -23,10 +23,10 @@ public class DBDataSQL {
 		
       
 		public final static String SQL_CREATE_TB_MESSAGE = "CREATE TABLE IF NOT EXISTS " + TB_MESSAGE + " ( " + _id
-				+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + COL_MES_PEERID + " VARCHAR2(255) NOT NULL, " + COL_MES_MSG
-				+ " VARCHAR2(255) NOT NULL, " + COL_MES_MSG_EXTRA + " INTEGER NOT NULL, " + COL_MES_DIRECTION + " VARCHAR2(255) NOT NULL, "
-				+ COL_MES_STATUS + " INTEGER NOT NULL, " + COL_MES_MSGTIME + " VARCHAR2(255) NOT NULL, " + COL_MES_UNREAD
-				+ " INTEGER NOT NULL, " + COL_MES_MSGTYPE + " INTEGER NOT NULL" + ")";
+				+ " INT PRIMARY KEY AUTO_INCREMENT, " + COL_MES_PEERID + " VARCHAR2(255) NOT NULL, " + COL_MES_MSG
+				+ " VARCHAR2(255) NOT NULL, " + COL_MES_MSG_EXTRA + " INT NOT NULL, " + COL_MES_DIRECTION + " VARCHAR2(255) NOT NULL, "
+				+ COL_MES_STATUS + " INT NOT NULL, " + COL_MES_MSGTIME + " VARCHAR2(255) NOT NULL, " + COL_MES_UNREAD
+				+ " INT NOT NULL, " + COL_MES_MSGTYPE + " INT NOT NULL" + ")";
 		public final static String SQL_CREATE_MESSAGE_INDEX = "CREATE INDEX IF NOT EXISTS imsg ON " + TB_MESSAGE + " ( "
 				+ COL_MES_PEERID + "," + COL_MES_MSG + "," + COL_MES_MSG_EXTRA + "," + COL_MES_DIRECTION + ","
 				+ COL_MES_STATUS + "," + COL_MES_MSGTIME + "," + COL_MES_UNREAD + "," + COL_MES_MSGTYPE + ")";
@@ -40,8 +40,8 @@ public class DBDataSQL {
 		public final static String COL_LOGIN_Time = "M_Time";// 密碼
 		
 		public final static String SQL_CREATE_TB_LOGIN ="CREATE TABLE IF NOT EXISTS " + TB_LOGIN + " ( " + _id
-				+ " INTEGER PRIMARY KEY AUTOINCREMENT, " + COL_LOGIN_NUMBER + " VARCHAR2(255) NOT NULL, " + COL_LOGIN_STATUS
-				+ " VARCHAR2(255) NOT NULL, " +COL_LOGIN_PASSWORD+ " VARCHAR2(255) NOT NULL, "+ COL_MES_MSGTIME + " VARCHAR2(255) NOT NULL" + ")";
+				+ " INT PRIMARY KEY AUTO_INCREMENT, " + COL_LOGIN_NUMBER + " VARCHAR2(255) NOT NULL, " + COL_LOGIN_STATUS
+				+ " VARCHAR2(255) NOT NULL, " +COL_LOGIN_PASSWORD+ " VARCHAR2(255) NOT NULL, "+ COL_LOGIN_Time + " VARCHAR2(255) NOT NULL" + ")";
 		
 		
 		public final static String SQL_CREATE_LOGIN_INDEX = "CREATE INDEX IF NOT EXISTS LOGIN ON " + TB_LOGIN + " ( "

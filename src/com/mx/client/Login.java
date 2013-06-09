@@ -19,6 +19,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.IOException;
+import java.security.KeyPair;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -32,7 +33,6 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.apache.commons.configuration.CompositeConfiguration;
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SystemConfiguration;
@@ -40,13 +40,19 @@ import org.apache.commons.configuration.XMLConfiguration;
 
 import sun.swing.SwingUtilities2;
 
+import com.mx.clent.vo.AnPeersBean;
 import com.mx.clent.vo.MsgFriendGroup;
+import com.mx.clent.vo.Profile;
+import com.mx.client.db.DBDataSQL;
+import com.mx.client.db.DBTools;
 import com.mx.client.webtools.ConnectionUtils;
 import com.mx.client.webtools.SConfig;
 import com.mx.client.webtools.SLogin;
 import com.mx.client.webtools.XmlUtil;
 import com.sun.awt.AWTUtilities;
 import com.sun.java.swing.SwingUtilities3;
+import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
+import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 public class Login extends JFrame {
 	static Point origin = new Point();// 获取当前鼠标的位置
@@ -69,6 +75,7 @@ public class Login extends JFrame {
 	public JComboBox comboBox状态;
 	String Skey;
 	String shapwd;
+
 	/**
 	 * @param args
 	 */
@@ -80,15 +87,15 @@ public class Login extends JFrame {
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		//config.addConfiguration(new PropertiesConfiguration(""));
+		// config.addConfiguration(new PropertiesConfiguration(""));
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					final Login frame = new Login();// 启动登陆框
-					//AWT.setWindowOpaque(frame, false);//设置窗体完全透明
+					// AWT.setWindowOpaque(frame, false);//设置窗体完全透明
 					AWTUtilities.setWindowOpaque(frame, false);
 					frame.setVisible(true);// 可见框架
-					
+
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 					frame.addMouseListener(new MouseListener() {
 
@@ -140,7 +147,8 @@ public class Login extends JFrame {
 							frame.setLocation(p.x + arg0.getX() - origin.x, p.y
 									+ arg0.getY() - origin.y);
 						}
-					});	frame.addMouseListener(new MouseListener() {
+					});
+					frame.addMouseListener(new MouseListener() {
 
 						@Override
 						public void mouseReleased(MouseEvent arg0) {
@@ -200,17 +208,17 @@ public class Login extends JFrame {
 	}
 
 	public Login() {
-		 if (SystemTray.isSupported()) // 如果操作系统支持托盘   
-	        {  
-	            this.tray();  
-	        }  
+		if (SystemTray.isSupported()) // 如果操作系统支持托盘
+		{
+			this.tray();
+		}
 		setTitle("MX");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(
 				Login.class.getResource("/com/mx/client/image/QQ_64.png")));
 		setUndecorated(true);// 设置窗体没有边框
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 350, 267);
-	    
+
 		contentPane = new MyPanel("/com/mx/client/image/QQ2011_Login.png");
 		contentPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		contentPane.setOpaque(false);
@@ -238,75 +246,115 @@ public class Login extends JFrame {
 		checkBox记住密码 = new JCheckBox("记住密码");
 		checkBox记住密码.setBounds(156, 198, 80, 18);
 		checkBox记住密码.setOpaque(false);
-		checkBox记住密码.setBorder(new EmptyBorder(0, 0,0,0));
+		checkBox记住密码.setBorder(new EmptyBorder(0, 0, 0, 0));
 		checkBox记住密码.setDoubleBuffered(false);
 		checkBox记住密码.setRolloverEnabled(false);
 		contentPane.add(checkBox记住密码);
-		
+
 		checkBox自动登录 = new JCheckBox("自动登陆");
 		checkBox自动登录.setBounds(237, 198, 80, 18);
 		checkBox自动登录.setOpaque(false);
-		checkBox自动登录.setBorder(new EmptyBorder(0,0,0,0));
+		checkBox自动登录.setBorder(new EmptyBorder(0, 0, 0, 0));
 		contentPane.add(checkBox自动登录);
-   
+
 		lbl登录 = new JLabel("");
 		lbl登录.setIcon(new ImageIcon(Login.class
 				.getResource("/com/mx/client/image/button/button_login_1.png")));
 		lbl登录.setBounds(262, 237, 69, 22);
 		lbl登录.addMouseListener(new MouseListener() {
-			
+
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseExited(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
 				String pwd = "";
 				try {
-					Skey = com.mx.client.webtools.SLogin.getInstance().register1();
+					Skey = com.mx.client.webtools.SLogin.getInstance()
+							.register1();
 					SConfig.getInstance().setSessionKey(Skey);
 					char[] p = pwd密码.getPassword();
 					pwd = new String(p);
-					System.out.println("pwd=="+pwd);
+					System.out.println("pwd==" + pwd);
 					shapwd = SConfig.getInstance().setPassword(pwd);
-					System.out.println("1===="+shapwd);
-					String result = SLogin.getInstance().login(textField用户名.getText(), Skey, shapwd);
-					
-					String friend =ConnectionUtils.getInstance().getContacts();
-					System.out.println(SConfig.getInstance().decodeContacts(friend));
-					friend  = SConfig.getInstance().decodeContacts(friend);
-					try {
-						List<MsgFriendGroup> friendGroup=XmlUtil.instance().parseXmltoString2(friend,"UTF-8","con");
-						MainFrame.setFriends(friendGroup);
-						MainFrame frame = MainFrame.getInstance();
-						frame.setVisible(true);
-						setVisible(false);
-					} catch (ParserConfigurationException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
+					System.out.println("1====" + shapwd);
+					String result = SLogin.getInstance().login(
+							textField用户名.getText(), Skey, shapwd);
+
+					// String friend
+					// =ConnectionUtils.getInstance().getContacts();
+					// System.out.println(SConfig.getInstance().decodeContacts(friend));
+					// friend = SConfig.getInstance().decodeContacts(friend);
+					System.out.println("是否存在吃记录"
+							+ Profile.isExistProfile(textField用户名.getText()));
+					if (Profile.isExistProfile(textField用户名.getText())) {
+						boolean re = Profile.checkloginpwd( textField用户名.getText(), shapwd);
+						if(re){
+							
+							Profile p1 =Profile.LoadProfile(textField用户名.getText());
+							try {
+								System.out.println(new String(Base64.decode(p1.myPeerBean.PUsername)));
+							} catch (Base64DecodingException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							
+						}
+					} else {
+
+						KeyPair kp = null;
+						String uptime = "";
+						try {
+							kp = SConfig.getInstance().updatePublicKeyToServer(
+									textField用户名.getText());
+							uptime = System.currentTimeMillis() + "";
+							DBTools.CreateUserProfile(textField用户名.getText());
+							DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_MESSAGE);
+							DBTools.excuteSql(DBDataSQL.SQL_CREATE_MESSAGE_INDEX);
+							DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_LOGIN);
+							DBTools.excuteSql(DBDataSQL.SQL_CREATE_LOGIN_INDEX);
+							AnPeersBean bean = new AnPeersBean();
+							bean.PPeerid = textField用户名.getText();
+							bean.PUsername = textField用户名.getText();
+							Profile profile = new Profile(textField用户名
+									.getText(), shapwd);
+							profile.CreateProfile(bean, shapwd, kp, Skey,
+									uptime);
+							// List<MsgFriendGroup>
+							// friendGroup=XmlUtil.instance().parseXmltoString2(friend,"UTF-8","con");
+							// MainFrame.setFriends(friendGroup);
+							// MainFrame frame = MainFrame.getInstance();
+							// frame.setVisible(true);
+							setVisible(false);
+						} catch (Exception e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						// System.out.println("friend==="+friend);
 					}
-					//System.out.println("friend==="+friend);
+
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -327,31 +375,31 @@ public class Login extends JFrame {
 		lbl注册账号.setBounds(288, 132, 55, 18);
 		contentPane.add(lbl注册账号);
 		lbl注册账号.addMouseListener(new MouseListener() {
-			
+
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mousePressed(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseExited(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseEntered(MouseEvent e) {
 				// TODO Auto-generated method stub
-				
+
 			}
-			
+
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
@@ -401,14 +449,14 @@ public class Login extends JFrame {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
-				try {  
-					
-                    tray.add(trayIcon); // 将托盘图标添加到系统的托盘实例中   
-                    //setVisible(false); // 使窗口不可视   
-                    dispose();  
-                } catch (AWTException ex) {  
-                    ex.printStackTrace();  
-                }  
+				try {
+
+					tray.add(trayIcon); // 将托盘图标添加到系统的托盘实例中
+					// setVisible(false); // 使窗口不可视
+					dispose();
+				} catch (AWTException ex) {
+					ex.printStackTrace();
+				}
 
 			}
 		});
@@ -479,7 +527,7 @@ public class Login extends JFrame {
 		pop.add(show);
 		pop.add(exit);
 		// 添加鼠标监听器，当鼠标在托盘图标上双击时，默认显示窗口
-		trayIcon = new TrayIcon(icon.getImage(),"MX", pop);
+		trayIcon = new TrayIcon(icon.getImage(), "MX", pop);
 		trayIcon.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) // 鼠标双击
@@ -507,6 +555,5 @@ public class Login extends JFrame {
 			}
 		});
 	}
-
 
 }
