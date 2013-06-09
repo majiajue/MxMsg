@@ -310,7 +310,7 @@ public class Login extends JFrame {
 					System.out.println("是否存在吃记录"
 							+ Profile.isExistProfile(textField用户名.getText()));
 					if (Profile.isExistProfile(textField用户名.getText())) {
-						boolean re = Profile.checkloginpwd( textField用户名.getText(), shapwd);
+						boolean re = Profile.checkloginpwd( textField用户名.getText(), pwd);
 						if(re){
 							
 							Profile p1 =Profile.LoadProfile(textField用户名.getText());
@@ -339,8 +339,8 @@ public class Login extends JFrame {
 							bean.PPeerid = textField用户名.getText();
 							bean.PUsername = textField用户名.getText();
 							Profile profile = new Profile(textField用户名
-									.getText(), shapwd);
-							profile.CreateProfile(bean, shapwd, kp, Skey,
+									.getText(), pwd);
+							profile.CreateProfile(bean, pwd, kp, Skey,
 									uptime);
 							// List<MsgFriendGroup>
 							// friendGroup=XmlUtil.instance().parseXmltoString2(friend,"UTF-8","con");

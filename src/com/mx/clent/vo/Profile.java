@@ -90,11 +90,13 @@ public class Profile {
 		}
 		profile.myPeerBean.setPublicKey(profile.rSAKeyPair.getPublic());
 		profile.HandleSave();
-		return null;
+		return profile;
 	}
 
 	public boolean HandleSave() {
 		try {
+			System.out.println("Ë½³×³¤¶È"+PubkeyUtils.encrypt(rSAKeyPair
+					.getPrivate().getEncoded(), whiterabbit).length);
 			save(KEY_PRIVATE, Base64.encode(PubkeyUtils.encrypt(rSAKeyPair
 					.getPrivate().getEncoded(), whiterabbit)));
 			save(KEY_PUBLIC, Base64.encode(rSAKeyPair.getPublic().getEncoded()));
@@ -284,6 +286,12 @@ public class Profile {
 		hashtable.clear();
 
 		hashtable.put(COL_KEY, KEY_PRIVATE);
+		
+		byte[] key = Base64.decode(GenDao.getInstance().getValue(
+				TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
+				hashtable));
+		System.out.println("key"+key.length);
+		
 		PrivateKey privateKey = PubkeyUtils.decodePrivate(
 				Base64.decode(GenDao.getInstance().getValue(
 						TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
