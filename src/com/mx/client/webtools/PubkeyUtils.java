@@ -175,8 +175,8 @@ public class PubkeyUtils {
 			kf = KeyFactory.getInstance(KEY_TYPE_RSA);
 			priv = kf.generatePrivate(privKeySpec);
 
-			pubKeySpec = new RSAPublicKeySpec(((RSAPrivateCrtKey) priv).getModulus(), ((RSAPrivateCrtKey) priv)
-					.getPublicExponent());
+			pubKeySpec = new RSAPublicKeySpec(((RSAPrivateCrtKey) priv).getModulus(),
+					((RSAPrivateCrtKey) priv).getPublicExponent());
 
 			pub = kf.generatePublic(pubKeySpec);
 			pair = new KeyPair(pub, priv);

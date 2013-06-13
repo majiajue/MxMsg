@@ -2,7 +2,6 @@ package com.mx.client;
 
 import java.awt.AWTException;
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.MenuItem;
 import java.awt.Point;
@@ -16,11 +15,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.IOException;
 import java.security.KeyPair;
-import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -32,27 +28,14 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import javax.xml.parsers.ParserConfigurationException;
-import org.apache.commons.configuration.CompositeConfiguration;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.SystemConfiguration;
-import org.apache.commons.configuration.XMLConfiguration;
-
-import sun.swing.SwingUtilities2;
 
 import com.mx.clent.vo.AnPeersBean;
-import com.mx.clent.vo.MsgFriendGroup;
 import com.mx.clent.vo.Profile;
 import com.mx.client.db.DBDataSQL;
 import com.mx.client.db.DBTools;
-import com.mx.client.webtools.ConnectionUtils;
 import com.mx.client.webtools.SConfig;
 import com.mx.client.webtools.SLogin;
-import com.mx.client.webtools.XmlUtil;
 import com.sun.awt.AWTUtilities;
-import com.sun.java.swing.SwingUtilities3;
-import com.sun.org.apache.xml.internal.security.exceptions.Base64DecodingException;
-import com.sun.org.apache.xml.internal.security.utils.Base64;
 
 public class Login extends JFrame {
 	static Point origin = new Point();// 获取当前鼠标的位置
@@ -144,8 +127,7 @@ public class Login extends JFrame {
 							// TODO Auto-generated method stub
 							Point p = frame.getLocation();
 
-							frame.setLocation(p.x + arg0.getX() - origin.x, p.y
-									+ arg0.getY() - origin.y);
+							frame.setLocation(p.x + arg0.getX() - origin.x, p.y + arg0.getY() - origin.y);
 						}
 					});
 					frame.addMouseListener(new MouseListener() {
@@ -195,8 +177,7 @@ public class Login extends JFrame {
 							// TODO Auto-generated method stub
 							Point p = frame.getLocation();
 
-							frame.setLocation(p.x + arg0.getX() - origin.x, p.y
-									+ arg0.getY() - origin.y);
+							frame.setLocation(p.x + arg0.getX() - origin.x, p.y + arg0.getY() - origin.y);
 						}
 					});
 				} catch (Exception e) {
@@ -213,8 +194,7 @@ public class Login extends JFrame {
 			this.tray();
 		}
 		setTitle("MX");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(
-				Login.class.getResource("/com/mx/client/image/QQ_64.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Login.class.getResource("/com/mx/client/image/QQ_64.png")));
 		setUndecorated(true);// 设置窗体没有边框
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 350, 267);
@@ -238,8 +218,7 @@ public class Login extends JFrame {
 		contentPane.add(lblQQ2013);
 
 		lbl头像 = new JLabel("");
-		lbl头像.setIcon(new ImageIcon(Login.class
-				.getResource("/com/mx/client/headImage/head_boy_01_64.jpg")));
+		lbl头像.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/headImage/head_boy_01_64.jpg")));
 		lbl头像.setBounds(18, 127, 64, 64);
 		contentPane.add(lbl头像);
 
@@ -258,8 +237,7 @@ public class Login extends JFrame {
 		contentPane.add(checkBox自动登录);
 
 		lbl登录 = new JLabel("");
-		lbl登录.setIcon(new ImageIcon(Login.class
-				.getResource("/com/mx/client/image/button/button_login_1.png")));
+		lbl登录.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/button_login_1.png")));
 		lbl登录.setBounds(262, 237, 69, 22);
 		lbl登录.addMouseListener(new MouseListener() {
 
@@ -292,43 +270,34 @@ public class Login extends JFrame {
 				// TODO Auto-generated method stub
 				String pwd = "";
 				try {
-					Skey = com.mx.client.webtools.SLogin.getInstance()
-							.register1();
+					Skey = com.mx.client.webtools.SLogin.getInstance().register1();
 					SConfig.getInstance().setSessionKey(Skey);
 					char[] p = pwd密码.getPassword();
 					pwd = new String(p);
 					System.out.println("pwd==" + pwd);
 					shapwd = SConfig.getInstance().setPassword(pwd);
 					System.out.println("1====" + shapwd);
-					String result = SLogin.getInstance().login(
-							textField用户名.getText(), Skey, shapwd);
+					String result = SLogin.getInstance().login(textField用户名.getText(), Skey, shapwd);
 
 					// String friend
 					// =ConnectionUtils.getInstance().getContacts();
 					// System.out.println(SConfig.getInstance().decodeContacts(friend));
 					// friend = SConfig.getInstance().decodeContacts(friend);
-					System.out.println("是否存在吃记录"
-							+ Profile.isExistProfile(textField用户名.getText()));
+					System.out.println("是否存在吃记录" + Profile.isExistProfile(textField用户名.getText()));
 					if (Profile.isExistProfile(textField用户名.getText())) {
-						boolean re = Profile.checkloginpwd( textField用户名.getText(), pwd);
-						if(re){
-							
-							Profile p1 =Profile.LoadProfile(textField用户名.getText());
-							try {
-								System.out.println(new String(Base64.decode(p1.myPeerBean.PUsername)));
-							} catch (Base64DecodingException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-							
+						boolean re = Profile.checkloginpwd(textField用户名.getText(), pwd);
+						if (re) {
+
+							Profile p1 = Profile.LoadProfile(textField用户名.getText());
+							System.out.println("p1.PUsername1:" + p1.myPeerBean.PUsername);
+
 						}
 					} else {
 
 						KeyPair kp = null;
 						String uptime = "";
 						try {
-							kp = SConfig.getInstance().updatePublicKeyToServer(
-									textField用户名.getText());
+							kp = SConfig.getInstance().updatePublicKeyToServer(textField用户名.getText());
 							uptime = System.currentTimeMillis() + "";
 							DBTools.CreateUserProfile(textField用户名.getText());
 							DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_MESSAGE);
@@ -338,10 +307,8 @@ public class Login extends JFrame {
 							AnPeersBean bean = new AnPeersBean();
 							bean.PPeerid = textField用户名.getText();
 							bean.PUsername = textField用户名.getText();
-							Profile profile = new Profile(textField用户名
-									.getText(), pwd);
-							profile.CreateProfile(bean, pwd, kp, Skey,
-									uptime);
+							Profile profile = new Profile(textField用户名.getText(), pwd);
+							profile.CreateProfile(bean, pwd, kp, Skey, uptime);
 							// List<MsgFriendGroup>
 							// friendGroup=XmlUtil.instance().parseXmltoString2(friend,"UTF-8","con");
 							// MainFrame.setFriends(friendGroup);
@@ -416,8 +383,7 @@ public class Login extends JFrame {
 		contentPane.add(lbl忘记密码);
 
 		lbl最小化 = new JLabel("");
-		lbl最小化.setIcon(new ImageIcon(Login.class
-				.getResource("/com/mx/client/image/button/login_minsize_1.png")));
+		lbl最小化.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/login_minsize_1.png")));
 		lbl最小化.setBounds(284, 0, 29, 19);
 		contentPane.add(lbl最小化);
 		lbl最小化.addMouseListener(new MouseListener() {
@@ -462,8 +428,7 @@ public class Login extends JFrame {
 		});
 
 		lbl退出 = new JLabel("");
-		lbl退出.setIcon(new ImageIcon(Login.class
-				.getResource("/com/mx/client/image/button/login_exit_1.png")));
+		lbl退出.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/login_exit_1.png")));
 		lbl退出.setBounds(312, -1, 37, 20);
 		contentPane.add(lbl退出);
 		lbl退出.addMouseListener(new MouseListener() {
@@ -500,15 +465,12 @@ public class Login extends JFrame {
 		});
 
 		lbl多账号 = new JLabel("");
-		lbl多账号.setIcon(new ImageIcon(
-				Login.class
-						.getResource("/com/mx/client/image/button/login_duozhanghao_1.png")));
+		lbl多账号.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/login_duozhanghao_1.png")));
 		lbl多账号.setBounds(14, 237, 69, 21);
 		contentPane.add(lbl多账号);
 
 		lbl设置 = new JLabel("");
-		lbl设置.setIcon(new ImageIcon(Login.class
-				.getResource("/com/mx/client/image/button/login_setting_1.png")));
+		lbl设置.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/login_setting_1.png")));
 		lbl设置.setBounds(93, 237, 69, 21);
 		contentPane.add(lbl设置);
 
@@ -519,8 +481,7 @@ public class Login extends JFrame {
 
 	void tray() {
 		tray = SystemTray.getSystemTray(); // 获得本操作系统托盘的实例
-		ImageIcon icon = new ImageIcon(
-				Login.class.getResource("/com/mx/client/image/QQ_16.png")); // 将要显示到托盘中的图标
+		ImageIcon icon = new ImageIcon(Login.class.getResource("/com/mx/client/image/QQ_16.png")); // 将要显示到托盘中的图标
 		PopupMenu pop = new PopupMenu(); // 构造一个右键弹出式菜单
 		MenuItem show = new MenuItem("打开程序(s)");
 		MenuItem exit = new MenuItem("退出程序(x)");

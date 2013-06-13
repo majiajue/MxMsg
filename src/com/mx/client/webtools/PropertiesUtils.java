@@ -1,21 +1,18 @@
 package com.mx.client.webtools;
 
-import javax.security.auth.login.Configuration;
-
-import org.apache.commons.configuration.ConfigurationFactory;
-import org.apache.http.conn.scheme.SchemeRegistry;
-import org.apache.http.params.HttpParams;
 
 public class PropertiesUtils {
 
 	public String sessionkey = "";
 	public String applicationPSK = "";
+
 	private PropertiesUtils() {
 	}
 
 	public String getWebHost() {
 		// return this.getKeyValue("webhost");
-		return "61.4.82.141";
+		// return "61.4.82.141";
+		return "www.han2011.com";
 		// return "192.168.4.233";
 	}
 
@@ -32,6 +29,7 @@ public class PropertiesUtils {
 
 		return SingletonHolder.INSTANCE;
 	}
+
 	public void setSessionKey(String skey) {
 
 		this.sessionkey = skey;
