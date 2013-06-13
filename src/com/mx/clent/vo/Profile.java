@@ -6,7 +6,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Hashtable;
-
+import com.mx.client.db.DBDataSQL;
 import com.mx.client.db.DBTools;
 import com.mx.client.db.GenDao;
 import com.mx.client.webtools.CryptorException;
@@ -67,8 +67,8 @@ public class Profile {
 		this.alice = SUtil.toSHAString64(whiterabbit + deblockpwd, null);
 	}
 
-	public static Profile CreateProfile(AnPeersBean peer, String password, KeyPair keyPair, String sessionkey,
-			String keyUpdateTime) {
+	public static Profile CreateProfile(AnPeersBean peer, String password,
+			KeyPair keyPair, String sessionkey, String keyUpdateTime) {
 		Profile profile = new Profile(peer.PPeerid, password);
 		profile.cheshireCat = sessionkey;
 		profile.myPeerBean = peer;
@@ -83,10 +83,13 @@ public class Profile {
 
 	public boolean HandleSave() {
 		try {
-			System.out.println("私匙长度" + PubkeyUtils.encrypt(rSAKeyPair.getPrivate().getEncoded(), whiterabbit).length);
+			System.out.println("私匙长度"
+					+ PubkeyUtils.encrypt(rSAKeyPair.getPrivate().getEncoded(),
+							whiterabbit).length);
 			// save(KEY_PRIVATE, Base64.encode(PubkeyUtils.encrypt(rSAKeyPair
 			// .getPrivate().getEncoded(), whiterabbit)));
-			String savePrivateString = Base64.encode(rSAKeyPair.getPrivate().getEncoded());
+			String savePrivateString = Base64.encode(rSAKeyPair.getPrivate()
+					.getEncoded());
 			System.out.println("savePrivateKey:" + savePrivateString);
 			save(KEY_PRIVATE, savePrivateString);
 			save(KEY_PUBLIC, Base64.encode(rSAKeyPair.getPublic().getEncoded()));
@@ -97,6 +100,7 @@ public class Profile {
 			SaveKeyValue(KEY_SESSIONKEY, cheshireCat);
 			SaveKeyValue(KEY_ALICE, alice);
 			SaveKeyValue(KEY_HATTER, hatter);
+			savePeer(MyPeerid, MyPeerid, "", "", "", "", "", "");
 		} catch (CryptorException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -109,7 +113,31 @@ public class Profile {
 	public void SaveKeyValue(String key, String value) {
 		save(key, Base64.encode(value.getBytes()));
 	}
-
+    
+	/**
+	 * 保存sessionkey
+	 * 
+	 * @param skey
+	 */
+	public void setSessionkey(String skey) {
+		this.cheshireCat = skey;
+		SaveKeyValue(KEY_SESSIONKEY, skey);
+	}
+	
+	/**
+	 * 获取用户的session
+	 * 
+	 * @return
+	 */
+	public String getSession() {
+		String skey = com.mx.client.webtools.SConfig.getInstance().getSessionKey();
+		if (skey!=null) {// 这里把sessionkey保存到内存中
+			skey = cheshireCat;
+			com.mx.client.webtools.SConfig.getInstance().setSessionKey(skey);
+		}
+		return skey;
+	}
+	
 	public static boolean checkloginpwd(String peerid, String password) {
 		Profile profile = new Profile(peerid);
 		boolean result = false;
@@ -119,8 +147,12 @@ public class Profile {
 			w = SUtil.toSHAString64(h + rabbbitsWatch, null);
 			Hashtable<String, Object> hashtable = new Hashtable<String, Object>();
 			hashtable.put(COL_KEY, KEY_WHITERABBIT);
-			String t1 = GenDao.getInstance().getValue(TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE, hashtable);
-			t1 = new String(org.apache.commons.codec.binary.Base64.decodeBase64(t1.getBytes()));
+			String t1 = GenDao.getInstance().getValue(
+					TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
+					hashtable);
+			t1 = new String(
+					org.apache.commons.codec.binary.Base64.decodeBase64(t1
+							.getBytes()));
 			System.out.println("t1" + t1);
 			result = t1.equals(w);
 		} catch (Exception e) {
@@ -170,16 +202,20 @@ public class Profile {
 	}
 
 	private boolean save(String key, String value) {
+
 		synchronized (dbLock) {
 			Hashtable<String, Object> condition = new Hashtable<String, Object>();
 			condition.put(COL_KEY, key);
-			Boolean boolean1 = GenDao.getInstance().executeUpdate(TABLE_WONDERLAND + MyPeerid,
-					new String[] { COL_vALUE }, new Object[] { value }, condition);
+			Boolean boolean1 = GenDao.getInstance().executeUpdate(
+					TABLE_WONDERLAND + MyPeerid, new String[] { COL_vALUE },
+					new Object[] { value }, condition);
 			if (boolean1) {
 				return true;
 			} else {
-				Boolean a = GenDao.getInstance().executeInsert(TABLE_WONDERLAND + MyPeerid,
-						new String[] { COL_KEY, COL_vALUE }, new Object[] { key, value });
+				Boolean a = GenDao.getInstance().executeInsert(
+						TABLE_WONDERLAND + MyPeerid,
+						new String[] { COL_KEY, COL_vALUE },
+						new Object[] { key, value });
 				if (a) {
 					return true;
 				} else {
@@ -188,6 +224,35 @@ public class Profile {
 
 			}
 		}
+	}
+
+	public void savePeer(String Peerid, String Username, String Remark,
+			String Pinyin, String PhoneNumber, String UpdateTime,
+			String Lastcontact, String Public) {
+		if (!checkparam(Peerid, Username, Pinyin, PhoneNumber, UpdateTime,
+				Lastcontact, Public)) {
+			return;
+		}
+		synchronized (dbLock) {
+			String[] cloumes = new String[] { DBDataSQL.COL_PEER_LASTCONTACT,
+					DBDataSQL.COL_PEER_PEERID, DBDataSQL.COL_PEER_PHONE,
+					DBDataSQL.COL_PEER_PINYIN, DBDataSQL.COL_PEER_PUBLIC,
+					DBDataSQL.COL_PEER_UPDTAETIME, DBDataSQL.COL_PEER_USERNAME,
+					DBDataSQL.COL_PEER_REMARK };
+			Object[] values = new Object[] { Peerid, Username, Pinyin,
+					PhoneNumber, UpdateTime, Lastcontact, Public };
+			Hashtable<String, Object> condition = new Hashtable<String, Object>();
+			condition.put(DBDataSQL.COL_PEER_PEERID, Peerid);
+			Boolean boolean1 = GenDao.getInstance().executeUpdate(
+					DBDataSQL.TB_PEERS, cloumes, values, condition);
+			if (!boolean1) {
+				GenDao.getInstance().executeInsert(DBDataSQL.TB_PEERS, cloumes,
+						values);
+
+			}
+
+		}
+
 	}
 
 	public static boolean VerfyProfile(String text, String shapwd) {
@@ -222,60 +287,102 @@ public class Profile {
 	 * @throws CryptorException
 	 * @throws Base64DecodingException
 	 */
-	private void load() throws NoSuchAlgorithmException, InvalidKeySpecException, CryptorException,
-			Base64DecodingException {
+	private void load() throws NoSuchAlgorithmException,
+			InvalidKeySpecException, CryptorException, Base64DecodingException {
 
 		Hashtable<String, Object> hashtable = new Hashtable<String, Object>();
 		hashtable.put(COL_KEY, KEY_ALICE);
-		this.alice = GenDao.getInstance().getValue(TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE, hashtable);
+		this.alice = GenDao.getInstance().getValue(TABLE_WONDERLAND + MyPeerid,
+				new String[0], COL_vALUE, hashtable);
 		hashtable.clear();
 		hashtable.put(COL_KEY, KEY_WHITERABBIT);
-		this.whiterabbit = GenDao.getInstance().getValue(TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
+		this.whiterabbit = GenDao.getInstance().getValue(
+				TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
 				hashtable);
 		System.out.println("whiterabbit" + whiterabbit);
 		hashtable.clear();
 		hashtable.put(COL_KEY, KEY_HATTER);
-		this.hatter = GenDao.getInstance().getValue(TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE, hashtable);
+		this.hatter = GenDao.getInstance().getValue(
+				TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
+				hashtable);
 		// StorageManager.setStorageKey(this.alice);
 		hashtable.clear();
 
 		hashtable.put(COL_KEY, KEY_RABBITWATCH);
-		this.rabbbitsWatch = GenDao.getInstance().getValue(TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
+		this.rabbbitsWatch = GenDao.getInstance().getValue(
+				TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
 				hashtable);
 		hashtable.clear();
 		hashtable.put(COL_KEY, KEY_SESSIONKEY);
-		this.cheshireCat = GenDao.getInstance().getValue(TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
+		this.cheshireCat = GenDao.getInstance().getValue(
+				TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
 				hashtable);
 		hashtable.clear();
 
 		hashtable.put(COL_KEY, KEY_PUBKEY_UPDATETIME);
-		this.keyupdatetime = GenDao.getInstance().getValue(TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
+		this.keyupdatetime = GenDao.getInstance().getValue(
+				TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
 				hashtable);
 		hashtable.clear();
 		hashtable.put(COL_KEY, KEY_PUBLIC);
 
 		PublicKey publicKey = PubkeyUtils.decodePublic(
-				Base64.decode(GenDao.getInstance().getValue(TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
+				Base64.decode(GenDao.getInstance().getValue(
+						TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
 						hashtable)), PubkeyUtils.KEY_TYPE_RSA);
 
 		hashtable.clear();
 
 		hashtable.put(COL_KEY, KEY_PRIVATE);
 
-		String privateKeyString = GenDao.getInstance().getValue(TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
+		String privateKeyString = GenDao.getInstance().getValue(
+				TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
 				hashtable);
 		byte[] key = Base64.decode(privateKeyString);
 		System.out.println("key1:" + key.length);
 		System.out.println("privateKeyString:" + privateKeyString);
 
 		PrivateKey privateKey = PubkeyUtils.decodePrivate(
-				Base64.decode(GenDao.getInstance().getValue(TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
+				Base64.decode(GenDao.getInstance().getValue(
+						TABLE_WONDERLAND + MyPeerid, new String[0], COL_vALUE,
 						hashtable)), PubkeyUtils.KEY_TYPE_RSA);
 		this.rSAKeyPair = new KeyPair(publicKey, privateKey);
 		this.myPeerBean.PPeerid = MyPeerid;
-		if ("".equals(this.myPeerBean.PUsername) || this.myPeerBean.PUsername == null) {
+		if ("".equals(this.myPeerBean.PUsername)
+				|| this.myPeerBean.PUsername == null) {
 			this.myPeerBean.PUsername = MyPeerid;
 		}
 		this.myPeerBean.publicKey = publicKey;
 	}
+
+	// 检查参数
+	protected boolean checkparam(Object... params) {
+		boolean result = true;
+		for (Object name : params)
+			if (name == null) {
+				result = false;
+				return result;
+			}
+		return result;
+	}
+    
+	/**
+	 * 获取用户的公私钥对
+	 * 
+	 * @return
+	 */
+	public KeyPair getKeyPair() {
+		return this.rSAKeyPair;
+	}
+
+	/**
+	 * 更新自己的密钥对
+	 * 
+	 * @param k
+	 */
+	public void changeKeyPair(KeyPair k) {
+		this.rSAKeyPair = k;
+		HandleSave();
+	}
+
 }

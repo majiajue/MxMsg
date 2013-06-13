@@ -17,6 +17,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
 import java.security.KeyPair;
+import java.security.PublicKey;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -28,7 +29,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-
+import org.apache.commons.codec.binary.Base64;
 import com.mx.clent.vo.AnPeersBean;
 import com.mx.clent.vo.Profile;
 import com.mx.client.db.DBDataSQL;
@@ -289,9 +290,26 @@ public class Login extends JFrame {
 						if (re) {
 
 							Profile p1 = Profile.LoadProfile(textField用户名.getText());
+							p1.setSessionkey(Skey);
+							KeyPair kp = null;
+							kp =p1.getKeyPair();
+							PublicKey key = kp.getPublic();
+							String encode_key = new String(Base64.encodeBase64(com.mx.client.webtools.PubkeyUtils.getEncodedPublic(key)));
+							
+							try {
+								com.mx.client.webtools.SPubkey.getInstance().postPubKey(encode_key);
+							} catch (Exception exception) {
+								// TODO Auto-generated catch block
+								exception.printStackTrace();
+							}
 							System.out.println("p1.PUsername1:" + p1.myPeerBean.PUsername);
 
+						}else{
+							
+							System.out.println(" error password!");
 						}
+						
+						
 					} else {
 
 						KeyPair kp = null;
@@ -304,6 +322,7 @@ public class Login extends JFrame {
 							DBTools.excuteSql(DBDataSQL.SQL_CREATE_MESSAGE_INDEX);
 							DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_LOGIN);
 							DBTools.excuteSql(DBDataSQL.SQL_CREATE_LOGIN_INDEX);
+							DBTools.excuteSql(DBDataSQL.TB_PEERS);
 							AnPeersBean bean = new AnPeersBean();
 							bean.PPeerid = textField用户名.getText();
 							bean.PUsername = textField用户名.getText();

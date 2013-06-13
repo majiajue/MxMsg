@@ -46,6 +46,33 @@ public class DBDataSQL {
 		
 		public final static String SQL_CREATE_LOGIN_INDEX = "CREATE INDEX IF NOT EXISTS LOGIN ON " + TB_LOGIN + " ( "
 				+ COL_LOGIN_NUMBER + "," + COL_LOGIN_PASSWORD + "," + COL_LOGIN_PASSWORD + "," + COL_LOGIN_Time + ")";
+		/**
+		 * TABLE peer { _id INTEGER NOT NULL; Peerid TEXT PRIMARY KEY NOT NULL;
+		 * 用户的用户id，是主键且唯一 Username TEXT; 用户的名称 Pinyin TEXT NOT NULL; 用户名的全称信息，用于检索
+		 * PHONE TEXT NOT NULL; 系统联系人的id Avatarid TEXT; 用户的头像 UpdateTime TEXT;
+		 * 上次更新的时间 Lastcontact TEXT:上次联系的时间 Public TEXT NOT NULL;该用户的公钥 }
+		 */
+		public final static String TB_PEERS = "peers";
+		public final static String COL_PEER_PEERID = "Peerid";
+		public final static String COL_PEER_USERNAME = "Username";
+		public final static String COL_PEER_REMARK = "Remark";
+		public final static String COL_PEER_PINYIN = "Pinyin";
+		public final static String COL_PEER_PHONE = "phone";
+		public final static String COL_PEER_AVATAR = "Avatarid";
+		public final static String COL_PEER_UPDTAETIME = "UpdateTime";
+		public final static String COL_PEER_LASTCONTACT = "Lastcontact";
+		public final static String COL_PEER_PUBLIC = "Public";
+
+		public final static String SQL_CREATE_TB_PEERS = "CREATE TABLE IF NOT EXISTS " + TB_PEERS + "(" + _id
+				+ "  INT PRIMARY KEY AUTOINCREMENT, " + COL_PEER_PEERID + " VARCHAR2(4000) NOT NULL, " + COL_PEER_USERNAME
+				+ " VARCHAR2(4000), " + COL_PEER_REMARK + " VARCHAR2(4000), " + COL_PEER_PINYIN + " VARCHAR2(4000) NOT NULL,  " + COL_PEER_PHONE
+				+ " VARCHAR2(4000) NOT NULL, " + COL_PEER_AVATAR + " VARCHAR2(4000), " + COL_PEER_UPDTAETIME + " VARCHAR2(4000), " + COL_PEER_LASTCONTACT
+				+ " VARCHAR2(4000) , " + COL_PEER_PUBLIC + " VARCHAR2(4000) NOT NULL" + ")";
+		public final static String SQL_CREATE_PEERS_INDEX = "CREATE INDEX IF NOT EXISTS ipeers ON " + TB_PEERS + " ("
+				+ COL_PEER_PEERID + "," + COL_PEER_USERNAME + "," + COL_PEER_REMARK + "," + COL_PEER_PINYIN + ","
+				+ COL_PEER_PHONE + "," + COL_PEER_AVATAR + "," + COL_PEER_UPDTAETIME + "," + COL_PEER_LASTCONTACT + ","
+				+ COL_PEER_PUBLIC + ")";
+
 
 
 }
