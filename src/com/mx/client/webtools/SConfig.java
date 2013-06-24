@@ -7,11 +7,15 @@ import java.security.NoSuchAlgorithmException;
 import java.security.PublicKey;
 import java.security.SecureRandom;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apache.http.client.ClientProtocolException;
+
+import com.mx.clent.vo.Profile;
+import com.mx.client.db.GenDao;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -22,15 +26,28 @@ import sun.misc.BASE64Encoder;
 
 public class SConfig {
 	public String sessionkey = "";
+	public final static String TB_PREFERENCE = "tb_preference";
+	private final Object[] dbLock = new Object[0];
 	private String m_psk;// 放在内存中的密钥
 	private String ApplicationPSKey="";
+	public String applicationPSK = "";
 	private static final String KEY_ALGORITHM = "RSA";
 	private static final String DEFAULT_SEED = "2C87BA8BC9A364D8CB0C8AB926039E06";
+	public final static String COL_PRE_KEY = "key";
+	public final static String COL_PRE_VALUE = "value";
+    public Profile profile;
+	public Profile getProfile() {
+		return profile;
+	}
+
+	public void setProfile(Profile profile) {
+		this.profile = profile;
+	}
 
 	public String getApplicationPSKey() {
 		return ApplicationPSKey;
 	}
-
+	
 	private SConfig() {
 
 	}
@@ -228,11 +245,12 @@ public class SConfig {
 	public static String decodeContacts(String tmp) {
 		String psk = null;
 		try {
-			psk = SConfig.getInstance().getApplicationPSK();
+			psk = SConfig.getInstance().getHelpKey();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		System.out.println("psk===");
 		String result = null;
 		if(psk!=null||!"".equals(psk)) {
 			try {
@@ -298,6 +316,90 @@ public class SConfig {
 		// LOG.v("wjy",
 		// "getUpdatePubkeyTime(String peerid)====="+getUpdatePubkeyTime(peerid));
 		return kp;
+	}
+	public void setApplicationPSK(String psk) {
+		save("applicationPSK", psk);
+		CryptorManager.getInstance().clearCryptor();
+	}
+
+	/**
+	 * TODO 获得magic
+	 * 
+	 * @return
+	 */
+	public boolean getMagic() {
+		try {
+            HashMap<String, Object> cv = new HashMap<String, Object>();
+			String result = ConnectionUtils.getInstance().getRequest("/magic/" + getSessionKey() + "/call.aspx");
+            System.out.println("result====="+result);
+			//HashMap<String, String> map = SXmlParser.xmlResponse(result);
+
+			if (result != null && XmlUtil.instance().parseXmltoString(result, "UTF-8", "r") != null) {
+				if (XmlUtil.instance().parseXmltoString(result, "UTF-8", "r").equals("ok")) {// 获取成功
+					String magic = XmlUtil.instance().parseXmltoString(result, "UTF-8", "magic");
+					if (magic != null) {
+						Cryptor crypt = null;
+						try {
+							crypt = new Cryptor(getHelpKey());
+							crypt.decrypt(Base64.decodeBase64(magic.getBytes()));
+							setApplicationPSK(magic);
+							setMagicSynServer(true);
+							return true;
+						} catch (CryptorException e) {
+							//LOG.e("debug", "SConfig --- 服务器上的Magic不正确，重新设置");
+							SConfig.getInstance().initApplicationPSK(getHelpKey());
+							if (setMagic(this.applicationPSK)) {
+								setApplicationPSK(magic);
+								setMagicSynServer(true);
+								return true;
+							}
+						}
+
+						return false;
+					}
+				}
+
+				if (XmlUtil.instance().parseXmltoString(result, "UTF-8", "r").equals("none")) {// 未设置
+					if (setMagic(this.applicationPSK))
+						return true;
+				}
+			}
+
+		} catch (ClientProtocolException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		return false;
+	}
+	
+	private boolean save(String key, String value) {
+
+		synchronized (dbLock) {
+			Hashtable<String, Object> condition = new Hashtable<String, Object>();
+			condition.put(COL_PRE_KEY, key);
+			Boolean boolean1 = GenDao.getInstance().executeUpdate(
+					TB_PREFERENCE, new String[] { COL_PRE_VALUE },
+					new Object[] { value }, condition);
+			if (boolean1) {
+				return true;
+			} else {
+				Boolean a = GenDao.getInstance().executeInsert(
+						TB_PREFERENCE,
+						new String[] { COL_PRE_KEY, COL_PRE_VALUE},
+						new Object[] { key, value });
+				if (a) {
+					return true;
+				} else {
+					return false;
+				}
+
+			}
+		}
 	}
 	public static void main(String[] args) {
 		System.out.println(SUtil.toSHAString64("123456", null));

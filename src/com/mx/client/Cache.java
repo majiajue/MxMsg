@@ -17,7 +17,7 @@ private static Cache instance;
 	private List<MsgTeam> teams;
 	private boolean isChange=false;
 	private Map<String ,MsgUser> friendMap=new HashMap<String ,MsgUser>();
-	//private Map<String,TalkFrame> talkFrameMap=new HashMap<String ,EIMTalkFrame>();
+	private Map<String,TalkFrame> talkFrameMap=new HashMap<String ,TalkFrame>();
 	
 	public static void setInstance(Cache instance) {
 		Cache.instance = instance;
@@ -47,23 +47,23 @@ private static Cache instance;
 		return friendMap;
 	}
 	
-//	public TalkFrame getTalkFrame(String userId){
-//		TalkFrame frame=talkFrameMap.get(userId);
-//		if(null==frame){
-//			MsgUser user=this.getUserByID(userId);
-//			frame=new TalkFrame(user);
-//			this.addTalkFrame(userId, frame);
-//		}
-//		return frame;
-//	}
-//	
-//	public void addTalkFrame(String userId,TalkFrame frame){
-//		this.talkFrameMap.put(userId, frame);
-//	}
-//	
-//	public void removeTalkFrame(String userId){
-//		this.talkFrameMap.remove(userId);
-//	}
+	public TalkFrame getTalkFrame(String userId){
+		TalkFrame frame=talkFrameMap.get(userId);
+		if(null==frame){
+			MsgUser user=this.getUserByID(userId);
+			frame=new TalkFrame(user);
+			this.addTalkFrame(userId, frame);
+		}
+		return frame;
+	}
+	
+	public void addTalkFrame(String userId,TalkFrame frame){
+		this.talkFrameMap.put(userId, frame);
+	}
+	
+	public void removeTalkFrame(String userId){
+		this.talkFrameMap.remove(userId);
+	}
 	
 	public MsgUser getUserByID(String id){
 		return this.getfriendMap().get(id);
@@ -86,11 +86,11 @@ private static Cache instance;
 	}
 
 
-//	public Map<String, TalkFrame> getTalkFrameMap() {
-//		return talkFrameMap;
-//	}
-//
-//	public void setTalkFrameMap(Map<String, TalkFrame> talkFrameMap) {
-//		this.talkFrameMap = talkFrameMap;
-//	}
+	public Map<String, TalkFrame> getTalkFrameMap() {
+		return talkFrameMap;
+	}
+
+	public void setTalkFrameMap(Map<String, TalkFrame> talkFrameMap) {
+		this.talkFrameMap = talkFrameMap;
+	}
 }

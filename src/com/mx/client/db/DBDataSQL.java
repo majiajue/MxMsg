@@ -62,16 +62,31 @@ public class DBDataSQL {
 		public final static String COL_PEER_UPDTAETIME = "UpdateTime";
 		public final static String COL_PEER_LASTCONTACT = "Lastcontact";
 		public final static String COL_PEER_PUBLIC = "Public";
+		public final static String COL_PEER_FROMPEERID="FriendId";
 
-		public final static String SQL_CREATE_TB_PEERS = "CREATE TABLE IF NOT EXISTS " + TB_PEERS + "(" + _id
-				+ "  INT PRIMARY KEY AUTOINCREMENT, " + COL_PEER_PEERID + " VARCHAR2(4000) NOT NULL, " + COL_PEER_USERNAME
-				+ " VARCHAR2(4000), " + COL_PEER_REMARK + " VARCHAR2(4000), " + COL_PEER_PINYIN + " VARCHAR2(4000) NOT NULL,  " + COL_PEER_PHONE
-				+ " VARCHAR2(4000) NOT NULL, " + COL_PEER_AVATAR + " VARCHAR2(4000), " + COL_PEER_UPDTAETIME + " VARCHAR2(4000), " + COL_PEER_LASTCONTACT
-				+ " VARCHAR2(4000) , " + COL_PEER_PUBLIC + " VARCHAR2(4000) NOT NULL" + ")";
-		public final static String SQL_CREATE_PEERS_INDEX = "CREATE INDEX IF NOT EXISTS ipeers ON " + TB_PEERS + " ("
+		public final static String SQL_CREATE_TB_PEERS = "CREATE TABLE IF NOT EXISTS " + TB_PEERS + " (" + _id
+				+ "  INT PRIMARY KEY AUTO_INCREMENT, " + COL_PEER_PEERID + " VARCHAR2(4000) NOT NULL, " + COL_PEER_USERNAME
+				+ " VARCHAR2(4000), " + COL_PEER_REMARK + " VARCHAR2(4000), " + COL_PEER_PINYIN + " VARCHAR2(4000) ,  " + COL_PEER_PHONE
+				+ " VARCHAR2(4000) , " + COL_PEER_AVATAR + " VARCHAR2(4000), " + COL_PEER_UPDTAETIME + " VARCHAR2(4000), " + COL_PEER_LASTCONTACT
+				+ " VARCHAR2(4000) , " + COL_PEER_PUBLIC + " VARCHAR2(4000) ," +COL_PEER_FROMPEERID + " VARCHAR2(4000)" +")";
+		public final static String SQL_CREATE_PEERS_INDEX = "CREATE INDEX IF NOT EXISTS imsg ON " + TB_PEERS + " ("
 				+ COL_PEER_PEERID + "," + COL_PEER_USERNAME + "," + COL_PEER_REMARK + "," + COL_PEER_PINYIN + ","
 				+ COL_PEER_PHONE + "," + COL_PEER_AVATAR + "," + COL_PEER_UPDTAETIME + "," + COL_PEER_LASTCONTACT + ","
 				+ COL_PEER_PUBLIC + ")";
+		// preference database
+		/**
+		 * Table preference{ _id INTEGER PRIMARY KEY AUTOINCREMENT;
+		 * sqlite的helper默认主键 Key TEXT NOT NULL PRIMARY KEY; 配置选项的名称 Value TEXT NOT
+		 * NULL; 配置选项的值 }
+		 */
+		public final static String TB_PREFERENCE = "tb_preference";
+		public final static String COL_PRE_KEY = "key";
+		public final static String COL_PRE_VALUE = "value";
+		public final static String SQL_CREATE_PREFERENCE = "CREATE TABLE IF NOT EXISTS " + TB_PREFERENCE + " ( " + _id
+				+ " INT PRIMARY KEY AUTO_INCREMENT, " + COL_PRE_KEY + " VARCHAR2(4000) NOT NULL ," + COL_PRE_VALUE
+				+ " VARCHAR2(4000) NOT NULL , UNIQUE( " + COL_PRE_KEY + "," + COL_PRE_VALUE + " ))";
+		public final static String SQL_CREATE_PREFERENCE_INDEX = "CREATE INDEX IF NOT EXISTS  imsg ON " + TB_PREFERENCE
+				+ " (" + COL_PRE_KEY + "," + COL_PRE_VALUE + ")";
 
 
 

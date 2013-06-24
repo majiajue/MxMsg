@@ -2,6 +2,7 @@ package com.mx.client;
 
 import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -9,12 +10,21 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.text.AbstractDocument.Content;
 
 import com.mx.clent.vo.MsgFriendGroup;
 import com.mx.clent.vo.MsgUser;
+import com.mx.client.webtools.ConnectionUtils;
+import com.mx.client.webtools.CryptorException;
+import com.mx.client.webtools.RSAEncryptor;
 
 
 
@@ -33,7 +43,7 @@ public class MainFrame extends BaseFrame {
 	
 	private MainFrame() {
         try {
-        	//intSubstance();
+            intSubstance();
 			initComponents();
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -105,10 +115,68 @@ public class MainFrame extends BaseFrame {
       
 			mainTabbedPanel = new SnapTipTabbedPane();
 			friendPanel = new javax.swing.JPanel();
-			friendTree=new TreeScrollPane(friends);
+			//friendTree=new JListCustomModel();
 			teamPanel = new javax.swing.JPanel();
 			zuijinPanel = new javax.swing.JPanel();
-
+			 JavaLocationCollection collection =
+				      new JavaLocationCollection();
+			JavaLocationListModel listModel =
+				      new JavaLocationListModel(collection);
+				    sampleJList = new JList(listModel);
+				    sampleJList.setCellRenderer(new JavaLocationRenderer());
+				    Font displayFont = new Font("Serif", Font.BOLD, 18);
+				    sampleJList.setFont(displayFont);
+				    sampleJList.addListSelectionListener(new ValueReporter());
+				    sampleJList.addMouseListener(new MouseListener() {
+						
+						@Override
+						public void mouseReleased(MouseEvent e) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public void mousePressed(MouseEvent e) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public void mouseExited(MouseEvent e) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public void mouseEntered(MouseEvent e) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+						@Override
+						public void mouseClicked(MouseEvent e) {
+							// TODO Auto-generated method stub
+							 if(e.getClickCount()==2){
+								 String peerid = ((JavaLocation)sampleJList.getSelectedValue()).getPeerId();
+								 System.out.println("peerid==="+peerid);
+								 ConnectionUtils.getInstance().getPubkey(peerid);
+								 String mMimeSend = "mime:txt:" +"helloworld!";
+								 String mecode="";
+								try {
+									mecode = RSAEncryptor.getInstance().encryptBase64Encode(mMimeSend.getBytes(), peerid);
+								} catch (CryptorException e1) {
+									// TODO Auto-generated catch block
+									e1.printStackTrace();
+								}
+								 Map<String, Object> map = new HashMap<String, Object>();
+								 map.put("duid", peerid);
+								 map.put("msg", mecode);
+								 ConnectionUtils.getInstance().postTxtMessage(map);
+								 System.out.println();
+							 }
+						}
+					});
+				  //friendPanel.add(sampleJList);  
 			//jToolBar1.setEnabled(false);
 			jToolBar2.setEnabled(false);
 			jToolBar3.setEnabled(false);
@@ -212,12 +280,14 @@ public class MainFrame extends BaseFrame {
 			friendPanel.setLayout(friendPanelLayout);
 			friendPanelLayout.setHorizontalGroup(
 			        friendPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-			        .addComponent(friendTree, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
+			        .addComponent(sampleJList, javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE)
 			    );
 			    friendPanelLayout.setVerticalGroup(
 			        friendPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-			        .addComponent(friendTree, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
+			        .addComponent(sampleJList, javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE)
 			    );
+			    
+
 			mainTabbedPanel.addTab("\u597d\u53cb\u5217\u8868", friendPanel);
 
 			javax.swing.GroupLayout teamPanelLayout = new javax.swing.GroupLayout(teamPanel);
@@ -273,11 +343,11 @@ public class MainFrame extends BaseFrame {
 		}
     }                  
     
-    public void initMainTree(List<MsgFriendGroup> groupList){
-    	TreeScrollPane treeScrollPane=new TreeScrollPane(groupList);
-    	friendTree=treeScrollPane;
-    	this.repaint();
-    }
+//    public void initMainTree(List<MsgFriendGroup> groupList){
+//    	TreeScrollPane treeScrollPane=new TreeScrollPane(groupList);
+//    	friendTree=treeScrollPane;
+//    	this.repaint();
+//    }
     public void setMainColor(Color bg){
     	mainTabbedPanel.setBackground(bg);
     	friendPanel.setBackground(bg);
@@ -310,13 +380,13 @@ public class MainFrame extends BaseFrame {
 		MainFrame.ower = ower;
 	}
     
-	public TreeScrollPane getFriendTree() {
-		return friendTree;
-	}
-
-	public void setFriendTree(TreeScrollPane friendTree) {
-		this.friendTree = friendTree;
-	}
+//	public TreeScrollPane getFriendTree() {
+//		return friendTree;
+//	}
+//
+//	public void setFriendTree(TreeScrollPane friendTree) {
+//		this.friendTree = friendTree;
+//	}
     
     // 变量声明 - 不进行修改                     
     private javax.swing.JButton compnayEmail;
@@ -325,7 +395,7 @@ public class MainFrame extends BaseFrame {
     private javax.swing.JButton findButton;
     private AutoCompletionField findField;
     private javax.swing.JPanel friendPanel;
-    private TreeScrollPane friendTree;
+   // private JListCustomModel friendTree;
     private javax.swing.JLabel headImage;
     private javax.swing.JButton iEButton;
     private javax.swing.JButton infoButton;
@@ -334,6 +404,7 @@ public class MainFrame extends BaseFrame {
     //private javax.swing.JToolBar jToolBar1;
     private javax.swing.JToolBar jToolBar2;
     private javax.swing.JToolBar jToolBar3;
+    private JList sampleJList;
     private SnapTipTabbedPane mainTabbedPanel;
     private javax.swing.JButton mySetButton;
     private javax.swing.JButton news;
@@ -414,4 +485,16 @@ public class MainFrame extends BaseFrame {
 		e.printStackTrace();
 	}
 }
+ 
+ private class ValueReporter implements ListSelectionListener {
+	    
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			// TODO Auto-generated method stub
+			 if(!e.getValueIsAdjusting())
+		        System.out.println(((JavaLocation)sampleJList.getSelectedValue()).getPeerId());
+		
+	  }
+ }
 }

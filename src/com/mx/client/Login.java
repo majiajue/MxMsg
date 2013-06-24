@@ -34,6 +34,7 @@ import com.mx.clent.vo.AnPeersBean;
 import com.mx.clent.vo.Profile;
 import com.mx.client.db.DBDataSQL;
 import com.mx.client.db.DBTools;
+import com.mx.client.webtools.ConnectionUtils;
 import com.mx.client.webtools.SConfig;
 import com.mx.client.webtools.SLogin;
 import com.sun.awt.AWTUtilities;
@@ -128,7 +129,8 @@ public class Login extends JFrame {
 							// TODO Auto-generated method stub
 							Point p = frame.getLocation();
 
-							frame.setLocation(p.x + arg0.getX() - origin.x, p.y + arg0.getY() - origin.y);
+							frame.setLocation(p.x + arg0.getX() - origin.x, p.y
+									+ arg0.getY() - origin.y);
 						}
 					});
 					frame.addMouseListener(new MouseListener() {
@@ -178,7 +180,8 @@ public class Login extends JFrame {
 							// TODO Auto-generated method stub
 							Point p = frame.getLocation();
 
-							frame.setLocation(p.x + arg0.getX() - origin.x, p.y + arg0.getY() - origin.y);
+							frame.setLocation(p.x + arg0.getX() - origin.x, p.y
+									+ arg0.getY() - origin.y);
 						}
 					});
 				} catch (Exception e) {
@@ -195,7 +198,8 @@ public class Login extends JFrame {
 			this.tray();
 		}
 		setTitle("MX");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(Login.class.getResource("/com/mx/client/image/QQ_64.png")));
+		setIconImage(Toolkit.getDefaultToolkit().getImage(
+				Login.class.getResource("/com/mx/client/image/QQ_64.png")));
 		setUndecorated(true);// 设置窗体没有边框
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 350, 267);
@@ -219,7 +223,8 @@ public class Login extends JFrame {
 		contentPane.add(lblQQ2013);
 
 		lbl头像 = new JLabel("");
-		lbl头像.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/headImage/head_boy_01_64.jpg")));
+		lbl头像.setIcon(new ImageIcon(Login.class
+				.getResource("/com/mx/client/headImage/head_boy_01_64.jpg")));
 		lbl头像.setBounds(18, 127, 64, 64);
 		contentPane.add(lbl头像);
 
@@ -238,7 +243,8 @@ public class Login extends JFrame {
 		contentPane.add(checkBox自动登录);
 
 		lbl登录 = new JLabel("");
-		lbl登录.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/button_login_1.png")));
+		lbl登录.setIcon(new ImageIcon(Login.class
+				.getResource("/com/mx/client/image/button/button_login_1.png")));
 		lbl登录.setBounds(262, 237, 69, 22);
 		lbl登录.addMouseListener(new MouseListener() {
 
@@ -271,76 +277,116 @@ public class Login extends JFrame {
 				// TODO Auto-generated method stub
 				String pwd = "";
 				try {
-					Skey = com.mx.client.webtools.SLogin.getInstance().register1();
+					Skey = com.mx.client.webtools.SLogin.getInstance()
+							.register1();
 					SConfig.getInstance().setSessionKey(Skey);
 					char[] p = pwd密码.getPassword();
 					pwd = new String(p);
 					System.out.println("pwd==" + pwd);
 					shapwd = SConfig.getInstance().setPassword(pwd);
 					System.out.println("1====" + shapwd);
-					String result = SLogin.getInstance().login(textField用户名.getText(), Skey, shapwd);
+					String result = SLogin.getInstance().login(
+							textField用户名.getText(), Skey, shapwd);
 
 					// String friend
 					// =ConnectionUtils.getInstance().getContacts();
 					// System.out.println(SConfig.getInstance().decodeContacts(friend));
 					// friend = SConfig.getInstance().decodeContacts(friend);
-					System.out.println("是否存在吃记录" + Profile.isExistProfile(textField用户名.getText()));
-					if (Profile.isExistProfile(textField用户名.getText())) {
-						boolean re = Profile.checkloginpwd(textField用户名.getText(), pwd);
-						if (re) {
+					System.out.println("是否存在吃记录"
+							+ Profile.isExistProfile(textField用户名.getText()));
 
-							Profile p1 = Profile.LoadProfile(textField用户名.getText());
-							p1.setSessionkey(Skey);
-							KeyPair kp = null;
-							kp =p1.getKeyPair();
-							PublicKey key = kp.getPublic();
-							String encode_key = new String(Base64.encodeBase64(com.mx.client.webtools.PubkeyUtils.getEncodedPublic(key)));
-							
-							try {
-								com.mx.client.webtools.SPubkey.getInstance().postPubKey(encode_key);
-							} catch (Exception exception) {
-								// TODO Auto-generated catch block
-								exception.printStackTrace();
-							}
-							System.out.println("p1.PUsername1:" + p1.myPeerBean.PUsername);
+					if (result == null || result.equals("Failed")
+							|| result.equals("failed")) {
 
-						}else{
-							
-							System.out.println(" error password!");
-						}
-						
-						
+						System.out.println("登陆失败");
 					} else {
 
-						KeyPair kp = null;
-						String uptime = "";
-						try {
-							kp = SConfig.getInstance().updatePublicKeyToServer(textField用户名.getText());
-							uptime = System.currentTimeMillis() + "";
-							DBTools.CreateUserProfile(textField用户名.getText());
-							DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_MESSAGE);
-							DBTools.excuteSql(DBDataSQL.SQL_CREATE_MESSAGE_INDEX);
-							DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_LOGIN);
-							DBTools.excuteSql(DBDataSQL.SQL_CREATE_LOGIN_INDEX);
-							DBTools.excuteSql(DBDataSQL.TB_PEERS);
-							AnPeersBean bean = new AnPeersBean();
-							bean.PPeerid = textField用户名.getText();
-							bean.PUsername = textField用户名.getText();
-							Profile profile = new Profile(textField用户名.getText(), pwd);
-							profile.CreateProfile(bean, pwd, kp, Skey, uptime);
-							// List<MsgFriendGroup>
-							// friendGroup=XmlUtil.instance().parseXmltoString2(friend,"UTF-8","con");
-							// MainFrame.setFriends(friendGroup);
-							// MainFrame frame = MainFrame.getInstance();
-							// frame.setVisible(true);
-							setVisible(false);
-						} catch (Exception e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
+						if (!SConfig.getInstance().getMagic()) {
+							// publishProgress("用户登录失败...");
+							System.out.println("登陆失败");
+							// SConfig.getInstance().setRegisted(false);
+							// return false;
 						}
-						// System.out.println("friend==="+friend);
-					}
+						if (Profile.isExistProfile(textField用户名.getText())) {
+							boolean re = Profile.checkloginpwd(
+									textField用户名.getText(), pwd);
+							if (re) {
 
+								Profile p1 = Profile.LoadProfile(textField用户名
+										.getText());
+								p1.setSessionkey(Skey);
+								KeyPair kp = null;
+								kp = p1.getKeyPair();
+								PublicKey key = kp.getPublic();
+								String encode_key = new String(
+										Base64.encodeBase64(com.mx.client.webtools.PubkeyUtils
+												.getEncodedPublic(key)));
+
+								try {
+									com.mx.client.webtools.SPubkey
+											.getInstance().postPubKey(
+													encode_key);
+								} catch (Exception exception) {
+									// TODO Auto-generated catch block
+									exception.printStackTrace();
+								}
+								System.out.println("p1.PUsername1:"
+										+ p1.myPeerBean.PUsername);
+								SConfig.getInstance().setProfile(p1);
+//								String friend = ConnectionUtils.getInstance()
+//										.getContacts();
+//								System.out.println(SConfig.getInstance()
+//										.decodeContacts(friend));
+//								friend = SConfig.getInstance().decodeContacts(
+//										friend);
+								MainFrame frame = MainFrame.getInstance();
+								frame.setVisible(true);
+								setVisible(false);
+							} else {
+
+								System.out.println(" error password!");
+							}
+
+						} else {
+
+							KeyPair kp = null;
+							String uptime = "";
+							try {
+								kp = SConfig.getInstance()
+										.updatePublicKeyToServer(
+												textField用户名.getText());
+								uptime = System.currentTimeMillis() + "";
+								DBTools.CreateUserProfile(textField用户名
+										.getText());
+								DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_MESSAGE);
+								DBTools.excuteSql(DBDataSQL.SQL_CREATE_MESSAGE_INDEX);
+								DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_LOGIN);
+								DBTools.excuteSql(DBDataSQL.SQL_CREATE_LOGIN_INDEX);
+								DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_PEERS);
+								DBTools.excuteSql(DBDataSQL.SQL_CREATE_PEERS_INDEX);
+								DBTools.excuteSql(DBDataSQL.SQL_CREATE_PREFERENCE);
+								DBTools.excuteSql(DBDataSQL.SQL_CREATE_PREFERENCE_INDEX);
+								AnPeersBean bean = new AnPeersBean();
+								bean.PPeerid = textField用户名.getText();
+								bean.PUsername = textField用户名.getText();
+								Profile profile = new Profile(textField用户名
+										.getText(), pwd);
+								profile = profile.CreateProfile(bean, pwd, kp,
+										Skey, uptime);
+								SConfig.getInstance().setProfile(profile);
+								// List<MsgFriendGroup>
+								// friendGroup=XmlUtil.instance().parseXmltoString2(friend,"UTF-8","con");
+								// MainFrame.setFriends(friendGroup);
+								MainFrame frame = MainFrame.getInstance();
+								frame.setVisible(true);
+								setVisible(false);
+							} catch (Exception e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+							// System.out.println("friend==="+friend);
+						}
+					}
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -402,7 +448,8 @@ public class Login extends JFrame {
 		contentPane.add(lbl忘记密码);
 
 		lbl最小化 = new JLabel("");
-		lbl最小化.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/login_minsize_1.png")));
+		lbl最小化.setIcon(new ImageIcon(Login.class
+				.getResource("/com/mx/client/image/button/login_minsize_1.png")));
 		lbl最小化.setBounds(284, 0, 29, 19);
 		contentPane.add(lbl最小化);
 		lbl最小化.addMouseListener(new MouseListener() {
@@ -447,7 +494,8 @@ public class Login extends JFrame {
 		});
 
 		lbl退出 = new JLabel("");
-		lbl退出.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/login_exit_1.png")));
+		lbl退出.setIcon(new ImageIcon(Login.class
+				.getResource("/com/mx/client/image/button/login_exit_1.png")));
 		lbl退出.setBounds(312, -1, 37, 20);
 		contentPane.add(lbl退出);
 		lbl退出.addMouseListener(new MouseListener() {
@@ -484,12 +532,15 @@ public class Login extends JFrame {
 		});
 
 		lbl多账号 = new JLabel("");
-		lbl多账号.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/login_duozhanghao_1.png")));
+		lbl多账号.setIcon(new ImageIcon(
+				Login.class
+						.getResource("/com/mx/client/image/button/login_duozhanghao_1.png")));
 		lbl多账号.setBounds(14, 237, 69, 21);
 		contentPane.add(lbl多账号);
 
 		lbl设置 = new JLabel("");
-		lbl设置.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/login_setting_1.png")));
+		lbl设置.setIcon(new ImageIcon(Login.class
+				.getResource("/com/mx/client/image/button/login_setting_1.png")));
 		lbl设置.setBounds(93, 237, 69, 21);
 		contentPane.add(lbl设置);
 
@@ -500,7 +551,8 @@ public class Login extends JFrame {
 
 	void tray() {
 		tray = SystemTray.getSystemTray(); // 获得本操作系统托盘的实例
-		ImageIcon icon = new ImageIcon(Login.class.getResource("/com/mx/client/image/QQ_16.png")); // 将要显示到托盘中的图标
+		ImageIcon icon = new ImageIcon(
+				Login.class.getResource("/com/mx/client/image/QQ_16.png")); // 将要显示到托盘中的图标
 		PopupMenu pop = new PopupMenu(); // 构造一个右键弹出式菜单
 		MenuItem show = new MenuItem("打开程序(s)");
 		MenuItem exit = new MenuItem("退出程序(x)");

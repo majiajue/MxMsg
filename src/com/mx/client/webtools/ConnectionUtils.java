@@ -2,15 +2,25 @@ package com.mx.client.webtools;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.security.KeyStore;
+import java.security.PublicKey;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.ParserConfigurationException;
+import com.mx.clent.vo.AnPeersBean;
 import com.mx.client.webtools.MySSLSocketFactory;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.configuration.MapConfiguration;
@@ -26,6 +36,7 @@ import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
@@ -33,6 +44,8 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.protocol.HTTP;
+
+import sun.reflect.generics.scope.Scope;
 
 public class ConnectionUtils {
 
@@ -157,7 +170,7 @@ public class ConnectionUtils {
 			url = murl + pos;
 		}
 		HttpClient client = initPgHttpClient();
-        System.out.println("url===="+url);
+		System.out.println("url====" + url);
 		try {
 			HttpPost request = new HttpPost(url);
 			List<BasicNameValuePair> postParameters = new ArrayList<BasicNameValuePair>();
@@ -190,7 +203,7 @@ public class ConnectionUtils {
 				sb.append(line + NL);
 			}
 			in.close();
-			System.out.println("sb==="+sb.toString());
+			System.out.println("sb===" + sb.toString());
 			return sb.toString();
 		} finally {
 			if (in != null) {
@@ -205,41 +218,48 @@ public class ConnectionUtils {
 			}
 		}
 	}
-	
-	public String postRequest(String pos, Map<String,Object> postContent) throws Exception{
-		return postRequest( pos,  postContent, null);
-	}	
-	public String postRequest(String pos, Map<String,Object> postContent,String murl)throws Exception {
+
+	public String postRequest(String pos, Map<String, Object> postContent)
+			throws Exception {
+		return postRequest(pos, postContent, null);
+	}
+
+	public String postRequest(String pos, Map<String, Object> postContent,
+			String murl) throws Exception {
 		BufferedReader in = null;
-		String url=null;
-		if(murl==null)
-		 {url = mHost + pos;}
-		else{
-			url=murl+pos;
+		String url = null;
+		if (murl == null) {
+			url = mHost + pos;
+		} else {
+			url = murl + pos;
 		}
 		HttpClient client = initPgHttpClient();
-		
+		System.out.println("url" + url);
 		try {
-		    HttpPost request = new HttpPost(url);
+			HttpPost request = new HttpPost(url);
 			List<BasicNameValuePair> postParameters = new ArrayList<BasicNameValuePair>();
 			if (postContent != null && postContent.size() > 0) {
-				Iterator<Entry<String, Object>> i = postContent.entrySet().iterator();
+				Iterator<Entry<String, Object>> i = postContent.entrySet()
+						.iterator();
 
 				while (i.hasNext()) {
 					Entry<String, Object> entry = i.next();
 
 					if (entry.getValue() == null) {
-						
+
 						continue;
 					}
-					postParameters.add(new BasicNameValuePair(entry.getKey(), (String) entry.getValue()));
+					postParameters.add(new BasicNameValuePair(entry.getKey(),
+							(String) entry.getValue()));
 				}
 			}
 
-			UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(postParameters, "UTF-8");
+			UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(
+					postParameters, "UTF-8");
 			request.setEntity(formEntity);
 			HttpResponse response = client.execute(request);
-			in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+			in = new BufferedReader(new InputStreamReader(response.getEntity()
+					.getContent()));
 			StringBuffer sb = new StringBuffer("");
 			String line = "";
 			String NL = System.getProperty("line.separator");
@@ -247,7 +267,7 @@ public class ConnectionUtils {
 				sb.append(line + NL);
 			}
 			in.close();
-			
+
 			return sb.toString();
 		} finally {
 			if (in != null) {
@@ -257,42 +277,233 @@ public class ConnectionUtils {
 					e.printStackTrace();
 				}
 			}
-	        if(client != null && client.getConnectionManager() != null) {
-	            client.getConnectionManager().shutdown();
-	        }			
+			if (client != null && client.getConnectionManager() != null) {
+				client.getConnectionManager().shutdown();
+			}
 		}
 	}
+
 	/**
 	 * 獲取聯繫人
+	 * 
 	 * @return
 	 */
-	public String getContacts(){
-		
-		String xml="";
+	public String getContacts() {
+
+		String xml = "";
 		try {
-			xml = postRequest(
-					"/backup/relations/get/" + SConfig.getInstance().getSessionKey() + "/call.xml",
-					null);
+			xml = postRequest("/backup/relations/get/"
+					+ SConfig.getInstance().getProfile().getSession()
+					+ "/call.xml", null);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		System.out.println("xml====>"+xml);
-		String result= "";
+		System.out.println("xml====>" + xml);
+		String result = "";
 		try {
-			if(XmlUtil.instance().parseXmltoString(xml, "UTF-8","r").equalsIgnoreCase("ok")){
-				result=XmlUtil.instance().parseXmltoString(xml, "UTF-8","relations");
-				
+			if (XmlUtil.instance().parseXmltoString(xml, "UTF-8", "r")
+					.equalsIgnoreCase("ok")) {
+				result = XmlUtil.instance().parseXmltoString(xml, "UTF-8",
+						"relations");
+
 			}
 		} catch (ParserConfigurationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		return result;
 	}
-	
 
-	
+	public void getPubkey(String Uid) {
+		String url = "/getpubkey/"
+				+ SConfig.getInstance().getProfile().getSession() + "/" + Uid
+				+ "/call.xml";
+		System.out.println("url" + url);
+		String xml = "";
+		String pubkey = "";
+		String time = "";
+		try {
+			xml = postSSLRequest(url, null, "https://www.han2011.com");
+			System.out.println(xml.toString());
+			if (XmlUtil.instance().parseXmltoString(xml, "UTF-8", "r")
+					.equalsIgnoreCase("ok")) {
+				pubkey = XmlUtil.instance().parseXmltoString(xml, "UTF-8",
+						"pubkey");
+				time = XmlUtil.instance().parseXmltoString(xml, "UTF-8",
+						"time");
+			}
+			System.out.println(pubkey + " ======== " + time);
+			
+			byte[]decoded = Base64.decodeBase64(pubkey.getBytes());
+			PublicKey pkey = PubkeyUtils.decodePublic(decoded, "RSA");
+			AnPeersBean bean = new AnPeersBean();
+			bean.savePeerKey(Uid, pkey, time);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
+	}
+
+	public String postSSLRequest(String pos, Map<String, Object> postContent,
+			String murl) throws Exception {
+		BufferedReader in = null;
+		String url = null;
+		if (murl == null) {
+			url = mHost + pos;
+		} else {
+			url = murl + pos;
+		}
+		System.out.println("url=="+url);
+		PoolingClientConnectionManager connectionManager=new PoolingClientConnectionManager();
+
+		connectionManager.setMaxTotal(1);
+
+		HttpClient httpclient = new DefaultHttpClient(connectionManager);
+		httpclient = wrapClient(httpclient);
+		httpclient.getParams().setParameter("http.socket.timeout",3000);
+
+		httpclient.getParams().setParameter("http.connection.timeout",3000);
+
+		httpclient.getParams().setParameter("http.connection-manager.timeout",300000000L);
+
+//
+//		// 获得密匙库
+//		KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+//		// FileInputStream instream = new FileInputStream(new File("D:/zzaa"));
+//		// 密匙库的密码
+//		trustStore.load(null, null);
+//		// 注册密匙库
+//		SSLSocketFactory socketFactory = new AnSSLSocketFactory(trustStore);
+//		// 不校验域名
+//		socketFactory.setHostnameVerifier(AnSSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+//		Scheme sch = new Scheme("https", 443, socketFactory);
+//		httpclient.getConnectionManager().getSchemeRegistry().register(sch);
+	    
+		
+		// 获得HttpGet对象
+		HttpGet httpGet = null;
+		
+		httpGet = new HttpGet(url);
+	
+		// 发送请求
+		HttpResponse response = httpclient.execute(httpGet);
+		// 输出返回值
+		InputStream is = response.getEntity().getContent();
+		BufferedReader br = new BufferedReader(new InputStreamReader(is));
+		StringBuffer sb = new StringBuffer("");
+		String line = "";
+		String NL = System.getProperty("line.separator");
+		while ((line = br.readLine()) != null) {
+			sb.append(line + NL);
+		}
+	   is.close();
+       System.out.println("sb======"+sb.toString());
+       return sb.toString();
+	}
+	/**
+	 * 用户获取httpcliect链接
+	 * @param base
+	 * @return
+	 */
+	
+	  public static org.apache.http.client.HttpClient wrapClient(org.apache.http.client.HttpClient base) {
+          try {
+              SSLContext ctx = SSLContext.getInstance("TLS");
+              X509TrustManager tm = new X509TrustManager() {
+                  public X509Certificate[] getAcceptedIssuers() {
+                      return null;
+                  }
+                  public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+                  public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
+              };
+              ctx.init(null, new TrustManager[] { tm }, null);
+              SSLSocketFactory ssf = new SSLSocketFactory(ctx, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+              SchemeRegistry registry = new SchemeRegistry();
+              registry.register(new Scheme("https", 443, ssf));
+              ThreadSafeClientConnManager mgr = new ThreadSafeClientConnManager(registry);
+              return new DefaultHttpClient(mgr, base.getParams());
+          } catch (Exception ex) {
+              ex.printStackTrace();
+              return null;
+          }
+      }
+	  
+	  
+	  public  void postTxtMessage(Map<String, Object> postContent){
+		  
+		  BufferedReader in = null;
+		  String url = "/postmessage/" + SConfig.getInstance().getProfile().getSession() + "/call.xml";;
+		
+		  PoolingClientConnectionManager connectionManager=new PoolingClientConnectionManager();
+
+			connectionManager.setMaxTotal(1);
+
+			HttpClient client = new DefaultHttpClient(connectionManager);
+			client = wrapClient(client);
+			client.getParams().setParameter("http.socket.timeout",3000);
+			client.getParams().setParameter("http.connection.timeout",3000);
+			client.getParams().setParameter("http.connection-manager.timeout",300000000L);
+			System.out.println("url" + url);
+			try {
+				HttpPost request = new HttpPost(url);
+				List<BasicNameValuePair> postParameters = new ArrayList<BasicNameValuePair>();
+				if (postContent != null && postContent.size() > 0) {
+					Iterator<Entry<String, Object>> i = postContent.entrySet()
+							.iterator();
+
+					while (i.hasNext()) {
+						Entry<String, Object> entry = i.next();
+
+						if (entry.getValue() == null) {
+
+							continue;
+						}
+						postParameters.add(new BasicNameValuePair(entry.getKey(),
+								(String) entry.getValue()));
+					}
+				}
+
+				UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(
+						postParameters, "UTF-8");
+				request.setEntity(formEntity);
+				HttpResponse response = client.execute(request);
+				in = new BufferedReader(new InputStreamReader(response.getEntity()
+						.getContent()));
+				StringBuffer sb = new StringBuffer("");
+				String line = "";
+				String NL = System.getProperty("line.separator");
+				while ((line = in.readLine()) != null) {
+					sb.append(line + NL);
+				}
+				in.close();
+
+				System.out.println(sb.toString());
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				if (in != null) {
+					try {
+						in.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				if (client != null && client.getConnectionManager() != null) {
+					client.getConnectionManager().shutdown();
+				}
+			}
+		  
+	  }
+	  
+	 
 }
