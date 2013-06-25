@@ -12,7 +12,6 @@ import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 
-
 import org.apache.commons.codec.binary.Base64;
 
 public class RSAEncryptor {
@@ -32,9 +31,21 @@ public class RSAEncryptor {
 		return SingletonHolder.INSTANCE;
 	}
 
-	private static final String ALGORITHM = "RSA";
+	private static final String ALGORITHM = "RSA/ECB/NoPadding";
 
-
+	public static int getBlockSize(int defaultLength, PublicKey key) {
+		if (defaultLength > 0) {
+			return defaultLength;
+		}
+		int length = key.getEncoded().length;
+		if (length < 200) {
+			return 128;
+		} else if (length < 300) {
+			return 256;
+		} else {
+			return 512;
+		}
+	}
 
 	private Cipher getEncryptCipher(String keynick) throws CryptorException {
 
@@ -42,25 +53,33 @@ public class RSAEncryptor {
 		System.out.println(key.toString());
 
 		Cipher cipher;
+		System.out.println("RSA:" + key.getFormat());
+		System.out.println("RSA:" + key.getEncoded().length);
+
 		try {
 			cipher = Cipher.getInstance(ALGORITHM);
 			cipher.init(Cipher.ENCRYPT_MODE, key);
-			System.out.println("size==="+cipher.getBlockSize());
+
+			System.out.println("RSA:size:" + getBlockSize(cipher.getBlockSize(), key));
+			System.out.println("RSA:algorithm:" + cipher.getAlgorithm());
+			System.out.println("RSA:algorithm:" + cipher.getBlockSize());
+			System.out.println("RSA good");
+			return cipher;
 		} catch (NoSuchAlgorithmException e) {
+			System.out.println("RSA NoSuchAlgorithmException");
 			throw new CryptorException(e);
 		} catch (NoSuchPaddingException e) {
+			System.out.println("RSA NoSuchPaddingException");
 			throw new CryptorException(e);
 		} catch (InvalidKeyException e) {
+			System.out.println("RSA InvalidKeyException");
 			throw new CryptorException(e);
 		}
-
-		return cipher;
 	}
 
 	private Cipher getDecryptCipher(String keynick) throws CryptorException {
 
 		PrivateKey key = KeyManager.getInstance().getDecryptKey(keynick);
-
 
 		Cipher cipher;
 		try {
@@ -154,9 +173,10 @@ public class RSAEncryptor {
 	 */
 	public synchronized byte[] encrypt(byte[] data, String keynick) throws CryptorException {
 		// 对数据加密
-		System.out.println("keynick---"+keynick);
+		System.out.println("keynick---" + keynick);
+		PublicKey key = KeyManager.getInstance().getEncryptKey(keynick);
 		Cipher cipher = getEncryptCipher(keynick);
-		int blockSize = cipher.getBlockSize();
+		int blockSize = getBlockSize(cipher.getBlockSize(), key);
 		byte[] bBuffer = new byte[blockSize];
 		int nLoop = data.length / blockSize;
 		int nRemaining = data.length - nLoop * blockSize;
