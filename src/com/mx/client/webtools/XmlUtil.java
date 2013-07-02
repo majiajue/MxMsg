@@ -10,6 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -149,7 +150,6 @@ public class XmlUtil {
 				for (Node node2 = node.getFirstChild(); node2 != null; node2 = node2
 						.getNextSibling()) {
 
-					
 					if (node2.getNodeName().equals("peerid")) {
 						if (node2.getTextContent() != null)
 							msgUser.setUserID(node2.getTextContent().trim());
@@ -169,7 +169,7 @@ public class XmlUtil {
 						System.out.println("phone===="
 								+ node2.getTextContent().trim());
 					}
-					
+
 				}
 				msgUser.setOnline(true);
 				users.add(msgUser);
@@ -180,6 +180,55 @@ public class XmlUtil {
 		groups.setUserList(users);
 		frList.add(groups);
 		return frList;
+	}
+
+	/**
+	 * 见xml解析为map
+	 * 
+	 * @param xml
+	 * @param encode
+	 * @param tagName
+	 * @return
+	 */
+	public HashMap<String, String> parseXmltoMap(String xml, String encode,
+			String tagName) {
+		HashMap<String, String> map = new HashMap<String, String>();
+		Document document = null;
+
+		try {
+			document = createDocument(xml.getBytes(encode));
+		} catch (UnsupportedEncodingException e) {
+			// TODO 自动生成 catch 块
+			e.printStackTrace();
+		} catch (SAXException e) {
+			// TODO 自动生成 catch 块
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO 自动生成 catch 块
+			e.printStackTrace();
+		}
+		StringBuffer sb = new StringBuffer();
+
+		Element element = document.getDocumentElement();
+		NodeList list = element.getElementsByTagName(tagName);
+		if (list.getLength() == 0) {
+			sb.append("");
+			System.out.println("无数据");
+		} else {
+			for (int i = 0; i < list.getLength(); i++) {
+				Node node = list.item(i);
+
+				for (Node node2 = node.getFirstChild(); node2 != null; node2 = node2
+						.getNextSibling()) {
+					map.put(node2.getNodeName(), node2.getTextContent().trim());
+
+				}
+
+			}
+
+		}
+		;
+		return map;
 	}
 
 	public String parseEnityToXml(Object object) throws SecurityException,
