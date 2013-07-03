@@ -9,21 +9,21 @@ import com.mx.client.db.SQLCommandBuilder.SQLCommandType;
 
 
 /**
- * SQLValidateHelper SQLÑéÖ¤¸¨ÖúÆ÷¹¤¾ßÀà
+ * SQLValidateHelper SQLéªŒè¯è¾…åŠ©å™¨å·¥å…·ç±»
  * @author CodingMouse
  * @version 1.0.0.1  2009-3-30
  */
 public final class SQLValidateHelper {
 
 	/**
-	 * ÑéÖ¤SQLÃüÁî×Ö·û´®¼°Æä²ÎÊıÁĞ±íµÄ·½·¨
-	 * @param sqlCmdType SQLÃüÁîÀàĞÍ
-	 * @param tableName Òª²Ù×÷µÄÌØ¶¨Êı¾İ¿â±íÃû³Æ
-	 * @param columnName Òª²Ù×÷µÄÌØ¶¨Êı¾İ¿âÁĞÃû³ÆÇåµ¥
-	 * @param param SQL²ÎÊıÁĞ±í
-	 * @param condition SQLÌõ¼şÁĞ±í
-	 * @return true-ÑéÖ¤Í¨¹ı/false-ÑéÖ¤Ê§°Ü
-	 * @throws SQLParamException SQL²ÎÊıÒì³£
+	 * éªŒè¯SQLå‘½ä»¤å­—ç¬¦ä¸²åŠå…¶å‚æ•°åˆ—è¡¨çš„æ–¹æ³•
+	 * @param sqlCmdType SQLå‘½ä»¤ç±»å‹
+	 * @param tableName è¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“è¡¨åç§°
+	 * @param columnName è¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“åˆ—åç§°æ¸…å•
+	 * @param param SQLå‚æ•°åˆ—è¡¨
+	 * @param condition SQLæ¡ä»¶åˆ—è¡¨
+	 * @return true-éªŒè¯é€šè¿‡/false-éªŒè¯å¤±è´¥
+	 * @throws SQLParamException SQLå‚æ•°å¼‚å¸¸
 	 */
 	public static void ValidateSQLAndParam(
 		SQLCommandType sqlCmdType, 
@@ -32,82 +32,82 @@ public final class SQLValidateHelper {
 		Object[] param, 
 		Hashtable<String, Object> condition) throws SQLParamException {
 		
-		// ÏûÏ¢ÌáÊ¾ºó×º
-		String notNullMsg = "¿ÕÖµºÍ¿Õ×Ö´®Öµ£¡";
-		String resetParam = "ÇëÖØĞÂ¸ø¶¨ÕıÈ·Åä¶Ô²ÎÊı£¡";
-		String entryTypeMsg = "ÇëÈ·ÈÏÄúÊ¹ÓÃµÄSQLÃüÁîÀàĞÍÊÇ·ñÕıÈ·£¡";
+		// æ¶ˆæ¯æç¤ºåç¼€
+		String notNullMsg = "ç©ºå€¼å’Œç©ºå­—ä¸²å€¼ï¼";
+		String resetParam = "è¯·é‡æ–°ç»™å®šæ­£ç¡®é…å¯¹å‚æ•°ï¼";
+		String entryTypeMsg = "è¯·ç¡®è®¤æ‚¨ä½¿ç”¨çš„SQLå‘½ä»¤ç±»å‹æ˜¯å¦æ­£ç¡®ï¼";
 		
-		// Èç¹ûSQLÃüÁîÀàĞÍÎª¿Õ
+		// å¦‚æœSQLå‘½ä»¤ç±»å‹ä¸ºç©º
 		if (sqlCmdType == null) {
-			// ÑéÖ¤Ê§°Ü
-			throw new SQLParamException("SQLÃüÁîÀàĞÍ²ÎÊı²»ÄÜÎª¿Õ£¡");
+			// éªŒè¯å¤±è´¥
+			throw new SQLParamException("SQLå‘½ä»¤ç±»å‹å‚æ•°ä¸èƒ½ä¸ºç©ºï¼");
 		}
-		// Èç¹ûÒª²Ù×÷µÄÌØ¶¨Êı¾İ¿â±íÃû³ÆÎª¿Õ
+		// å¦‚æœè¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“è¡¨åç§°ä¸ºç©º
 		if (tableName == null
 			|| tableName.equals("")) {
-			// ÑéÖ¤Ê§°Ü
-			throw new SQLParamException("Òª²Ù×÷µÄÌØ¶¨Êı¾İ¿â±íÃû³Æ²»ÄÜÎª" + notNullMsg);
+			// éªŒè¯å¤±è´¥
+			throw new SQLParamException("è¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“è¡¨åç§°ä¸èƒ½ä¸º" + notNullMsg);
 		}
-		// ¼ì²éÌØ¶¨Êı¾İ¿âÁĞÃû³ÆÇåµ¥ÖĞÊÇ·ñ°üº¬nullºÍ¿Õ×Ö´®Öµ
+		// æ£€æŸ¥ç‰¹å®šæ•°æ®åº“åˆ—åç§°æ¸…å•ä¸­æ˜¯å¦åŒ…å«nullå’Œç©ºå­—ä¸²å€¼
 		if (columnName != null) {
 			for (int i = 0; i < columnName.length; i++) {
-				// ÒÆ³ı²ÎÊıÖĞÓÉÊ¹ÓÃÕßÌí¼ÓµÄ·½(ÖĞ)À¨ºÅ(¡°[¡±ºÍ¡°]¡±)
+				// ç§»é™¤å‚æ•°ä¸­ç”±ä½¿ç”¨è€…æ·»åŠ çš„æ–¹(ä¸­)æ‹¬å·(â€œ[â€å’Œâ€œ]â€)
 				columnName[i] = columnName[i].replace('[', '\u0020').trim().replace(']', '\u0020').trim();
 				if (columnName[i] == null 
 					|| columnName[i].equals("")) {
-					// ÑéÖ¤Ê§°Ü
-					throw new SQLParamException("Òª²Ù×÷µÄÌØ¶¨Êı¾İ¿âÁĞÃû³ÆÇåµ¥ÖĞ²»ÄÜ°üº¬" + notNullMsg);
+					// éªŒè¯å¤±è´¥
+					throw new SQLParamException("è¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“åˆ—åç§°æ¸…å•ä¸­ä¸èƒ½åŒ…å«" + notNullMsg);
 				}
 			}
 		}
-		// ¼ì²éSQL²ÎÊıÁĞ±íÖĞÊÇ·ñ°üº¬nullºÍ¿Õ×Ö´®Öµ
+		// æ£€æŸ¥SQLå‚æ•°åˆ—è¡¨ä¸­æ˜¯å¦åŒ…å«nullå’Œç©ºå­—ä¸²å€¼
 		if (param != null) {
 			for (int i = 0; i < param.length; i++) {
 				if (param[i] == null 
 					|| param[i].equals("")) {
-					// ÑéÖ¤Ê§°Ü
-					throw new SQLParamException("SQL²ÎÊıÁĞ±íÖĞ²»ÄÜ°üº¬" + notNullMsg);
+					// éªŒè¯å¤±è´¥
+					throw new SQLParamException("SQLå‚æ•°åˆ—è¡¨ä¸­ä¸èƒ½åŒ…å«" + notNullMsg);
 				}
 			}
 		}
-		// ½øĞĞÌØÊâµÄ²ÎÊı¼ì²é
+		// è¿›è¡Œç‰¹æ®Šçš„å‚æ•°æ£€æŸ¥
 		switch (sqlCmdType) {
 			case SELECT:
-				// Èç¹û¸ø¶¨ÁËSQL²ÎÊıÁĞ±í
+				// å¦‚æœç»™å®šäº†SQLå‚æ•°åˆ—è¡¨
 				if (param != null && param.length > 0) {
-					// ÑéÖ¤Ê§°Ü
-					throw new SQLParamException("SelectÓï¾äÖĞÎŞĞèÖ¸¶¨SQL²ÎÊıÁĞ±í£¬" + entryTypeMsg);
+					// éªŒè¯å¤±è´¥
+					throw new SQLParamException("Selectè¯­å¥ä¸­æ— éœ€æŒ‡å®šSQLå‚æ•°åˆ—è¡¨ï¼Œ" + entryTypeMsg);
 				}
 				break;
 			case INSERT:
-				// Èç¹ûÁĞÃûÓë²ÎÊı¸öÊı²»Ò»ÖÂ
+				// å¦‚æœåˆ—åä¸å‚æ•°ä¸ªæ•°ä¸ä¸€è‡´
 				if (columnName.length != param.length) {
-					// ÑéÖ¤Ê§°Ü
-					throw new SQLParamException("InsertÓï¾äÖĞ¸ø¶¨µÄÁĞÃûÓëSQL²ÎÊıÊıÁ¿²»Æ¥Åä£¬" + resetParam);
+					// éªŒè¯å¤±è´¥
+					throw new SQLParamException("Insertè¯­å¥ä¸­ç»™å®šçš„åˆ—åä¸SQLå‚æ•°æ•°é‡ä¸åŒ¹é…ï¼Œ" + resetParam);
 				}
-				// Èç¹û¸ø¶¨ÁËSQLÌõ¼şÁĞ±í
+				// å¦‚æœç»™å®šäº†SQLæ¡ä»¶åˆ—è¡¨
 				if (condition != null && condition.size() > 0) {
-					// ÑéÖ¤Ê§°Ü
-					throw new SQLParamException("InsertÓï¾äÖĞÎŞĞèÖ¸¶¨SQLÌõ¼şÁĞ±í£¬" + entryTypeMsg);
+					// éªŒè¯å¤±è´¥
+					throw new SQLParamException("Insertè¯­å¥ä¸­æ— éœ€æŒ‡å®šSQLæ¡ä»¶åˆ—è¡¨ï¼Œ" + entryTypeMsg);
 				}
 				break;
 			case UPDATE:
-				// Èç¹ûÁĞÃûÓë²ÎÊı¸öÊı²»Ò»ÖÂ
+				// å¦‚æœåˆ—åä¸å‚æ•°ä¸ªæ•°ä¸ä¸€è‡´
 				if (columnName.length != param.length) {
-					// ÑéÖ¤Ê§°Ü
-					throw new SQLParamException("UpdateÓï¾äÖĞ¸ø¶¨µÄÁĞÃûÓëSQL²ÎÊıÊıÁ¿²»Æ¥Åä£¬" + resetParam);
+					// éªŒè¯å¤±è´¥
+					throw new SQLParamException("Updateè¯­å¥ä¸­ç»™å®šçš„åˆ—åä¸SQLå‚æ•°æ•°é‡ä¸åŒ¹é…ï¼Œ" + resetParam);
 				}
 				break;
 			case DELETE:
-				// Èç¹û¸ø¶¨ÁËÒª²Ù×÷µÄÌØ¶¨Êı¾İ¿âÁĞÃû³ÆÇåµ¥
+				// å¦‚æœç»™å®šäº†è¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“åˆ—åç§°æ¸…å•
 				if (columnName != null && columnName.length > 0) {
-					// ÑéÖ¤Ê§°Ü
-					throw new SQLParamException("DeleteÓï¾äÖĞÎŞĞèÖ¸¶¨Òª²Ù×÷µÄÌØ¶¨Êı¾İ¿âÁĞÃû³ÆÇåµ¥£¬" + entryTypeMsg);
+					// éªŒè¯å¤±è´¥
+					throw new SQLParamException("Deleteè¯­å¥ä¸­æ— éœ€æŒ‡å®šè¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“åˆ—åç§°æ¸…å•ï¼Œ" + entryTypeMsg);
 				}
-				// Èç¹û¸ø¶¨ÁËSQL²ÎÊıÁĞ±í
+				// å¦‚æœç»™å®šäº†SQLå‚æ•°åˆ—è¡¨
 				if (param != null && param.length > 0) {
-					// ÑéÖ¤Ê§°Ü
-					throw new SQLParamException("DeleteÓï¾äÖĞÎŞĞèÖ¸¶¨SQL²ÎÊıÁĞ±í£¬" + entryTypeMsg);
+					// éªŒè¯å¤±è´¥
+					throw new SQLParamException("Deleteè¯­å¥ä¸­æ— éœ€æŒ‡å®šSQLå‚æ•°åˆ—è¡¨ï¼Œ" + entryTypeMsg);
 				}
 				break;
 		}

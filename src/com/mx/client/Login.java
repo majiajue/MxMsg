@@ -16,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.security.KeyPair;
 import java.security.PublicKey;
 
@@ -34,6 +35,7 @@ import com.mx.clent.vo.AnPeersBean;
 import com.mx.clent.vo.Profile;
 import com.mx.client.db.DBDataSQL;
 import com.mx.client.db.DBTools;
+import com.mx.client.netty.NettyClient;
 import com.mx.client.webtools.ConnectionUtils;
 import com.mx.client.webtools.SConfig;
 import com.mx.client.webtools.SLogin;
@@ -339,6 +341,7 @@ public class Login extends JFrame {
 //										.decodeContacts(friend));
 //								friend = SConfig.getInstance().decodeContacts(
 //										friend);
+								
 								MainFrame frame = MainFrame.getInstance();
 								frame.setVisible(true);
 								setVisible(false);
@@ -386,6 +389,7 @@ public class Login extends JFrame {
 							}
 							// System.out.println("friend==="+friend);
 						}
+						
 					}
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block

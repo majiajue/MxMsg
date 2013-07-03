@@ -34,7 +34,7 @@ public class AnPeersBean {
 	public String PRemark = "";
 
 	public PublicKey publicKey;
-	// ÅÐ¶ÏÈº³ÉÔ±ÊÇ·ñÔÚÏßµÄ×Ö¶Î£¬²»Ðè´æÈëÊý¾Ý¿â
+	// ï¿½Ð¶ï¿½Èºï¿½ï¿½Ô±ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ßµï¿½ï¿½Ö¶Î£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½
 	public String isOnline = "1";
 	public String Maskid = "-1";
 	/**
@@ -51,14 +51,14 @@ public class AnPeersBean {
 	}
 
 	/**
-	 * ¹¹ÔìÒ»¸ö¿ÕµÄpeerBean,Ö¸µ¼ËùÓÐ×Ö¶Î³õÊ¼»¯Íê³ÉÖ®Ç°£¬Õâ¸öpeer²»ÄÜ±»±£´æ
+	 * ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Õµï¿½peerBean,Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶Î³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½Ö®Ç°ï¿½ï¿½ï¿½ï¿½ï¿½peerï¿½ï¿½ï¿½Ü±ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	public AnPeersBean() {
 
 	}
 
 	/**
-	 * ÐÂ½¨Ò»¸öÓÃ»§½Úµã£¬¹¹Ôìº¯Êý½«»á×Ô¶¯½«ÓÃ»§Ãû±£´æ³ÉÆ´Òô±£´æ
+	 * ï¿½Â½ï¿½Ò»ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Úµã£¬ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½Æ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 * @param Peerid
 	 * @param Username
@@ -102,7 +102,7 @@ public class AnPeersBean {
 				+ PUpdateTime + " || " + PLastcontact + " || " + PPubKey;
 	}
 
-	// Éú³ÉÆ´Òô
+	// ï¿½ï¿½ï¿½Æ´ï¿½ï¿½
 	public String getPinYinStr(String Username) {
 		String pinYin = "";
 		ArrayList<Token> tokens = new ArrayList<Token>();
@@ -123,7 +123,7 @@ public class AnPeersBean {
 	}
 
 	/**
-	 * »ñÈ¡¸ÃÓÃ»§µÄpublic key
+	 * ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½public key
 	 * 
 	 * @return
 	 */
@@ -132,7 +132,7 @@ public class AnPeersBean {
 	}
 
 	/**
-	 * ÉèÖÃÐÂµÄ¹«Ô¿
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ÂµÄ¹ï¿½Ô¿
 	 * 
 	 * @param key
 	 */
@@ -144,7 +144,7 @@ public class AnPeersBean {
 	}
 
 	/**
-	 * ÉèÖÃ¹«Ô¿£¬²ÎÊýÊÇ´ÓÊý¾Ý¿âÖÐÈ¡³öÀ´µÄ£¬À´Ô´ÊÇ Base64.encodetoString(publickey.getencoded());
+	 * ï¿½ï¿½ï¿½Ã¹ï¿½Ô¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ï¿½ï¿½Ý¿ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Ô´ï¿½ï¿½ Base64.encodetoString(publickey.getencoded());
 	 * 
 	 * @param encodedKey
 	 */
@@ -159,7 +159,7 @@ public class AnPeersBean {
 		}
 	}
 
-	// ·µ»ØÒ»¸ö¿ÕµÄ
+	// ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Õµï¿½
 	public static final AnPeersBean NULL = new AnPeersBean();
     public AnPeersBean getUserByPeerID(String uid){
     	AnPeersBean bean = new AnPeersBean();
@@ -214,7 +214,7 @@ public class AnPeersBean {
 		}
 	}
 
-	// ¼ì²é²ÎÊý
+	// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	protected boolean checkparam(Object... params) {
 		boolean result = true;
 		for (Object name : params)
@@ -225,7 +225,7 @@ public class AnPeersBean {
 		return result;
 	}
 	/**
-	 * »ñÈ¡ÓÃ»§µÄ¹«³×
+	 * ï¿½ï¿½È¡ï¿½Ã»ï¿½ï¿½Ä¹ï¿½ï¿½ï¿½
 	 * @param name
 	 * @param key
 	 * @param time
@@ -245,12 +245,25 @@ public class AnPeersBean {
 		}
 	}
 	
+	public boolean isPeerExist(String peerid){
+		Hashtable<String, Object> table = new Hashtable<String, Object>();
+		table.put("Peerid",peerid);
+		if(GenDao.getInstance().getValue(DBDataSQL.TB_PEERS,cloumes, DBDataSQL.COL_PEER_PEERID, table)!=null){
+			return true;
+			
+		}else{
+			
+			return false;
+		}
+		
+	}
+	
 	/**
-	 * ´ÓÒ»¸öcursor´´½¨Anpeers¶ÔÏó£¬
+	 * ï¿½ï¿½Ò»ï¿½ï¿½cursorï¿½ï¿½ï¿½ï¿½Anpeersï¿½ï¿½ï¿½ï¿½
 	 * 
 	 * @param c
-	 *            cursor¶ÔÏó£¬±ØÐë´ÓStorageManager.GetInstance().getAnpeersList().
-	 *            getCursor()»ñµÃ£¬»òÕß±ØÐëÊÇ´ÓpeerDatabaseÖÐ»ñµÃµÄpeer¶ÔÓ¦µÄcursor¶ÔÏó
+	 *            cursorï¿½ï¿½ï¿½ó£¬±ï¿½ï¿½ï¿½ï¿½StorageManager.GetInstance().getAnpeersList().
+	 *            getCursor()ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ß±ï¿½ï¿½ï¿½ï¿½Ç´ï¿½peerDatabaseï¿½Ð»ï¿½Ãµï¿½peerï¿½ï¿½Ó¦ï¿½ï¿½cursorï¿½ï¿½ï¿½ï¿½
 	 */
 //	public static AnPeersBean CreateFromCursor(Cursor c) {
 //		AnPeersBean peers = NULL;
@@ -259,7 +272,7 @@ public class AnPeersBean {
 //			String phone;
 //			String Remark;
 //			Peerid = c.getString(c.getColumnIndex(DBDataSQL.COL_PEER_PEERID));
-//			// Ê×ÏÈ´Ó»º´æÖÐÈ¡Ò»´Î
+//			// ï¿½ï¿½ï¿½È´Ó»ï¿½ï¿½ï¿½ï¿½ï¿½È¡Ò»ï¿½ï¿½
 //			if (!TextUtils.isEmpty(Peerid)) {
 //				peers = AnPeersBeanCache.getInstance().get(Peerid);
 //				if (peers == null) {
@@ -279,7 +292,7 @@ public class AnPeersBean {
 //				}
 //			}
 //		} catch (Exception e) {
-//			LOG.e("mixun", "ÀàÐÍ²»Æ¥Åä£¬»òÕßÓÐ¿Õ×Ö¶Î");
+//			LOG.e("mixun", "ï¿½ï¿½ï¿½Í²ï¿½Æ¥ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ð¿ï¿½ï¿½Ö¶ï¿½");
 //			e.printStackTrace();
 //		} finally {
 //		}
@@ -305,7 +318,7 @@ public class AnPeersBean {
 //			}
 //
 //		} catch (Exception e) {
-//			LOG.e("Debug", "AnPeersBean ---- CreateSimpleFromCursor ---ÀàÐÍ²»Æ¥Åä£¬»òÕßÓÐ¿Õ×Ö¶Î");
+//			LOG.e("Debug", "AnPeersBean ---- CreateSimpleFromCursor ---ï¿½ï¿½ï¿½Í²ï¿½Æ¥ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ð¿ï¿½ï¿½Ö¶ï¿½");
 //			e.printStackTrace();
 //		} finally {
 //		}

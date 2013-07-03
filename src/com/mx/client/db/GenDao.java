@@ -1,25 +1,30 @@
 package com.mx.client.db;
 
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import javax.swing.text.StyledEditorKit.BoldAction;
+
 import com.mx.client.db.SQLCommandBuilder.SQLCommandType;
 
-
 /**
- * ²»´ø²éÑ¯£¬·½±ãÎŞÊµÌåµÄÊı¾İ¿â²Ù×÷
+ * ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½İ¿ï¿½ï¿½ï¿½ï¿½
+ * 
  * @author majiajue
- *
+ * 
  */
 public class GenDao {
-	private Connection conn = null;       // Êı¾İ¿âÁ¬½Ó¶ÔÏó
-	private PreparedStatement ps = null;  // Ô¤±àÒëµÄSQLÃüÁîÖ´ĞĞ¶ÔÏó
-	private ResultSet rs = null;          // ½á¹û¼¯¶ÔÏó
+	private Connection conn = null; // ï¿½ï¿½İ¿ï¿½ï¿½ï¿½ï¿½Ó¶ï¿½ï¿½ï¿½
+	private PreparedStatement ps = null; // Ô¤ï¿½ï¿½ï¿½ï¿½ï¿½SQLï¿½ï¿½ï¿½ï¿½Ö´ï¿½Ğ¶ï¿½ï¿½ï¿½
+	private ResultSet rs = null; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+
 	private static class SingletonHolder {
 		public static final GenDao INSTANCE = new GenDao();
 	}
@@ -27,151 +32,147 @@ public class GenDao {
 	public static GenDao getInstance() {
 		return SingletonHolder.INSTANCE;
 	}
+
 	/**
-	 * executeInsert Ö´ĞĞSQLÌí¼ÓÊı¾İÃüÁîµÄ·½·¨
-	 * @param tableName Òª²Ù×÷µÄÌØ¶¨Êı¾İ¿â±íÃû³Æ
-	 * @param columnName Òª²Ù×÷µÄÌØ¶¨Êı¾İ¿âÁĞÃû³ÆÇåµ¥(PascalÃüÃû·¨)
-	 * @param param SQL²ÎÊıÁĞ±í
-	 * @return true-³É¹¦/false-Ê§°Ü
+	 * executeInsert æ‰§è¡ŒSQLæ·»åŠ æ•°æ®å‘½ä»¤çš„æ–¹æ³•
+	 * 
+	 * @param tableName
+	 *            è¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“è¡¨åç§°
+	 * @param columnName
+	 *            è¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“åˆ—åç§°æ¸…å•(Pascalå‘½åæ³•)
+	 * @param param
+	 *            SQLå‚æ•°åˆ—è¡¨
+	 * @return true-æˆåŠŸ/false-å¤±è´¥
 	 */
-	public boolean executeInsert(
-		String tableName, 
-		String[] columnName, 
-		Object[] param) {
-		
-		int rowCount = 0;  // ±£´æÖ´ĞĞSQL²åÈëÊı¾İÃüÁîºóÊÜÓ°ÏìµÄĞĞÊı
-		
+	public boolean executeInsert(String tableName, String[] columnName,
+			Object[] param) {
+
+		int rowCount = 0; // ä¿å­˜æ‰§è¡ŒSQLæ’å…¥æ•°æ®å‘½ä»¤åå—å½±å“çš„è¡Œæ•°
+
 		try {
-			
-			// »ñÈ¡Êı¾İ¿âÁ¬½Ó¶ÔÏó
+
+			// è·å–æ•°æ®åº“è¿æ¥å¯¹è±¡
 			this.conn = DBTools.getH2SQLConnection();
-			// »ñÈ¡Ô¤±àÒëSQLÓï¾äÖ´ĞĞ¶ÔÏó²¢¸ù¾İ²ÎÊı×Ô¶¯¹¹ÔìSQLÃüÁî×Ö´®
-			this.ps = this.conn.prepareStatement(
-				SQLCommandBuilder.getInstance().getSQLCommand(
-					SQLCommandType.INSERT, 
-					tableName, 
-					columnName, 
-					param, 
-					null));
-			 
-			// ×Ô¶¯Ó³ÉäSQL²ÎÊı
+			// è·å–é¢„ç¼–è¯‘SQLè¯­å¥æ‰§è¡Œå¯¹è±¡å¹¶æ ¹æ®å‚æ•°è‡ªåŠ¨æ„é€ SQLå‘½ä»¤å­—ä¸²
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder
+					.getInstance().getSQLCommand(SQLCommandType.INSERT,
+							tableName, columnName, param, null));
+
+			// è‡ªåŠ¨æ˜ å°„SQLå‚æ•°
 			if (param != null && param.length > 0) {
 				this.ps = SQLParamHelper.JavaParam2SQLParam(param, this.ps);
 			}
-			 
-			// Ö´ĞĞSQL¸üĞÂÃüÁî²¢±£´æ·µ»ØµÄÊÜÓ°ÏìĞĞÊı
+
+			// æ‰§è¡ŒSQLæ›´æ–°å‘½ä»¤å¹¶ä¿å­˜è¿”å›çš„å—å½±å“è¡Œæ•°
 			rowCount = this.ps.executeUpdate();
-			 
+
 		} catch (SQLException ex) {
-			
-			System.err.println("Òì³£ĞÅÏ¢£ºÖ´ĞĞSQLÌí¼ÓÃüÁîÊ±·¢Éú´íÎó£¡\r\n" + ex.getMessage());
-			 
-	 	 } finally {
-	 		 
-	 		 // ÊÍ·Å×ÊÔ´
-	 		 this.releaseResource();
-	 		 
-	 	 }
-		
+
+			System.err.println("å¼‚å¸¸ä¿¡æ¯ï¼šæ‰§è¡ŒSQLæ·»åŠ å‘½ä»¤æ—¶å‘ç”Ÿé”™è¯¯ï¼\r\n" + ex.getMessage());
+
+		} finally {
+
+			// é‡Šæ”¾èµ„æº
+			this.releaseResource();
+
+		}
+
 		return rowCount > 0;
-		
+
 	}
-	
+
 	/**
-	 * executeDelete Ö´ĞĞSQLÉ¾³ıÊı¾İÃüÁîµÄ·½·¨
-	 * @param tableName Òª²Ù×÷µÄÌØ¶¨Êı¾İ¿â±íÃû³Æ
-	 * @param condition SQLÌõ¼şÁĞ±í
-	 * @return true-³É¹¦/false-Ê§°Ü
+	 * executeDelete æ‰§è¡ŒSQLåˆ é™¤æ•°æ®å‘½ä»¤çš„æ–¹æ³•
+	 * 
+	 * @param tableName
+	 *            è¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“è¡¨åç§°
+	 * @param condition
+	 *            SQLæ¡ä»¶åˆ—è¡¨
+	 * @return true-æˆåŠŸ/false-å¤±è´¥
 	 */
-	public boolean executeDelete(
-		String tableName, 
-		Hashtable<String, Object> condition) {
-		
-		int rowCount = 0; // ±£´æÖ´ĞĞSQL¸üĞÂÃüÁîÊÜÓ°ÏìµÄĞĞÊı
-		 
+	public boolean executeDelete(String tableName,
+			Hashtable<String, Object> condition) {
+
+		int rowCount = 0; // ä¿å­˜æ‰§è¡ŒSQLæ›´æ–°å‘½ä»¤å—å½±å“çš„è¡Œæ•°
+
 		try {
-			 
-			// »ñÈ¡Êı¾İ¿âÁ¬½Ó¶ÔÏó
+
+			// è·å–æ•°æ®åº“è¿æ¥å¯¹è±¡
 			this.conn = DBTools.getH2SQLConnection();
-			// »ñÈ¡Ô¤±àÒëSQLÓï¾äÖ´ĞĞ¶ÔÏó²¢¸ù¾İ²ÎÊı×Ô¶¯¹¹ÔìSQLÃüÁî×Ö´®
-			this.ps = this.conn.prepareStatement(
-				SQLCommandBuilder.getInstance().getSQLCommand(
-					SQLCommandType.DELETE, 
-					tableName, 
-					null, 
-					null, 
-					condition));
-			 
-			// ×Ô¶¯Ó³ÉäSQL²ÎÊı
+			// è·å–é¢„ç¼–è¯‘SQLè¯­å¥æ‰§è¡Œå¯¹è±¡å¹¶æ ¹æ®å‚æ•°è‡ªåŠ¨æ„é€ SQLå‘½ä»¤å­—ä¸²
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder
+					.getInstance().getSQLCommand(SQLCommandType.DELETE,
+							tableName, null, null, condition));
+
+			// è‡ªåŠ¨æ˜ å°„SQLå‚æ•°
 			if (condition != null && condition.size() > 0) {
-				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values().toArray(), this.ps);
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
+						.toArray(), this.ps);
 			}
-			 
-			// Ö´ĞĞSQL¸üĞÂÃüÁî²¢±£´æ·µ»ØµÄÊÜÓ°ÏìĞĞÊı
+
+			// æ‰§è¡ŒSQLæ›´æ–°å‘½ä»¤å¹¶ä¿å­˜è¿”å›çš„å—å½±å“è¡Œæ•°
 			rowCount = this.ps.executeUpdate();
-			 
+
 		} catch (SQLException ex) {
-			 
-			System.err.println("Òì³£ĞÅÏ¢£ºÖ´ĞĞSQLÉ¾³ıÃüÁîÊ±·¢Éú´íÎó£¡\r\n" + ex.getMessage());
-			 
-	 	} finally {
-	 		 
-	 		// ÊÍ·Å×ÊÔ´
-	 		this.releaseResource();
-	 		 
-	 	}
-		
-		// ·µ»Ø½á¹û
+
+			System.err.println("å¼‚å¸¸ä¿¡æ¯ï¼šæ‰§è¡ŒSQLåˆ é™¤å‘½ä»¤æ—¶å‘ç”Ÿé”™è¯¯ï¼\r\n" + ex.getMessage());
+
+		} finally {
+
+			// é‡Šæ”¾èµ„æº
+			this.releaseResource();
+
+		}
+
+		// è¿”å›ç»“æœ
 		return rowCount > 0;
-		
+
 	}
-	
+
 	/**
-	 * executeUpdate Ö´ĞĞSQLĞŞ¸ÄÊı¾İÃüÁîµÄ·½·¨
-	 * @param tableName Òª²Ù×÷µÄÌØ¶¨Êı¾İ¿â±íÃû³Æ
-	 * @param columnName Òª²Ù×÷µÄÌØ¶¨Êı¾İ¿âÁĞÃû³ÆÇåµ¥(PascalÃüÃû·¨)
-	 * @param param SQL²ÎÊıÁĞ±í
-	 * @param condition SQLÌõ¼şÁĞ±í
-	 * @return true-³É¹¦/false-Ê§°Ü
+	 * executeUpdate æ‰§è¡ŒSQLä¿®æ”¹æ•°æ®å‘½ä»¤çš„æ–¹æ³•
+	 * 
+	 * @param tableName
+	 *            è¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“è¡¨åç§°
+	 * @param columnName
+	 *            è¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“åˆ—åç§°æ¸…å•(Pascalå‘½åæ³•)
+	 * @param param
+	 *            SQLå‚æ•°åˆ—è¡¨
+	 * @param condition
+	 *            SQLæ¡ä»¶åˆ—è¡¨
+	 * @return true-æˆåŠŸ/false-å¤±è´¥
 	 */
-	public boolean executeUpdate(
-		String tableName, 
-		String[] columnName, 
-		Object[] param, 
-		Hashtable<String, Object> condition) {
-		
-		int rowCount = 0; // ±£´æÖ´ĞĞSQL¸üĞÂÃüÁîÊÜÓ°ÏìµÄĞĞÊı
-		 
+	public boolean executeUpdate(String tableName, String[] columnName,
+			Object[] param, Hashtable<String, Object> condition) {
+
+		int rowCount = 0; // ä¿å­˜æ‰§è¡ŒSQLæ›´æ–°å‘½ä»¤å—å½±å“çš„è¡Œæ•°
+
 		try {
-			 
-			// »ñÈ¡Êı¾İ¿âÁ¬½Ó¶ÔÏó
+
+			// è·å–æ•°æ®åº“è¿æ¥å¯¹è±¡
 			this.conn = DBTools.getH2SQLConnection();
-			// »ñÈ¡Ô¤±àÒëSQLÓï¾äÖ´ĞĞ¶ÔÏó²¢¸ù¾İ²ÎÊı×Ô¶¯¹¹ÔìSQLÃüÁî×Ö´®
-			this.ps = this.conn.prepareStatement(
-				SQLCommandBuilder.getInstance().getSQLCommand(
-					SQLCommandType.UPDATE, 
-					tableName, 
-					columnName, 
-					param, 
-					condition));
-			 
-			// ×Ô¶¯Ó³ÉäSQL²ÎÊı
+			// è·å–é¢„ç¼–è¯‘SQLè¯­å¥æ‰§è¡Œå¯¹è±¡å¹¶æ ¹æ®å‚æ•°è‡ªåŠ¨æ„é€ SQLå‘½ä»¤å­—ä¸²
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder
+					.getInstance().getSQLCommand(SQLCommandType.UPDATE,
+							tableName, columnName, param, condition));
+
+			// è‡ªåŠ¨æ˜ å°„SQLå‚æ•°
 			if (param != null && param.length > 0) {
-				// ½«Ìõ¼şÁĞ±íÌí¼Óµ½SQL²ÎÊıÁĞ±íºóÕûÌåÉèÖÃ²ÎÊıÁĞ±í
+				// å°†æ¡ä»¶åˆ—è¡¨æ·»åŠ åˆ°SQLå‚æ•°åˆ—è¡¨åæ•´ä½“è®¾ç½®å‚æ•°åˆ—è¡¨
 				if (condition != null && condition.size() > 0) {
 					Object[] paramArray = param;
 					Object[] conditionArray = condition.values().toArray();
 					List<Object> paramList = new Vector<Object>();
-					// Ìí¼ÓSQL²ÎÊıÁĞ±í
+					// æ·»åŠ SQLå‚æ•°åˆ—è¡¨
 					for (Object objParam : paramArray) {
 						if (!paramList.add(objParam)) {
-							System.err.println("Òì³£ĞÅÏ¢£ºÎ´ÄÜ½«SQL²ÎÊıÁĞ±íÌí¼Óµ½UpdateÓï¾ä£¡");
+							System.err.println("å¼‚å¸¸ä¿¡æ¯ï¼šæœªèƒ½å°†SQLå‚æ•°åˆ—è¡¨æ·»åŠ åˆ°Updateè¯­å¥ï¼");
 						}
 					}
-					// Ìí¼ÓSQLÌõ¼şÁĞ±í
+					// æ·»åŠ SQLæ¡ä»¶åˆ—è¡¨
 					for (Object objCondition : conditionArray) {
 						if (!paramList.add(objCondition)) {
-							System.err.println("Òì³£ĞÅÏ¢£ºÎ´ÄÜ½«SQLÌõ¼şÁĞ±íÌí¼Óµ½UpdateÓï¾ä£¡");
+							System.err.println("å¼‚å¸¸ä¿¡æ¯ï¼šæœªèƒ½å°†SQLæ¡ä»¶åˆ—è¡¨æ·»åŠ åˆ°Updateè¯­å¥ï¼");
 						}
 					}
 					param = paramList.toArray();
@@ -179,91 +180,227 @@ public class GenDao {
 				this.ps = SQLParamHelper.JavaParam2SQLParam(param, this.ps);
 			}
 
-			// Ö´ĞĞSQL¸üĞÂÃüÁî²¢±£´æ·µ»ØµÄÊÜÓ°ÏìĞĞÊı
+			// æ‰§è¡ŒSQLæ›´æ–°å‘½ä»¤å¹¶ä¿å­˜è¿”å›çš„å—å½±å“è¡Œæ•°
 			rowCount = this.ps.executeUpdate();
-			 
+
 		} catch (SQLException ex) {
-			 
-			System.err.println("Òì³£ĞÅÏ¢£ºÖ´ĞĞSQLĞŞ¸ÄÃüÁîÊ±·¢Éú´íÎó£¡\r\n" + ex.getMessage());
-			 
-	 	} finally {
-	 		 
-	 		// ÊÍ·Å×ÊÔ´
-	 		this.releaseResource();
-	 		 
-	 	}
-	 	
-		// ·µ»Ø½á¹û
+
+			System.err.println("å¼‚å¸¸ä¿¡æ¯ï¼šæ‰§è¡ŒSQLä¿®æ”¹å‘½ä»¤æ—¶å‘ç”Ÿé”™è¯¯ï¼\r\n" + ex.getMessage());
+
+		} finally {
+
+			// é‡Šæ”¾èµ„æº
+			this.releaseResource();
+
+		}
+
+		// è¿”å›ç»“æœ
 		return rowCount > 0;
-		
-	 }
+
+	}
+
 	/**
-	 * »ñÈ¡Ä³Ò»×Ö¶ÎÌõ¼ÇÂ¼µÄÖµ
+	 * è·å–æŸä¸€å­—æ®µæ¡è®°å½•çš„å€¼
+	 * 
 	 * @param tableName
 	 * @param columnName
 	 * @param condition
 	 * @return
 	 */
-    public String getValue(String tableName,String[] columnName,String valueColumn,
-    		Hashtable<String, Object> condition){
-    	this.conn = DBTools.getH2SQLConnection();
-		// »ñÈ¡Ô¤±àÒëSQLÓï¾äÖ´ĞĞ¶ÔÏó²¢¸ù¾İ²ÎÊı×Ô¶¯¹¹ÔìSQLÃüÁî×Ö´®
-    	String value="";
+	public String getValue(String tableName, String[] columnName,
+			String valueColumn, Hashtable<String, Object> condition) {
+		this.conn = DBTools.getH2SQLConnection();
+		// è·å–é¢„ç¼–è¯‘SQLè¯­å¥æ‰§è¡Œå¯¹è±¡å¹¶æ ¹æ®å‚æ•°è‡ªåŠ¨æ„é€ SQLå‘½ä»¤å­—ä¸²
+		String value = "";
 		try {
-			this.ps = this.conn.prepareStatement(
-				SQLCommandBuilder.getInstance().getSQLCommand(
-				SQLCommandType.SELECT, 
-				tableName, 
-				columnName, 
-				null, 
-				condition));
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder
+					.getInstance().getSQLCommand(SQLCommandType.SELECT,
+							tableName, columnName, null, condition));
 			if (condition != null && condition.size() > 0) {
-				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values().toArray(), this.ps);
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
+						.toArray(), this.ps);
 			}
 
-			// Ö´ĞĞSQL¸üĞÂÃüÁî²¢±£´æÈ¡»ØµÄ½á¹û¼¯¶ÔÏó
+			// æ‰§è¡ŒSQLæ›´æ–°å‘½ä»¤å¹¶ä¿å­˜å–å›çš„ç»“æœé›†å¯¹è±¡
 			this.rs = this.ps.executeQuery();
 			rs.last();
-		    int a = rs.getRow();
-		    if(a==1){
-		    	value = rs.getString(valueColumn.toUpperCase());
-		    }
+			int a = rs.getRow();
+			if (a == 1) {
+				value = rs.getString(valueColumn.toUpperCase());
+			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		// ×Ô¶¯Ó³ÉäSQL²ÎÊı
-    	return value;
-    };
+
+		// è‡ªåŠ¨æ˜ å°„SQLå‚æ•°
+		return value;
+	};
+
 	/**
-	 * releaseResource ÊÍ·ÅËùÓĞÊı¾İ¿â·ÃÎÊ¶ÔÏó×ÊÔ´
+	 * è·å–æŸä¸€å­—æ®µæ¡è®°å½•çš„å€¼
+	 * 
+	 * @param tableName
+	 * @param columnName
+	 * @param condition
+	 * @return
+	 */
+	public String getOrderByValue(String tableName, String[] columnName,
+			String valueColumn, Hashtable<String, Object> condition,
+			String orderBySQL) {
+		this.conn = DBTools.getH2SQLConnection();
+		// è·å–é¢„ç¼–è¯‘SQLè¯­å¥æ‰§è¡Œå¯¹è±¡å¹¶æ ¹æ®å‚æ•°è‡ªåŠ¨æ„é€ SQLå‘½ä»¤å­—ä¸²
+		String value = "";
+		try {
+			this.ps = this.conn
+					.prepareStatement(SQLCommandBuilder.getInstance()
+							.getOrderBySQLCommand(SQLCommandType.SELECT,
+									tableName, columnName, null, condition,
+									orderBySQL));
+			if (condition != null && condition.size() > 0) {
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
+						.toArray(), this.ps);
+			}
+
+			// æ‰§è¡ŒSQLæ›´æ–°å‘½ä»¤å¹¶ä¿å­˜å–å›çš„ç»“æœé›†å¯¹è±¡
+			this.rs = this.ps.executeQuery();
+			rs.last();
+			int a = rs.getRow();
+			if (a == 1) {
+				value = rs.getString(valueColumn.toUpperCase());
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// è‡ªåŠ¨æ˜ å°„SQLå‚æ•°
+		return value;
+	};
+
+	/**
+	 * è·å–blobå­—æ®µ
+	 * 
+	 * @param tableName
+	 * @param columnName
+	 * @param condition
+	 * @return
+	 */
+	public Blob getBlobValue(String tableName, String[] columnName,
+			String valueColumn, Hashtable<String, Object> condition) {
+		this.conn = DBTools.getH2SQLConnection();
+		// è·å–é¢„ç¼–è¯‘SQLè¯­å¥æ‰§è¡Œå¯¹è±¡å¹¶æ ¹æ®å‚æ•°è‡ªåŠ¨æ„é€ SQLå‘½ä»¤å­—ä¸²
+		Blob blob = null;
+		try {
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder
+					.getInstance().getSQLCommand(SQLCommandType.SELECT,
+							tableName, columnName, null, condition));
+			if (condition != null && condition.size() > 0) {
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
+						.toArray(), this.ps);
+			}
+
+			// æ‰§è¡ŒSQLæ›´æ–°å‘½ä»¤å¹¶ä¿å­˜å–å›çš„ç»“æœé›†å¯¹è±¡
+			this.rs = this.ps.executeQuery();
+			rs.last();
+			int a = rs.getRow();
+			if (a == 1) {
+				blob = rs.getBlob(valueColumn.toUpperCase());
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// è‡ªåŠ¨æ˜ å°„SQLå‚æ•°
+		return blob;
+	};
+
+	/**
+	 * releaseResource é‡Šæ”¾æ‰€æœ‰æ•°æ®åº“è®¿é—®å¯¹è±¡èµ„æº
 	 */
 	private void releaseResource() {
-		 
-		if(this.rs != null) {
+
+		if (this.rs != null) {
 			try {
 				this.rs.close();
 			} catch (SQLException ex) {
-				System.err.println("Òì³£ĞÅÏ¢£º¹Ø±Õ½á¹û¼¯¶ÔÏó´íÎó£¡\r\n" + ex.getMessage());
+				System.err.println("å¼‚å¸¸ä¿¡æ¯ï¼šå…³é—­ç»“æœé›†å¯¹è±¡é”™è¯¯ï¼\r\n" + ex.getMessage());
 			}
 		}
-		if(this.ps != null) {
+		if (this.ps != null) {
 			try {
 				this.ps.close();
 			} catch (SQLException ex) {
-				System.err.println("Òì³£ĞÅÏ¢£º¹Ø±ÕSQLÃüÁîÖ´ĞĞ¶ÔÏó´íÎó£¡\r\n" + ex.getMessage());
+				System.err.println("å¼‚å¸¸ä¿¡æ¯ï¼šå…³é—­SQLå‘½ä»¤æ‰§è¡Œå¯¹è±¡é”™è¯¯ï¼\r\n" + ex.getMessage());
 			}
 		}
-		if(this.conn != null) {
-			try{	
+		if (this.conn != null) {
+			try {
 				if (!this.conn.isClosed()) {
 					this.conn.close();
 				}
-			} catch (SQLException ex){
-				System.err.println("Òì³£ĞÅÏ¢£º¹Ø±ÕÊı¾İ¿âÁ¬½Ó´íÎó£¡\r\n" + ex.getMessage());
+			} catch (SQLException ex) {
+				System.err.println("å¼‚å¸¸ä¿¡æ¯ï¼šå…³é—­æ•°æ®åº“è¿æ¥é”™è¯¯ï¼\r\n" + ex.getMessage());
 			}
 		}
-		 
+
 	}
+
+	/**
+	 * executeInsert æ‰§è¡ŒSQLæ·»åŠ æ•°æ®å‘½ä»¤çš„æ–¹æ³•å¹¶ä¸”è¿”å›ä¸»é”®
+	 * 
+	 * @param tableName
+	 *            è¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“è¡¨åç§°
+	 * @param columnName
+	 *            è¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“åˆ—åç§°æ¸…å•(Pascalå‘½åæ³•)
+	 * @param param
+	 *            SQLå‚æ•°åˆ—è¡¨
+	 * @return true-æˆåŠŸ/false-å¤±è´¥
+	 */
+	public int executeInsertRId(String tableName, String[] columnName,
+			Object[] param) {
+
+		int rowId = 0; // ä¿å­˜æ‰§è¡ŒSQLæ’å…¥æ•°æ®å‘½ä»¤åå—å½±å“çš„è¡Œæ•°
+
+		try {
+
+			// è·å–æ•°æ®åº“è¿æ¥å¯¹è±¡
+			this.conn = DBTools.getH2SQLConnection();
+			// è·å–é¢„ç¼–è¯‘SQLè¯­å¥æ‰§è¡Œå¯¹è±¡å¹¶æ ¹æ®å‚æ•°è‡ªåŠ¨æ„é€ SQLå‘½ä»¤å­—ä¸²
+			this.ps = this.conn.prepareStatement(
+					SQLCommandBuilder.getInstance().getSQLCommand(
+							SQLCommandType.INSERT, tableName, columnName,
+							param, null), Statement.RETURN_GENERATED_KEYS);
+
+			// è‡ªåŠ¨æ˜ å°„SQLå‚æ•°
+			if (param != null && param.length > 0) {
+				this.ps = SQLParamHelper.JavaParam2SQLParam(param, this.ps);
+			}
+
+			// æ‰§è¡ŒSQLæ›´æ–°å‘½ä»¤å¹¶ä¿å­˜è¿”å›çš„å—å½±å“è¡Œæ•°
+			this.ps.executeUpdate();
+
+			ResultSet resultSet = ps.getGeneratedKeys();
+			if (resultSet.next()) {
+
+				rowId = rs.getInt(1);
+
+			}
+
+		} catch (SQLException ex) {
+
+			System.err.println("å¼‚å¸¸ä¿¡æ¯ï¼šæ‰§è¡ŒSQLæ·»åŠ å‘½ä»¤æ—¶å‘ç”Ÿé”™è¯¯ï¼\r\n" + ex.getMessage());
+
+		} finally {
+
+			// é‡Šæ”¾èµ„æº
+			this.releaseResource();
+
+		}
+
+		return rowId;
+
+	}
+
 }

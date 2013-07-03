@@ -6,44 +6,44 @@ import java.util.Hashtable;
 
 
 /**
- * SQLCommandBuilder SQLÃüÁîÉú³ÉÆ÷¹¤¾ßÀà
+ * SQLCommandBuilder SQLå‘½ä»¤ç”Ÿæˆå™¨å·¥å…·ç±»
  * @author 
  * @version 1.0.0.1  2009-3-31
  */
 public final class SQLCommandBuilder {
 
-	// ±£´æÉú³ÉÆ÷×ÔÉíÊµÀı 
+	// ä¿å­˜ç”Ÿæˆå™¨è‡ªèº«å®ä¾‹ 
 	private static SQLCommandBuilder sqlCmdBuilder = null;
 	
 	/**
-	 * Ë½ÓĞ»¯Ä¬ÈÏ¹¹ÔìÆ÷
+	 * ç§æœ‰åŒ–é»˜è®¤æ„é€ å™¨
 	 */
 	private SQLCommandBuilder() { }
 	
 	/**
-	 * Ê¹ÓÃ¾²Ì¬¹¤³§´´½¨Àà×ÔÉíÊµÀı
-	 * @return Àà×ÔÉíÊµÀı
+	 * ä½¿ç”¨é™æ€å·¥å‚åˆ›å»ºç±»è‡ªèº«å®ä¾‹
+	 * @return ç±»è‡ªèº«å®ä¾‹
 	 */
 	public static SQLCommandBuilder getInstance() {
 
-		// È·±£Àà×ÔÉíÊµÀıÎ¨Ò»
+		// ç¡®ä¿ç±»è‡ªèº«å®ä¾‹å”¯ä¸€
 		if (sqlCmdBuilder == null) {
 			sqlCmdBuilder = new SQLCommandBuilder();
 		}
 
-		// ·µ»ØÀà×ÔÉíÊµÀı
+		// è¿”å›ç±»è‡ªèº«å®ä¾‹
 		return sqlCmdBuilder;
 		
 	}
 	
 	/**
-	 * ¸ù¾İSQLÃüÁîÀàĞÍ»ñÈ¡SQLÓï¾äµÄ·½·¨
-	 * @param sqlCmdType SQLÃüÁîÀàĞÍ
-	 * @param tableName Òª²Ù×÷µÄÌØ¶¨Êı¾İ¿â±íÃû³Æ
-	 * @param columnName Òª²Ù×÷µÄÌØ¶¨Êı¾İ¿âÁĞÃû³ÆÇåµ¥
-	 * @param param SQL²ÎÊıÁĞ±í
-	 * @param condition SQLÌõ¼şÁĞ±í
-	 * @return SQLÓï¾äµÄ·½·¨
+	 * æ ¹æ®SQLå‘½ä»¤ç±»å‹è·å–SQLè¯­å¥çš„æ–¹æ³•
+	 * @param sqlCmdType SQLå‘½ä»¤ç±»å‹
+	 * @param tableName è¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“è¡¨åç§°
+	 * @param columnName è¦æ“ä½œçš„ç‰¹å®šæ•°æ®åº“åˆ—åç§°æ¸…å•
+	 * @param param SQLå‚æ•°åˆ—è¡¨
+	 * @param condition SQLæ¡ä»¶åˆ—è¡¨
+	 * @return SQLè¯­å¥çš„æ–¹æ³•
 	 */
 	public String getSQLCommand(
 		SQLCommandType sqlCmdType, 
@@ -52,7 +52,7 @@ public final class SQLCommandBuilder {
 		Object[] param, 
 		Hashtable<String, Object> condition) {
 		
-		// Ğ£Ñé²ÎÊıµÄÓĞĞ§ĞÔ£¬ÈôÎŞĞ§ÔòÅ×³öÒì³£
+		// æ ¡éªŒå‚æ•°çš„æœ‰æ•ˆæ€§ï¼Œè‹¥æ— æ•ˆåˆ™æŠ›å‡ºå¼‚å¸¸
 		try {
 			SQLValidateHelper.ValidateSQLAndParam(
 				sqlCmdType, 
@@ -61,18 +61,18 @@ public final class SQLCommandBuilder {
 				param, 
 				condition);
 		} catch (SQLParamException ex) {
-			System.err.println("Òì³£ĞÅÏ¢£º¸ø¶¨µÄSQL²ÎÊı²»ºÏ·¨£¡\r\n" + ex.getMessage());
+			System.err.println("å¼‚å¸¸ä¿¡æ¯ï¼šç»™å®šçš„SQLå‚æ•°ä¸åˆæ³•ï¼\r\n" + ex.getMessage());
 		}
 		
-		// ±£´æÆ´½ÓµÄSQLÃüÁî×Ö´®(Unicode×Ö·û\u0020±íÊ¾¿Õ¸ñ·û)
+		// ä¿å­˜æ‹¼æ¥çš„SQLå‘½ä»¤å­—ä¸²(Unicodeå­—ç¬¦\u0020è¡¨ç¤ºç©ºæ ¼ç¬¦)
 		StringBuffer sql = new StringBuffer();
 		
-		// ¸ù¾İSQLÃüÁîÀàĞÍ¹¹½¨SQLÃüÁî
+		// æ ¹æ®SQLå‘½ä»¤ç±»å‹æ„å»ºSQLå‘½ä»¤
 		switch (sqlCmdType) {
 			case SELECT:
-				// Éú³ÉSelectÃüÁî(½öÊÊÓÃÓÚµ¥±í²éÑ¯)
+				// ç”ŸæˆSelectå‘½ä»¤(ä»…é€‚ç”¨äºå•è¡¨æŸ¥è¯¢)
 				sql.append("Select\u0020");
-				// Æ´½ÓÁĞÃû
+				// æ‹¼æ¥åˆ—å
 				if(columnName.length==0){
 					
 					sql.append("\u0020*\u0020");
@@ -85,70 +85,152 @@ public final class SQLCommandBuilder {
 					}	
 				}
 				
-				// Æ´½Ó±íÃû
+				// æ‹¼æ¥è¡¨å
 				sql.append("From\u0020" + tableName + "");
-				// Æ´½ÓÌõ¼ş
+				// æ‹¼æ¥æ¡ä»¶
 				sql.append(this.buildCondition(condition));
+				//æ‹¼æ¥æ’åº
+				
 				break;
 			case INSERT:
-				// Éú³ÉInsertÃüÁî
+				// ç”ŸæˆInsertå‘½ä»¤
 				sql.append("Insert\u0020Into\u0020");
-				// Æ´½Ó±íÃû
+				// æ‹¼æ¥è¡¨å
 				sql.append(tableName + "\u0020(");
-				// Æ´½ÓÁĞÃû
+				// æ‹¼æ¥åˆ—å
 				for (int i = 0; i < columnName.length; i++) {
 					sql.append((i < columnName.length - 1) 
 						? (columnName[i] + ",\u0020") 
 						: (columnName[i] + ")\u0020"));  
 				}
-				// Æ´½ÓÕ¼Î»·û
+				// æ‹¼æ¥å ä½ç¬¦
 				sql.append("Values\u0020(");
 				for (int j = 0; j < param.length; j++) {
 					sql.append((j < param.length - 1) ? "?,\u0020" : "?)");
 				}
 				break;
 			case UPDATE:
-				// Éú³ÉUpdateÃüÁî
+				// ç”ŸæˆUpdateå‘½ä»¤
 				sql.append("Update\u0020");
-				// Æ´½Ó±íÃû
+				// æ‹¼æ¥è¡¨å
 				sql.append(tableName + "\u0020Set\u0020");
-				// Æ´½ÓÁĞÃû
+				// æ‹¼æ¥åˆ—å
 				for (int i = 0; i < columnName.length; i++) {
 					sql.append((i < columnName.length - 1) 
 						? (columnName[i] + "\u0020=\u0020?,\u0020") 
 						: (columnName[i] + "\u0020=\u0020?"));  
 				}
-				// Æ´½ÓÌõ¼ş
+				// æ‹¼æ¥æ¡ä»¶
 				sql.append(this.buildCondition(condition));
 				break;
 			case DELETE:
-				// Éú³ÉDeleteÃüÁî
+				// ç”ŸæˆDeleteå‘½ä»¤
 				sql.append("Delete\u0020From\u0020");
-				// Æ´½Ó±íÃû
+				// æ‹¼æ¥è¡¨å
 				sql.append(tableName + "");
-				// Æ´½ÓÌõ¼ş
+				// æ‹¼æ¥æ¡ä»¶
 				sql.append(this.buildCondition(condition));
 				break;
 		}
 		
-		System.err.println("µ±Ç°SQLÓï¾ä£º\r\n" + sql.toString());
+		System.err.println("å½“å‰SQLè¯­å¥ï¼š\r\n" + sql.toString());
 		
-		// ·µ»Ø½á¹û
+		// è¿”å›ç»“æœ
 		return sql.toString();
 		
 	}
 	
 	/**
-	 * ¹¹½¨SQLÃüÁîÌõ¼ş×Ö´®
-	 * @param condition SQLÌõ¼şÁĞ±í
-	 * @return SQLÃüÁîÌõ¼ş×Ö´®
+	 * 
+	 * @param sqlCmdType
+	 * @param tableName
+	 * @param columnName
+	 * @param param
+	 * @param condition
+	 * @param orderBySqlæ’åºsql
+	 * @return
 	 */
-	private String buildCondition(Hashtable<String, Object> condition) {
+	public String getOrderBySQLCommand(
+			SQLCommandType sqlCmdType, 
+			String tableName, 
+			String[] columnName, 
+			Object[] param, 
+			Hashtable<String, Object> condition,
+			String orderBySql
+			) {
+			
+			// æ ¡éªŒå‚æ•°çš„æœ‰æ•ˆæ€§ï¼Œè‹¥æ— æ•ˆåˆ™æŠ›å‡ºå¼‚å¸¸
+			try {
+				SQLValidateHelper.ValidateSQLAndParam(
+					sqlCmdType, 
+					tableName, 
+					columnName, 
+					param, 
+					condition);
+			} catch (SQLParamException ex) {
+				System.err.println("å¼‚å¸¸ä¿¡æ¯ï¼šç»™å®šçš„SQLå‚æ•°ä¸åˆæ³•ï¼\r\n" + ex.getMessage());
+			}
+			
+			// ä¿å­˜æ‹¼æ¥çš„SQLå‘½ä»¤å­—ä¸²(Unicodeå­—ç¬¦\u0020è¡¨ç¤ºç©ºæ ¼ç¬¦)
+			StringBuffer sql = new StringBuffer();
+			
+			// æ ¹æ®SQLå‘½ä»¤ç±»å‹æ„å»ºSQLå‘½ä»¤
+			switch (sqlCmdType) {
+				case SELECT:
+					// ç”ŸæˆSelectå‘½ä»¤(ä»…é€‚ç”¨äºå•è¡¨æŸ¥è¯¢)
+					sql.append("Select\u0020");
+					// æ‹¼æ¥åˆ—å
+					if(columnName.length==0){
+						
+						sql.append("\u0020*\u0020");
+					}else{
+						
+						for (int i = 0; i < columnName.length; i++) {
+							sql.append((i < columnName.length - 1) 
+								? (columnName[i] + ",\u0020") 
+								: (columnName[i] + "\u0020"));
+						}	
+					}
+					
+					// æ‹¼æ¥è¡¨å
+					sql.append("From\u0020" + tableName + "");
+					// æ‹¼æ¥æ¡ä»¶
+					sql.append(this.buildCondition(condition));
+					//æ‹¼æ¥æ’åº
+					sql.append(this.buildOrderByCondition(orderBySql));
+					break;
+			}
+			
+			System.err.println("å½“å‰SQLè¯­å¥ï¼š\r\n" + sql.toString());
+			
+			// è¿”å›ç»“æœ
+			return sql.toString();
+			
+		}
+	/**
+	 * æ„å»ºSQLå‘½ä»¤æŸ¥è¯¢æ’åºæ¡ä»¶å­—ä¸²
+	 * @param condition SQLæ¡ä»¶åˆ—è¡¨
+	 * @return SQLå‘½ä»¤æ¡ä»¶å­—ä¸²
+	 */
+	private String buildOrderByCondition(String orderby) {
 		
-		// ±£´æSQLÌõ¼ş²¿·ÖµÄ×Ö´®
+		// ä¿å­˜SQLæ¡ä»¶éƒ¨åˆ†çš„å­—ä¸²
 		StringBuffer sql = new StringBuffer();
 		
-		// Æ´½ÓÌõ¼ş
+		// æ‹¼æ¥æ¡ä»¶
+		sql.append("\u0020"+orderby+"\u0020");
+		
+		// è¿”å›ç»“æœ
+		return sql.toString();
+		
+	}
+	
+	private String buildCondition(Hashtable<String, Object> condition) {
+		
+		// ä¿å­˜SQLæ¡ä»¶éƒ¨åˆ†çš„å­—ä¸²
+		StringBuffer sql = new StringBuffer();
+		
+		// æ‹¼æ¥æ¡ä»¶
 		if (condition != null && condition.size() != 0) {
 			sql.append("\u0020Where\u0020");
 			Object[] conditionName = condition.keySet().toArray();
@@ -159,32 +241,33 @@ public final class SQLCommandBuilder {
 			}
 		}
 		
-		// ·µ»Ø½á¹û
+		// è¿”å›ç»“æœ
 		return sql.toString();
 		
 	}
 	
+	
 	/**
-	 * SQLCommandType SQLÃüÁîÀàĞÍÃ¶¾Ù
+	 * SQLCommandType SQLå‘½ä»¤ç±»å‹æšä¸¾
 	 * @author CodingMouse
 	 * @version 1.0.0.1  2009-3-31
 	 */
 	public enum SQLCommandType {
 		
 		/**
-		 * SQL²éÑ¯Êı¾İÃüÁî(½öÊÊÓÃÓÚµ¥±í²éÑ¯)
+		 * SQLæŸ¥è¯¢æ•°æ®å‘½ä»¤(ä»…é€‚ç”¨äºå•è¡¨æŸ¥è¯¢)
 		 */
 		SELECT,
 		/**
-		 * SQL²åÈëÊı¾İÃüÁî
+		 * SQLæ’å…¥æ•°æ®å‘½ä»¤
 		 */
 		INSERT,
 		/**
-		 * SQLĞŞ¸ÄÊı¾İÃüÁî
+		 * SQLä¿®æ”¹æ•°æ®å‘½ä»¤
 		 */
 		UPDATE,
 		/**
-		 * SQLÉ¾³ıÊı¾İÃüÁî
+		 * SQLåˆ é™¤æ•°æ®å‘½ä»¤
 		 */
 		DELETE
 		

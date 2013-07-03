@@ -435,7 +435,7 @@ public class ConnectionUtils {
 	  public  void postTxtMessage(Map<String, Object> postContent){
 		  
 		  BufferedReader in = null;
-		  String url = "/postmessage/" + SConfig.getInstance().getProfile().getSession() + "/call.xml";;
+		  String url = "https://www.han2011.com/postmessage/" + SConfig.getInstance().getProfile().getSession() + "/call.xml";;
 		
 		  PoolingClientConnectionManager connectionManager=new PoolingClientConnectionManager();
 

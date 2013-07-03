@@ -97,7 +97,7 @@ public class RSAEncryptor {
 	}
 
 	/**
-	 * ¸ù¾İÃÜÔ¿ÃûÕÒµ½½âÃÜÃÜÔ¿ºó£¬¶ÔBASE64±àÂë¸ñÊ½µÄÊı¾İ½øĞĞ½âÃÜ
+	 * æ ¹æ®å¯†é’¥åæ‰¾åˆ°è§£å¯†å¯†é’¥åï¼Œå¯¹BASE64ç¼–ç æ ¼å¼çš„æ•°æ®è¿›è¡Œè§£å¯†
 	 * 
 	 * @param dataBase64
 	 * @param keynick
@@ -118,7 +118,7 @@ public class RSAEncryptor {
 	}
 
 	/**
-	 * ¸ù¾İÃÜÔ¿ÃûÕÒµ½½âÃÜÃÜÔ¿ºó£¬¶ÔÊı¾İ½øĞĞ½âÃÜ
+	 * æ ¹æ®å¯†é’¥åæ‰¾åˆ°è§£å¯†å¯†é’¥åï¼Œå¯¹æ•°æ®è¿›è¡Œè§£å¯†
 	 * 
 	 * @param data
 	 * @param keynick
@@ -126,7 +126,7 @@ public class RSAEncryptor {
 	 * @throws Exception
 	 */
 	public synchronized byte[] decrypt(byte[] data, String keynick) throws CryptorException {
-		// ¶ÔÊı¾İ½âÃÜ
+		// å¯¹æ•°æ®è§£å¯†
 		Cipher cipher = getDecryptCipher(keynick);
 		int blockSize = cipher.getBlockSize();
 		byte[] bBuffer = new byte[blockSize];
@@ -152,7 +152,7 @@ public class RSAEncryptor {
 	}
 
 	/**
-	 * ¸ù¾İÃÜÔ¿ÃûÕÒµ½¼ÓÃÜÃÜÔ¿ºó£¬¶ÔÊı¾İ½øĞĞ¼ÓÃÜ£¬ ²¢ÇÒ½«¼ÓÃÜ½á¹ûÓÃBASE64½øĞĞ±àÂë£¬·µ»Ø±àÂëºóµÄ×Ö·û´®
+	 * æ ¹æ®å¯†é’¥åæ‰¾åˆ°åŠ å¯†å¯†é’¥åï¼Œå¯¹æ•°æ®è¿›è¡ŒåŠ å¯†ï¼Œ å¹¶ä¸”å°†åŠ å¯†ç»“æœç”¨BASE64è¿›è¡Œç¼–ç ï¼Œè¿”å›ç¼–ç åçš„å­—ç¬¦ä¸²
 	 * 
 	 * @param data
 	 * @param keynick
@@ -164,7 +164,7 @@ public class RSAEncryptor {
 	}
 
 	/**
-	 * ¸ù¾İÃÜÔ¿ÃûÕÒµ½¼ÓÃÜÃÜÔ¿ºó£¬¶ÔÊı¾İ½øĞĞ¼ÓÃÜ
+	 * æ ¹æ®å¯†é’¥åæ‰¾åˆ°åŠ å¯†å¯†é’¥åï¼Œå¯¹æ•°æ®è¿›è¡ŒåŠ å¯†
 	 * 
 	 * @param data
 	 * @param keynick
@@ -172,7 +172,7 @@ public class RSAEncryptor {
 	 * @throws Exception
 	 */
 	public synchronized byte[] encrypt(byte[] data, String keynick) throws CryptorException {
-		// ¶ÔÊı¾İ¼ÓÃÜ
+		// å¯¹æ•°æ®åŠ å¯†
 		System.out.println("keynick---" + keynick);
 		PublicKey key = KeyManager.getInstance().getEncryptKey(keynick);
 		Cipher cipher = getEncryptCipher(keynick);
