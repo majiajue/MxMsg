@@ -33,6 +33,8 @@ public class RSAEncryptor {
 
 	private static final String ALGORITHM = "RSA/ECB/NoPadding";
 
+	// private static final String ALGORITHM = "RSA/ECB/PKCS1Padding";
+
 	public static int getBlockSize(int defaultLength, PublicKey key) {
 		if (defaultLength > 0) {
 			return defaultLength;
@@ -80,7 +82,10 @@ public class RSAEncryptor {
 	private Cipher getDecryptCipher(String keynick) throws CryptorException {
 
 		PrivateKey key = KeyManager.getInstance().getDecryptKey(keynick);
-
+		PublicKey key1 = KeyManager.getInstance().getEncryptKey(keynick);
+		System.out.println("private key length:" + key.getEncoded().length);
+		System.out.println("private:" + Base64.encodeBase64String(key.getEncoded()));
+		System.out.println("public:" + Base64.encodeBase64String(key1.getEncoded()));
 		Cipher cipher;
 		try {
 			cipher = Cipher.getInstance(ALGORITHM);
@@ -107,14 +112,33 @@ public class RSAEncryptor {
 	public byte[] decryptBase64String(String dataBase64, String keynick) throws CryptorException {
 		boolean isBase64 = false;
 		try {
-			isBase64 = Base64.isArrayByteBase64(dataBase64.getBytes());
+			// isBase64 = Base64.isArrayByteBase64(dataBase64.getBytes());
+			isBase64 = Base64.isBase64(dataBase64.getBytes());
 		} catch (Exception e) {
-
+			e.printStackTrace();
 		}
 		if (isBase64) {
 			return decrypt(Base64.decodeBase64(dataBase64.getBytes()), keynick);
-		} else
+		} else {
 			return dataBase64.getBytes();
+		}
+	}
+
+	public byte[] myDecryptBase64String(String dataBase64) throws CryptorException, InvalidKeyException,
+			NoSuchAlgorithmException, NoSuchPaddingException {
+		boolean isBase64 = false;
+		try {
+			// isBase64 = Base64.isArrayByteBase64(dataBase64.getBytes());
+			isBase64 = Base64.isBase64(dataBase64.getBytes());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (isBase64) {
+			System.out.println("确实是base64编码，开始解密");
+			return myDecrypt(Base64.decodeBase64(dataBase64.getBytes()));
+		} else {
+			return dataBase64.getBytes();
+		}
 	}
 
 	/**
@@ -128,7 +152,10 @@ public class RSAEncryptor {
 	public synchronized byte[] decrypt(byte[] data, String keynick) throws CryptorException {
 		// 对数据解密
 		Cipher cipher = getDecryptCipher(keynick);
-		int blockSize = cipher.getBlockSize();
+		PublicKey key = KeyManager.getInstance().getEncryptKey(keynick);
+		int blockSize = getBlockSize(cipher.getBlockSize(), key);
+		System.out.println("decrypt blockSize:" + blockSize);
+		System.out.println("keynick:" + keynick);
 		byte[] bBuffer = new byte[blockSize];
 		int nLoop = data.length / blockSize;
 
@@ -161,6 +188,78 @@ public class RSAEncryptor {
 	 */
 	public String encryptBase64Encode(byte[] data, String keynick) throws CryptorException {
 		return new String(Base64.encodeBase64(encrypt(data, keynick)));
+	}
+
+	public String myEncryptBase64Encode(byte[] data) throws CryptorException, InvalidKeyException,
+			NoSuchAlgorithmException, NoSuchPaddingException {
+		return new String(Base64.encodeBase64(myEncrypt(data)));
+	}
+
+	public synchronized byte[] myDecrypt(byte[] data) throws CryptorException, InvalidKeyException,
+			NoSuchAlgorithmException, NoSuchPaddingException {
+		// 对数据解密
+		Cipher cipher = Cipher.getInstance(ALGORITHM);
+		PrivateKey privateKey = SConfig.getInstance().profile.getKeyPair().getPrivate();
+		cipher.init(Cipher.DECRYPT_MODE, privateKey);
+		PublicKey pubKey = SConfig.getInstance().profile.getKeyPair().getPublic();
+		int blockSize = getBlockSize(cipher.getBlockSize(), pubKey);
+		byte[] bBuffer = new byte[blockSize];
+		int nLoop = data.length / blockSize;
+
+		try {
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			for (int i = 0; i < nLoop; i++) {
+				System.arraycopy(data, i * blockSize, bBuffer, 0, blockSize);
+
+				bos.write(cipher.doFinal(bBuffer));
+
+			}
+			System.out.println("debug1");
+			return bos.toByteArray();
+		} catch (IllegalBlockSizeException e) {
+			System.out.println("debug2");
+			throw new CryptorException(e);
+		} catch (BadPaddingException e) {
+			System.out.println("debug3");
+			throw new CryptorException(e);
+		} catch (IOException e) {
+			System.out.println("debug4");
+			throw new CryptorException(e);
+		}
+
+	}
+
+	public byte[] myEncrypt(byte[] data) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException,
+			CryptorException {
+		PublicKey pubkey = SConfig.getInstance().profile.getKeyPair().getPublic();
+		Cipher cipher = Cipher.getInstance(ALGORITHM);
+		cipher.init(Cipher.ENCRYPT_MODE, pubkey);
+		int blockSize = getBlockSize(cipher.getBlockSize(), pubkey);
+		byte[] bBuffer = new byte[blockSize];
+		int nLoop = data.length / blockSize;
+		int nRemaining = data.length - nLoop * blockSize;
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+		try {
+			for (int i = 0; i < nLoop; i++) {
+				System.arraycopy(data, i * blockSize, bBuffer, 0, blockSize);
+
+				bos.write(cipher.doFinal(bBuffer));
+			}
+
+			if (nRemaining > 0) {
+				System.arraycopy(data, nLoop * blockSize, bBuffer, 0, nRemaining);
+				bos.write(cipher.doFinal(bBuffer, 0, nRemaining));
+			}
+		} catch (IllegalBlockSizeException e) {
+			throw new CryptorException(e);
+		} catch (BadPaddingException e) {
+			throw new CryptorException(e);
+		} catch (IOException e) {
+			throw new CryptorException(e);
+		}
+		return bos.toByteArray();
 	}
 
 	/**

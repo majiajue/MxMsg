@@ -16,9 +16,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.security.KeyPair;
-import java.security.PublicKey;
 
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBox;
@@ -30,44 +27,40 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
-import org.apache.commons.codec.binary.Base64;
-import com.mx.clent.vo.AnPeersBean;
+
 import com.mx.clent.vo.Profile;
-import com.mx.client.db.DBDataSQL;
 import com.mx.client.db.DBTools;
-import com.mx.client.netty.NettyClient;
-import com.mx.client.webtools.ConnectionUtils;
 import com.mx.client.webtools.SConfig;
 import com.mx.client.webtools.SLogin;
 import com.sun.awt.AWTUtilities;
 
 public class Login extends JFrame {
-	static Point origin = new Point();// »ñÈ¡µ±Ç°Êó±êµÄÎ»ÖÃ
+	static Point origin = new Point();// è·å–å½“å‰é¼ æ ‡çš„ä½ç½®
 	private JPanel contentPane;
-	static SystemTray tray = null;// ÏµÍ³ÍĞÅÌ
-	static TrayIcon trayIcon = null; // ÍĞÅÌÍ¼±ê
-	public JPasswordField pwdÃÜÂë;
+	static SystemTray tray = null;// ç³»ç»Ÿæ‰˜ç›˜
+	static TrayIcon trayIcon = null; // æ‰˜ç›˜å›¾æ ‡
+	public JPasswordField pwdå¯†ç ;
 	private JLabel lblQQ2013;
-	public JLabel lblÍ·Ïñ;
-	public JCheckBox checkBox¼Ç×¡ÃÜÂë;
-	public JCheckBox checkBox×Ô¶¯µÇÂ¼;
-	public JLabel lblµÇÂ¼;
-	public JTextField textFieldÓÃ»§Ãû;
-	public JLabel lbl×¢²áÕËºÅ;
-	public JLabel lblÍü¼ÇÃÜÂë;
-	public JLabel lbl×îĞ¡»¯;
-	public JLabel lblÍË³ö;
-	public JLabel lbl¶àÕËºÅ;
-	public JLabel lblÉèÖÃ;
-	public JComboBox comboBox×´Ì¬;
-	String Skey;
-	String shapwd;
+	public JLabel lblå¤´åƒ;
+	public JCheckBox checkBoxè®°ä½å¯†ç ;
+	public JCheckBox checkBoxè‡ªåŠ¨ç™»å½•;
+	public JLabel lblç™»å½•;
+	public JTextField textFieldç”¨æˆ·å;
+	public JLabel lblæ³¨å†Œè´¦å·;
+	public JLabel lblå¿˜è®°å¯†ç ;
+	public JLabel lblæœ€å°åŒ–;
+	public JLabel lblé€€å‡º;
+	public JLabel lblå¤šè´¦å·;
+	public JLabel lblè®¾ç½®;
+	public JComboBox comboBoxçŠ¶æ€;
+	String mSkey;
+	String mShapwd;
 
 	/**
 	 * @param args
 	 */
 	/**
-	 * Æô¶¯µÇÂ½¿ò
+	 * å¯åŠ¨ç™»é™†æ¡†
 	 * 
 	 * @param args
 	 */
@@ -78,10 +71,10 @@ public class Login extends JFrame {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					final Login frame = new Login();// Æô¶¯µÇÂ½¿ò
-					// AWT.setWindowOpaque(frame, false);//ÉèÖÃ´°ÌåÍêÈ«Í¸Ã÷
+					final Login frame = new Login();// å¯åŠ¨ç™»é™†æ¡†
+					// AWT.setWindowOpaque(frame, false);//è®¾ç½®çª—ä½“å®Œå…¨é€æ˜
 					AWTUtilities.setWindowOpaque(frame, false);
-					frame.setVisible(true);// ¿É¼û¿ò¼Ü
+					frame.setVisible(true);// å¯è§æ¡†æ¶
 
 					frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 					frame.addMouseListener(new MouseListener() {
@@ -131,8 +124,7 @@ public class Login extends JFrame {
 							// TODO Auto-generated method stub
 							Point p = frame.getLocation();
 
-							frame.setLocation(p.x + arg0.getX() - origin.x, p.y
-									+ arg0.getY() - origin.y);
+							frame.setLocation(p.x + arg0.getX() - origin.x, p.y + arg0.getY() - origin.y);
 						}
 					});
 					frame.addMouseListener(new MouseListener() {
@@ -182,8 +174,7 @@ public class Login extends JFrame {
 							// TODO Auto-generated method stub
 							Point p = frame.getLocation();
 
-							frame.setLocation(p.x + arg0.getX() - origin.x, p.y
-									+ arg0.getY() - origin.y);
+							frame.setLocation(p.x + arg0.getX() - origin.x, p.y + arg0.getY() - origin.y);
 						}
 					});
 				} catch (Exception e) {
@@ -195,14 +186,14 @@ public class Login extends JFrame {
 	}
 
 	public Login() {
-		if (SystemTray.isSupported()) // Èç¹û²Ù×÷ÏµÍ³Ö§³ÖÍĞÅÌ
+
+		if (SystemTray.isSupported()) // å¦‚æœæ“ä½œç³»ç»Ÿæ”¯æŒæ‰˜ç›˜
 		{
 			this.tray();
 		}
 		setTitle("MX");
-		setIconImage(Toolkit.getDefaultToolkit().getImage(
-				Login.class.getResource("/com/mx/client/image/QQ_64.png")));
-		setUndecorated(true);// ÉèÖÃ´°ÌåÃ»ÓĞ±ß¿ò
+		setIconImage(Toolkit.getDefaultToolkit().getImage(Login.class.getResource("/com/mx/client/image/QQ_64.png")));
+		setUndecorated(true);// è®¾ç½®çª—ä½“æ²¡æœ‰è¾¹æ¡†
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 350, 267);
 
@@ -212,43 +203,41 @@ public class Login extends JFrame {
 		setContentPane(contentPane);
 		contentPane.setLayout(null);
 		contentPane.setOpaque(false);
-		pwdÃÜÂë = new JPasswordField();
-		pwdÃÜÂë.setText("123");
-		pwdÃÜÂë.setEchoChar('¡ñ');
-		pwdÃÜÂë.setBounds(104, 163, 154, 26);
-		contentPane.add(pwdÃÜÂë);
+		pwdå¯†ç  = new JPasswordField();
+		pwdå¯†ç .setText("123");
+		pwdå¯†ç .setEchoChar('â—');
+		pwdå¯†ç .setBounds(104, 163, 154, 26);
+		contentPane.add(pwdå¯†ç );
 
 		lblQQ2013 = new JLabel("MX");
 		lblQQ2013.setForeground(new Color(0, 0, 51));
-		lblQQ2013.setFont(new Font("ËÎÌå", Font.BOLD, 16));
+		lblQQ2013.setFont(new Font("å®‹ä½“", Font.BOLD, 16));
 		lblQQ2013.setBounds(14, 6, 55, 18);
 		contentPane.add(lblQQ2013);
 
-		lblÍ·Ïñ = new JLabel("");
-		lblÍ·Ïñ.setIcon(new ImageIcon(Login.class
-				.getResource("/com/mx/client/headImage/head_boy_01_64.jpg")));
-		lblÍ·Ïñ.setBounds(18, 127, 64, 64);
-		contentPane.add(lblÍ·Ïñ);
+		lblå¤´åƒ = new JLabel("");
+		lblå¤´åƒ.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/headImage/head_boy_01_64.jpg")));
+		lblå¤´åƒ.setBounds(18, 127, 64, 64);
+		contentPane.add(lblå¤´åƒ);
 
-		checkBox¼Ç×¡ÃÜÂë = new JCheckBox("¼Ç×¡ÃÜÂë");
-		checkBox¼Ç×¡ÃÜÂë.setBounds(156, 198, 80, 18);
-		checkBox¼Ç×¡ÃÜÂë.setOpaque(false);
-		checkBox¼Ç×¡ÃÜÂë.setBorder(new EmptyBorder(0, 0, 0, 0));
-		checkBox¼Ç×¡ÃÜÂë.setDoubleBuffered(false);
-		checkBox¼Ç×¡ÃÜÂë.setRolloverEnabled(false);
-		contentPane.add(checkBox¼Ç×¡ÃÜÂë);
+		checkBoxè®°ä½å¯†ç  = new JCheckBox("è®°ä½å¯†ç ");
+		checkBoxè®°ä½å¯†ç .setBounds(156, 198, 80, 18);
+		checkBoxè®°ä½å¯†ç .setOpaque(false);
+		checkBoxè®°ä½å¯†ç .setBorder(new EmptyBorder(0, 0, 0, 0));
+		checkBoxè®°ä½å¯†ç .setDoubleBuffered(false);
+		checkBoxè®°ä½å¯†ç .setRolloverEnabled(false);
+		contentPane.add(checkBoxè®°ä½å¯†ç );
 
-		checkBox×Ô¶¯µÇÂ¼ = new JCheckBox("×Ô¶¯µÇÂ½");
-		checkBox×Ô¶¯µÇÂ¼.setBounds(237, 198, 80, 18);
-		checkBox×Ô¶¯µÇÂ¼.setOpaque(false);
-		checkBox×Ô¶¯µÇÂ¼.setBorder(new EmptyBorder(0, 0, 0, 0));
-		contentPane.add(checkBox×Ô¶¯µÇÂ¼);
+		checkBoxè‡ªåŠ¨ç™»å½• = new JCheckBox("è‡ªåŠ¨ç™»é™†");
+		checkBoxè‡ªåŠ¨ç™»å½•.setBounds(237, 198, 80, 18);
+		checkBoxè‡ªåŠ¨ç™»å½•.setOpaque(false);
+		checkBoxè‡ªåŠ¨ç™»å½•.setBorder(new EmptyBorder(0, 0, 0, 0));
+		contentPane.add(checkBoxè‡ªåŠ¨ç™»å½•);
 
-		lblµÇÂ¼ = new JLabel("");
-		lblµÇÂ¼.setIcon(new ImageIcon(Login.class
-				.getResource("/com/mx/client/image/button/button_login_1.png")));
-		lblµÇÂ¼.setBounds(262, 237, 69, 22);
-		lblµÇÂ¼.addMouseListener(new MouseListener() {
+		lblç™»å½• = new JLabel("");
+		lblç™»å½•.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/button_login_1.png")));
+		lblç™»å½•.setBounds(262, 237, 69, 22);
+		lblç™»å½•.addMouseListener(new MouseListener() {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -276,141 +265,56 @@ public class Login extends JFrame {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				// TODO Auto-generated method stub
-				String pwd = "";
 				try {
-					Skey = com.mx.client.webtools.SLogin.getInstance()
-							.register1();
-					SConfig.getInstance().setSessionKey(Skey);
-					char[] p = pwdÃÜÂë.getPassword();
-					pwd = new String(p);
-					System.out.println("pwd==" + pwd);
-					shapwd = SConfig.getInstance().setPassword(pwd);
-					System.out.println("1====" + shapwd);
-					String result = SLogin.getInstance().login(
-							textFieldÓÃ»§Ãû.getText(), Skey, shapwd);
-
-					// String friend
-					// =ConnectionUtils.getInstance().getContacts();
-					// System.out.println(SConfig.getInstance().decodeContacts(friend));
-					// friend = SConfig.getInstance().decodeContacts(friend);
-					System.out.println("ÊÇ·ñ´æÔÚ³Ô¼ÇÂ¼"
-							+ Profile.isExistProfile(textFieldÓÃ»§Ãû.getText()));
-
-					if (result == null || result.equals("Failed")
-							|| result.equals("failed")) {
-
-						System.out.println("µÇÂ½Ê§°Ü");
-					} else {
-
-						if (!SConfig.getInstance().getMagic()) {
-							// publishProgress("ÓÃ»§µÇÂ¼Ê§°Ü...");
-							System.out.println("µÇÂ½Ê§°Ü");
-							// SConfig.getInstance().setRegisted(false);
-							// return false;
-						}
-						if (Profile.isExistProfile(textFieldÓÃ»§Ãû.getText())) {
-							boolean re = Profile.checkloginpwd(
-									textFieldÓÃ»§Ãû.getText(), pwd);
-							if (re) {
-
-								Profile p1 = Profile.LoadProfile(textFieldÓÃ»§Ãû
-										.getText());
-								p1.setSessionkey(Skey);
-								KeyPair kp = null;
-								kp = p1.getKeyPair();
-								PublicKey key = kp.getPublic();
-								String encode_key = new String(
-										Base64.encodeBase64(com.mx.client.webtools.PubkeyUtils
-												.getEncodedPublic(key)));
-
-								try {
-									com.mx.client.webtools.SPubkey
-											.getInstance().postPubKey(
-													encode_key);
-								} catch (Exception exception) {
-									// TODO Auto-generated catch block
-									exception.printStackTrace();
-								}
-								System.out.println("p1.PUsername1:"
-										+ p1.myPeerBean.PUsername);
-								SConfig.getInstance().setProfile(p1);
-//								String friend = ConnectionUtils.getInstance()
-//										.getContacts();
-//								System.out.println(SConfig.getInstance()
-//										.decodeContacts(friend));
-//								friend = SConfig.getInstance().decodeContacts(
-//										friend);
-								
-								MainFrame frame = MainFrame.getInstance();
-								frame.setVisible(true);
-								setVisible(false);
-							} else {
-
-								System.out.println(" error password!");
-							}
-
-						} else {
-
-							KeyPair kp = null;
-							String uptime = "";
+					String userId = textFieldç”¨æˆ·å.getText();
+					String password = new String(pwdå¯†ç .getPassword());
+					if (loginProcess(userId, password)) {
+						if (Profile.isExistProfile(userId)) {
+							System.out.println("Login: ç”¨æˆ·(" + userId + ")profileå·²ç»å­˜åœ¨ï¼Œè½½å…¥ä¸€ä¸‹");
+							Profile profile = Profile.LoadProfile(userId);
+							profile.setSessionkey(mSkey);
 							try {
-								kp = SConfig.getInstance()
-										.updatePublicKeyToServer(
-												textFieldÓÃ»§Ãû.getText());
-								uptime = System.currentTimeMillis() + "";
-								DBTools.CreateUserProfile(textFieldÓÃ»§Ãû
-										.getText());
-								DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_MESSAGE);
-								DBTools.excuteSql(DBDataSQL.SQL_CREATE_MESSAGE_INDEX);
-								DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_LOGIN);
-								DBTools.excuteSql(DBDataSQL.SQL_CREATE_LOGIN_INDEX);
-								DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_PEERS);
-								DBTools.excuteSql(DBDataSQL.SQL_CREATE_PEERS_INDEX);
-								DBTools.excuteSql(DBDataSQL.SQL_CREATE_PREFERENCE);
-								DBTools.excuteSql(DBDataSQL.SQL_CREATE_PREFERENCE_INDEX);
-								AnPeersBean bean = new AnPeersBean();
-								bean.PPeerid = textFieldÓÃ»§Ãû.getText();
-								bean.PUsername = textFieldÓÃ»§Ãû.getText();
-								Profile profile = new Profile(textFieldÓÃ»§Ãû
-										.getText(), pwd);
-								profile = profile.CreateProfile(bean, pwd, kp,
-										Skey, uptime);
+								SConfig.getInstance().updatePublicKeyToServer(profile.getKeyPair().getPublic());
+							} catch (Exception e1) {
+								e1.printStackTrace();
+							}
+							SConfig.getInstance().setProfile(profile);
+						} else {
+							System.out.println("Login: (" + userId + ")ç¬¬ä¸€æ¬¡ç”Ÿæˆprofile");
+							try {
+								DBTools.initDatabase(userId); // åˆå§‹åŒ–å¯†è®¯æ•°æ®åº“
+								Profile profile = Profile.CreateProfile(userId, mSkey); // åˆ›å»ºè¯¥ç”¨æˆ·çš„profileæ–‡ä»¶
 								SConfig.getInstance().setProfile(profile);
 								// List<MsgFriendGroup>
 								// friendGroup=XmlUtil.instance().parseXmltoString2(friend,"UTF-8","con");
 								// MainFrame.setFriends(friendGroup);
-								MainFrame frame = MainFrame.getInstance();
-								frame.setVisible(true);
-								setVisible(false);
 							} catch (Exception e1) {
-								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
-							// System.out.println("friend==="+friend);
 						}
-						
 					}
+					MainFrame frame = MainFrame.getInstance();
+					frame.setVisible(true);
+					setVisible(false);
 				} catch (IOException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 			}
 		});
-		contentPane.add(lblµÇÂ¼);
+		contentPane.add(lblç™»å½•);
 
-		textFieldÓÃ»§Ãû = new JTextField();
-		textFieldÓÃ»§Ãû.setText("\u9A6C\u5316\u817E");
-		textFieldÓÃ»§Ãû.setBounds(104, 128, 154, 26);
-		contentPane.add(textFieldÓÃ»§Ãû);
-		textFieldÓÃ»§Ãû.setColumns(10);
+		textFieldç”¨æˆ·å = new JTextField();
+		textFieldç”¨æˆ·å.setText("\u9A6C\u5316\u817E");
+		textFieldç”¨æˆ·å.setBounds(104, 128, 154, 26);
+		contentPane.add(textFieldç”¨æˆ·å);
+		textFieldç”¨æˆ·å.setColumns(10);
 
-		lbl×¢²áÕËºÅ = new JLabel("\u6CE8\u518C\u8D26\u53F7");
-		lbl×¢²áÕËºÅ.setFont(new Font("SansSerif", Font.PLAIN, 13));
-		lbl×¢²áÕËºÅ.setForeground(new Color(0, 51, 255));
-		lbl×¢²áÕËºÅ.setBounds(288, 132, 55, 18);
-		contentPane.add(lbl×¢²áÕËºÅ);
-		lbl×¢²áÕËºÅ.addMouseListener(new MouseListener() {
+		lblæ³¨å†Œè´¦å· = new JLabel("\u6CE8\u518C\u8D26\u53F7");
+		lblæ³¨å†Œè´¦å·.setFont(new Font("SansSerif", Font.PLAIN, 13));
+		lblæ³¨å†Œè´¦å·.setForeground(new Color(0, 51, 255));
+		lblæ³¨å†Œè´¦å·.setBounds(288, 132, 55, 18);
+		contentPane.add(lblæ³¨å†Œè´¦å·);
+		lblæ³¨å†Œè´¦å·.addMouseListener(new MouseListener() {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -441,22 +345,21 @@ public class Login extends JFrame {
 				// TODO Auto-generated method stub
 				RegisterFrame registerFrame = new RegisterFrame();
 				registerFrame.setVisible(true);
-				lbl×¢²áÕËºÅ.setEnabled(false);
+				lblæ³¨å†Œè´¦å·.setEnabled(false);
 			}
 		});
 
-		lblÍü¼ÇÃÜÂë = new JLabel("\u5FD8\u8BB0\u5BC6\u7801");
-		lblÍü¼ÇÃÜÂë.setFont(new Font("SansSerif", Font.PLAIN, 13));
-		lblÍü¼ÇÃÜÂë.setForeground(new Color(0, 51, 255));
-		lblÍü¼ÇÃÜÂë.setBounds(288, 167, 55, 18);
-		contentPane.add(lblÍü¼ÇÃÜÂë);
+		lblå¿˜è®°å¯†ç  = new JLabel("\u5FD8\u8BB0\u5BC6\u7801");
+		lblå¿˜è®°å¯†ç .setFont(new Font("SansSerif", Font.PLAIN, 13));
+		lblå¿˜è®°å¯†ç .setForeground(new Color(0, 51, 255));
+		lblå¿˜è®°å¯†ç .setBounds(288, 167, 55, 18);
+		contentPane.add(lblå¿˜è®°å¯†ç );
 
-		lbl×îĞ¡»¯ = new JLabel("");
-		lbl×îĞ¡»¯.setIcon(new ImageIcon(Login.class
-				.getResource("/com/mx/client/image/button/login_minsize_1.png")));
-		lbl×îĞ¡»¯.setBounds(284, 0, 29, 19);
-		contentPane.add(lbl×îĞ¡»¯);
-		lbl×îĞ¡»¯.addMouseListener(new MouseListener() {
+		lblæœ€å°åŒ– = new JLabel("");
+		lblæœ€å°åŒ–.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/login_minsize_1.png")));
+		lblæœ€å°åŒ–.setBounds(284, 0, 29, 19);
+		contentPane.add(lblæœ€å°åŒ–);
+		lblæœ€å°åŒ–.addMouseListener(new MouseListener() {
 
 			@Override
 			public void mouseReleased(MouseEvent e) {
@@ -487,8 +390,8 @@ public class Login extends JFrame {
 				// TODO Auto-generated method stub
 				try {
 
-					tray.add(trayIcon); // ½«ÍĞÅÌÍ¼±êÌí¼Óµ½ÏµÍ³µÄÍĞÅÌÊµÀıÖĞ
-					// setVisible(false); // Ê¹´°¿Ú²»¿ÉÊÓ
+					tray.add(trayIcon); // å°†æ‰˜ç›˜å›¾æ ‡æ·»åŠ åˆ°ç³»ç»Ÿçš„æ‰˜ç›˜å®ä¾‹ä¸­
+					// setVisible(false); // ä½¿çª—å£ä¸å¯è§†
 					dispose();
 				} catch (AWTException ex) {
 					ex.printStackTrace();
@@ -497,12 +400,11 @@ public class Login extends JFrame {
 			}
 		});
 
-		lblÍË³ö = new JLabel("");
-		lblÍË³ö.setIcon(new ImageIcon(Login.class
-				.getResource("/com/mx/client/image/button/login_exit_1.png")));
-		lblÍË³ö.setBounds(312, -1, 37, 20);
-		contentPane.add(lblÍË³ö);
-		lblÍË³ö.addMouseListener(new MouseListener() {
+		lblé€€å‡º = new JLabel("");
+		lblé€€å‡º.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/login_exit_1.png")));
+		lblé€€å‡º.setBounds(312, -1, 37, 20);
+		contentPane.add(lblé€€å‡º);
+		lblé€€å‡º.addMouseListener(new MouseListener() {
 
 			@Override
 			public void mouseReleased(MouseEvent arg0) {
@@ -535,61 +437,79 @@ public class Login extends JFrame {
 			}
 		});
 
-		lbl¶àÕËºÅ = new JLabel("");
-		lbl¶àÕËºÅ.setIcon(new ImageIcon(
-				Login.class
-						.getResource("/com/mx/client/image/button/login_duozhanghao_1.png")));
-		lbl¶àÕËºÅ.setBounds(14, 237, 69, 21);
-		contentPane.add(lbl¶àÕËºÅ);
+		lblå¤šè´¦å· = new JLabel("");
+		lblå¤šè´¦å·.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/login_duozhanghao_1.png")));
+		lblå¤šè´¦å·.setBounds(14, 237, 69, 21);
+		contentPane.add(lblå¤šè´¦å·);
 
-		lblÉèÖÃ = new JLabel("");
-		lblÉèÖÃ.setIcon(new ImageIcon(Login.class
-				.getResource("/com/mx/client/image/button/login_setting_1.png")));
-		lblÉèÖÃ.setBounds(93, 237, 69, 21);
-		contentPane.add(lblÉèÖÃ);
+		lblè®¾ç½® = new JLabel("");
+		lblè®¾ç½®.setIcon(new ImageIcon(Login.class.getResource("/com/mx/client/image/button/login_setting_1.png")));
+		lblè®¾ç½®.setBounds(93, 237, 69, 21);
+		contentPane.add(lblè®¾ç½®);
 
-		comboBox×´Ì¬ = new JComboBox();
-		comboBox×´Ì¬.setBounds(104, 195, 40, 24);
-		contentPane.add(comboBox×´Ì¬);
+		comboBoxçŠ¶æ€ = new JComboBox();
+		comboBoxçŠ¶æ€.setBounds(104, 195, 40, 24);
+		contentPane.add(comboBoxçŠ¶æ€);
 	}
 
 	void tray() {
-		tray = SystemTray.getSystemTray(); // »ñµÃ±¾²Ù×÷ÏµÍ³ÍĞÅÌµÄÊµÀı
-		ImageIcon icon = new ImageIcon(
-				Login.class.getResource("/com/mx/client/image/QQ_16.png")); // ½«ÒªÏÔÊ¾µ½ÍĞÅÌÖĞµÄÍ¼±ê
-		PopupMenu pop = new PopupMenu(); // ¹¹ÔìÒ»¸öÓÒ¼üµ¯³öÊ½²Ëµ¥
-		MenuItem show = new MenuItem("´ò¿ª³ÌĞò(s)");
-		MenuItem exit = new MenuItem("ÍË³ö³ÌĞò(x)");
+		tray = SystemTray.getSystemTray(); // è·å¾—æœ¬æ“ä½œç³»ç»Ÿæ‰˜ç›˜çš„å®ä¾‹
+		ImageIcon icon = new ImageIcon(Login.class.getResource("/com/mx/client/image/QQ_16.png")); // å°†è¦æ˜¾ç¤ºåˆ°æ‰˜ç›˜ä¸­çš„å›¾æ ‡
+		PopupMenu pop = new PopupMenu(); // æ„é€ ä¸€ä¸ªå³é”®å¼¹å‡ºå¼èœå•
+		MenuItem show = new MenuItem("æ‰“å¼€ç¨‹åº(s)");
+		MenuItem exit = new MenuItem("é€€å‡ºç¨‹åº(x)");
 		pop.add(show);
 		pop.add(exit);
-		// Ìí¼ÓÊó±ê¼àÌıÆ÷£¬µ±Êó±êÔÚÍĞÅÌÍ¼±êÉÏË«»÷Ê±£¬Ä¬ÈÏÏÔÊ¾´°¿Ú
+		// æ·»åŠ é¼ æ ‡ç›‘å¬å™¨ï¼Œå½“é¼ æ ‡åœ¨æ‰˜ç›˜å›¾æ ‡ä¸ŠåŒå‡»æ—¶ï¼Œé»˜è®¤æ˜¾ç¤ºçª—å£
 		trayIcon = new TrayIcon(icon.getImage(), "MX", pop);
 		trayIcon.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2) // Êó±êË«»÷
+				if (e.getClickCount() == 2) // é¼ æ ‡åŒå‡»
 				{
-					tray.remove(trayIcon); // ´ÓÏµÍ³µÄÍĞÅÌÊµÀıÖĞÒÆ³ıÍĞÅÌÍ¼±ê
+					tray.remove(trayIcon); // ä»ç³»ç»Ÿçš„æ‰˜ç›˜å®ä¾‹ä¸­ç§»é™¤æ‰˜ç›˜å›¾æ ‡
 					setExtendedState(JFrame.NORMAL);
-					setVisible(true); // ÏÔÊ¾´°¿Ú
+					setVisible(true); // æ˜¾ç¤ºçª—å£
 					toFront();
 				}
 			}
 		});
-		show.addActionListener(new ActionListener() // µã»÷¡°ÏÔÊ¾´°¿Ú¡±²Ëµ¥ºó½«´°¿ÚÏÔÊ¾³öÀ´
+		show.addActionListener(new ActionListener() // ç‚¹å‡»â€œæ˜¾ç¤ºçª—å£â€èœå•åå°†çª—å£æ˜¾ç¤ºå‡ºæ¥
 		{
 			public void actionPerformed(ActionEvent e) {
-				// tray.remove(trayIcon); // ´ÓÏµÍ³µÄÍĞÅÌÊµÀıÖĞÒÆ³ıÍĞÅÌÍ¼±ê
+				// tray.remove(trayIcon); // ä»ç³»ç»Ÿçš„æ‰˜ç›˜å®ä¾‹ä¸­ç§»é™¤æ‰˜ç›˜å›¾æ ‡
 				setExtendedState(JFrame.NORMAL);
-				setVisible(true); // ÏÔÊ¾´°¿Ú
+				setVisible(true); // æ˜¾ç¤ºçª—å£
 				toFront();
 			}
 		});
-		exit.addActionListener(new ActionListener() // µã»÷¡°ÍË³öÑİÊ¾¡±²Ëµ¥ºóÍË³ö³ÌĞò
+		exit.addActionListener(new ActionListener() // ç‚¹å‡»â€œé€€å‡ºæ¼”ç¤ºâ€èœå•åé€€å‡ºç¨‹åº
 		{
 			public void actionPerformed(ActionEvent e) {
-				System.exit(0); // ÍË³ö³ÌĞò
+				System.exit(0); // é€€å‡ºç¨‹åº
 			}
 		});
 	}
 
+	/**
+	 * 
+	 * @param userId
+	 *            ç™»é™†ID
+	 * @param password
+	 *            ç™»é™†å¯†ç 
+	 * @return ç™»é™†æˆåŠŸè¿”å›true, ç™»é™†å¤±è´¥è¿”å›false, è·å¾—çš„session keyä¿å­˜åœ¨mSkeyä¸­
+	 * @throws IOException
+	 */
+	private boolean loginProcess(String userId, String password) throws IOException {
+		mSkey = com.mx.client.webtools.SLogin.getInstance().register1();
+		SConfig.getInstance().setSessionKey(mSkey);
+		// String pwd = new String(password);
+		// System.out.println("pwd==" + pwd);
+		mShapwd = SConfig.getInstance().setPassword(password);
+		String result = SLogin.getInstance().login(userId, mSkey, mShapwd);
+		if (result == null || result.equals("Failed") || result.equals("failed")) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 }

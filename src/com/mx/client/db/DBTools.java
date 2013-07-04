@@ -7,10 +7,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import org.h2.Driver;
-
 /**
- * Êı¾İ¿âÁ¬½Ó¹¤¾ßÀà
+ * ï¿½ï¿½İ¿ï¿½ï¿½ï¿½ï¿½Ó¹ï¿½ï¿½ï¿½ï¿½ï¿½
  * 
  * @author majiajue
  * 
@@ -19,15 +17,15 @@ public class DBTools {
 	private static Statement statement = null;
 	private static ResultSet resultSet = null;
 	private static Connection connection = null;
-	private static String H2_URL = "jdbc:h2:/data/MX;";// Êı¾İ¿âÁ¬½ÓµØÖ·
-	private static final String H2_DRIVER = "org.h2.Driver"; // H2 Çı¶¯
-	private static final String H2_USERNAME = "sa";// Êı¾İ¿âÓÃ»§Ãû
-	private static final String H2_PASSWORD = "";// Êı¾İ¿âÃÜÂë
+	private static String H2_URL = "jdbc:h2:/data/MX;";// ï¿½ï¿½İ¿ï¿½ï¿½ï¿½ï¿½Óµï¿½Ö·
+	private static final String H2_DRIVER = "org.h2.Driver"; // H2 ï¿½ï¿½
+	private static final String H2_USERNAME = "sa";// ï¿½ï¿½İ¿ï¿½ï¿½Ã»ï¿½ï¿½ï¿½
+	private static final String H2_PASSWORD = "";// ï¿½ï¿½İ¿ï¿½ï¿½ï¿½ï¿½ï¿½
 
 	/**
-	 * »ñÈ¡H2SQLÊı¾İ¿âÁ¬½Ó
+	 * ï¿½ï¿½È¡H2SQLï¿½ï¿½İ¿ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * 
-	 * @return Êı¾İ¿âµÄÁ¬½Ó
+	 * @return ï¿½ï¿½İ¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 
 	public static Connection getH2SQLConnection() {
@@ -39,9 +37,8 @@ public class DBTools {
 		}
 		Connection conn = null;
 		try {
-			// ×Ô¶¯´´½¨Çı¶¯³ÌĞòµÄÊµÀıÇÒ×Ô¶¯µ÷ÓÃDriverManagerÀ´×¢²áËü
-			conn = DriverManager
-					.getConnection(H2_URL, H2_USERNAME, H2_PASSWORD);
+			// ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½DriverManagerï¿½ï¿½×¢ï¿½ï¿½ï¿½ï¿½
+			conn = DriverManager.getConnection(H2_URL, H2_USERNAME, H2_PASSWORD);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -51,7 +48,7 @@ public class DBTools {
 	}
 
 	/**
-	 * Ö´ĞĞ
+	 * Ö´ï¿½ï¿½
 	 * 
 	 * @param sql
 	 * @throws SQLException
@@ -61,11 +58,11 @@ public class DBTools {
 		try {
 			connection.setAutoCommit(true);
 			statement = connection.createStatement();
-			//statement.execute(sql);
-			int a=statement.executeUpdate(sql);
+			// statement.execute(sql);
+			int a = statement.executeUpdate(sql);
 			System.out.println(a);
-			System.out.println("Ö´ĞĞ³É¹¦");
-			
+			System.out.println("Ö´ï¿½Ğ³É¹ï¿½");
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -86,20 +83,20 @@ public class DBTools {
 	public static int findData(String sql) {
 		connection = getH2SQLConnection();
 		PreparedStatement ps = null;
-		int a=0;
+		int a = 0;
 		try {
 			ps = connection.prepareStatement(sql);
 			resultSet = ps.executeQuery();
 			resultSet.last();
-			a= resultSet.getRow();
-            System.out.println("==="+a);
+			a = resultSet.getRow();
+			System.out.println("===" + a);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			//e.printStackTrace();
+			// e.printStackTrace();
 			return 0;
 		} finally {
-			if(resultSet!=null){
-				
+			if (resultSet != null) {
+
 				try {
 					resultSet.close();
 				} catch (SQLException e) {
@@ -136,9 +133,8 @@ public class DBTools {
 
 	public static void CreateUserProfile(String MyPeerid) {
 
-		String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_WONDERLAND
-				+ MyPeerid + " (ID INT PRIMARY KEY AUTO_INCREMENT, "
-				+ COL_KEY + " VARCHAR2(255) NOT NULL, " + COL_vALUE
+		String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_WONDERLAND + MyPeerid
+				+ " (ID INT PRIMARY KEY AUTO_INCREMENT, " + COL_KEY + " VARCHAR2(255) NOT NULL, " + COL_vALUE
 				+ " VARCHAR2(4000) NOT NULL)";
 		try {
 			excuteSql(sql);
@@ -147,6 +143,24 @@ public class DBTools {
 			e.printStackTrace();
 		}
 
+	}
+
+	/**
+	 * åˆå§‹åŒ–å¯†è®¯çš„æ•°æ®åº“ç»“æ„
+	 * 
+	 * @param userId
+	 * @throws SQLException
+	 */
+	public static void initDatabase(String userId) throws SQLException {
+		DBTools.CreateUserProfile(userId);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_MESSAGE);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_MESSAGE_INDEX);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_LOGIN);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_LOGIN_INDEX);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_PEERS);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_PEERS_INDEX);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_PREFERENCE);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_PREFERENCE_INDEX);
 	}
 
 }
