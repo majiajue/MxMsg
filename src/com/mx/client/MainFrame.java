@@ -19,7 +19,6 @@ import javax.swing.JFrame;
 import javax.swing.JList;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.text.AbstractDocument.Content;
 
 import com.mx.clent.vo.MsgFriendGroup;
 import com.mx.clent.vo.MsgUser;
@@ -47,6 +46,17 @@ public class MainFrame extends BaseFrame {
 		try {
 			intSubstance();
 			initComponents();
+			String s = "test";
+			try {
+				System.out.println("RSA s:" + s);
+				String m1 = RSAEncryptor.getInstance().myEncryptBase64Encode(s.getBytes());
+				System.out.println("RSA m1:" + m1);
+				String m2 = new String(RSAEncryptor.getInstance().myDecryptBase64String(m1));
+				System.out.println("RSA m2:" + m2.trim());
+			} catch (CryptorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -131,8 +141,7 @@ public class MainFrame extends BaseFrame {
 			teamPanel = new javax.swing.JPanel();
 			zuijinPanel = new javax.swing.JPanel();
 			JavaLocationCollection collection = new JavaLocationCollection();
-			JavaLocationListModel listModel = new JavaLocationListModel(
-					collection);
+			JavaLocationListModel listModel = new JavaLocationListModel(collection);
 			sampleJList = new JList(listModel);
 			sampleJList.setCellRenderer(new JavaLocationRenderer());
 			Font displayFont = new Font("Serif", Font.BOLD, 18);
@@ -168,16 +177,13 @@ public class MainFrame extends BaseFrame {
 				public void mouseClicked(MouseEvent e) {
 					// TODO Auto-generated method stub
 					if (e.getClickCount() == 2) {
-						String peerid = ((JavaLocation) sampleJList
-								.getSelectedValue()).getPeerId();
+						String peerid = ((JavaLocation) sampleJList.getSelectedValue()).getPeerId();
 						System.out.println("peerid===" + peerid);
 						ConnectionUtils.getInstance().getPubkey(peerid);
 						String mMimeSend = "mime:txt:" + "helloworld!";
 						String mecode = "";
 						try {
-							mecode = RSAEncryptor.getInstance()
-									.encryptBase64Encode(mMimeSend.getBytes(),
-											peerid);
+							mecode = RSAEncryptor.getInstance().encryptBase64Encode(mMimeSend.getBytes(), peerid);
 						} catch (CryptorException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -205,8 +211,8 @@ public class MainFrame extends BaseFrame {
 			// headImage.setIcon(headIcon);
 			headImage.setMinimumSize(new java.awt.Dimension(42, 15));
 
-			stateComboBox.setModel(new javax.swing.DefaultComboBoxModel(
-					new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+			stateComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3",
+					"Item 4" }));
 
 			personWord.setText(ower.getPersonWord());
 
@@ -222,49 +228,33 @@ public class MainFrame extends BaseFrame {
 			// news.setText("��˾����");
 			// jToolBar1.add(news);
 
-			javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(
-					jPanel1);
+			javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
 			jPanel1.setLayout(jPanel1Layout);
-			jPanel1Layout
-					.setHorizontalGroup(jPanel1Layout
-							.createParallelGroup(
-									javax.swing.GroupLayout.Alignment.LEADING)
-							.addGroup(
-									jPanel1Layout
-											.createSequentialGroup()
-											.addContainerGap()
-											.addComponent(
-													headImage,
-													javax.swing.GroupLayout.PREFERRED_SIZE,
-													javax.swing.GroupLayout.DEFAULT_SIZE,
-													javax.swing.GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(
-													javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-											.addGroup(
-													jPanel1Layout
-															.createParallelGroup(
-																	javax.swing.GroupLayout.Alignment.LEADING)
-															.addComponent(
-																	stateComboBox,
-																	javax.swing.GroupLayout.PREFERRED_SIZE,
-																	85,
-																	javax.swing.GroupLayout.PREFERRED_SIZE)
-															.addComponent(
-																	personWord,
-																	javax.swing.GroupLayout.DEFAULT_SIZE,
-																	179,
-																	Short.MAX_VALUE))
-											.addContainerGap())
-							// .addComponent(jToolBar1,
-							// javax.swing.GroupLayout.DEFAULT_SIZE, 200,
-							// Short.MAX_VALUE)
-							.addComponent(findField,
-									javax.swing.GroupLayout.DEFAULT_SIZE, 200,
-									Short.MAX_VALUE));
+			jPanel1Layout.setHorizontalGroup(jPanel1Layout
+					.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+					.addGroup(
+							jPanel1Layout
+									.createSequentialGroup()
+									.addContainerGap()
+									.addComponent(headImage, javax.swing.GroupLayout.PREFERRED_SIZE,
+											javax.swing.GroupLayout.DEFAULT_SIZE,
+											javax.swing.GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addGroup(
+											jPanel1Layout
+													.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+													.addComponent(stateComboBox,
+															javax.swing.GroupLayout.PREFERRED_SIZE, 85,
+															javax.swing.GroupLayout.PREFERRED_SIZE)
+													.addComponent(personWord, javax.swing.GroupLayout.DEFAULT_SIZE,
+															179, Short.MAX_VALUE)).addContainerGap())
+					// .addComponent(jToolBar1,
+					// javax.swing.GroupLayout.DEFAULT_SIZE, 200,
+					// Short.MAX_VALUE)
+					.addComponent(findField, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE));
 			jPanel1Layout
 					.setVerticalGroup(jPanel1Layout
-							.createParallelGroup(
-									javax.swing.GroupLayout.Alignment.LEADING)
+							.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 							.addGroup(
 									javax.swing.GroupLayout.Alignment.TRAILING,
 									jPanel1Layout
@@ -273,10 +263,8 @@ public class MainFrame extends BaseFrame {
 											.addGroup(
 													jPanel1Layout
 															.createParallelGroup(
-																	javax.swing.GroupLayout.Alignment.LEADING,
-																	false)
-															.addComponent(
-																	headImage,
+																	javax.swing.GroupLayout.Alignment.LEADING, false)
+															.addComponent(headImage,
 																	javax.swing.GroupLayout.PREFERRED_SIZE,
 																	javax.swing.GroupLayout.DEFAULT_SIZE,
 																	javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -292,24 +280,16 @@ public class MainFrame extends BaseFrame {
 																					javax.swing.LayoutStyle.ComponentPlacement.RELATED,
 																					javax.swing.GroupLayout.DEFAULT_SIZE,
 																					Short.MAX_VALUE)
-																			.addComponent(
-																					personWord)))
-											.addPreferredGap(
-													javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-													javax.swing.GroupLayout.DEFAULT_SIZE,
-													Short.MAX_VALUE)
+																			.addComponent(personWord)))
+											.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED,
+													javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
 											// .addComponent(jToolBar1,
 											// javax.swing.GroupLayout.PREFERRED_SIZE,
 											// 25,
 											// javax.swing.GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(
-													javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-											.addComponent(
-													findField,
-													javax.swing.GroupLayout.PREFERRED_SIZE,
-													29,
-													javax.swing.GroupLayout.PREFERRED_SIZE)
-											.addGap(18, 18, 18)));
+											.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(findField, javax.swing.GroupLayout.PREFERRED_SIZE, 29,
+													javax.swing.GroupLayout.PREFERRED_SIZE).addGap(18, 18, 18)));
 
 			// jToolBar2.setBorder(javax.swing.BorderFactory.createTitledBorder(javax.swing.BorderFactory.createTitledBorder("\u5feb\u6377")));
 			// iEButton.setText("\u6d4f\u89c8\u5668");
@@ -329,142 +309,83 @@ public class MainFrame extends BaseFrame {
 			findButton.setText("\u67e5\u627e");
 			jToolBar3.add(findButton);
 
-			javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(
-					jPanel2);
+			javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
 			jPanel2.setLayout(jPanel2Layout);
 			jPanel2Layout
-					.setHorizontalGroup(jPanel2Layout.createParallelGroup(
-							javax.swing.GroupLayout.Alignment.LEADING)
+					.setHorizontalGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 					// .addComponent(jToolBar2,
 					// javax.swing.GroupLayout.DEFAULT_SIZE, 245,
 					// Short.MAX_VALUE)
 							.addGroup(
 									jPanel2Layout
 											.createSequentialGroup()
-											.addComponent(
-													sysSetButton,
-													javax.swing.GroupLayout.PREFERRED_SIZE,
-													70,
+											.addComponent(sysSetButton, javax.swing.GroupLayout.PREFERRED_SIZE, 70,
 													javax.swing.GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(
-													javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-											.addComponent(
-													jToolBar3,
-													javax.swing.GroupLayout.DEFAULT_SIZE,
-													169, Short.MAX_VALUE)));
-			jPanel2Layout
-					.setVerticalGroup(jPanel2Layout
-							.createParallelGroup(
-									javax.swing.GroupLayout.Alignment.LEADING)
-							.addGroup(
-									jPanel2Layout
-											.createSequentialGroup()
-											// .addComponent(jToolBar2,
-											// javax.swing.GroupLayout.PREFERRED_SIZE,
-											// 48,
-											// javax.swing.GroupLayout.PREFERRED_SIZE)
-											.addPreferredGap(
-													javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-											.addGroup(
-													jPanel2Layout
-															.createParallelGroup(
-																	javax.swing.GroupLayout.Alignment.TRAILING)
-															.addComponent(
-																	jToolBar3,
-																	javax.swing.GroupLayout.DEFAULT_SIZE,
-																	31,
-																	Short.MAX_VALUE)
-															.addComponent(
-																	sysSetButton,
-																	javax.swing.GroupLayout.PREFERRED_SIZE,
-																	31,
-																	javax.swing.GroupLayout.PREFERRED_SIZE))));
+											.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+											.addComponent(jToolBar3, javax.swing.GroupLayout.DEFAULT_SIZE, 169,
+													Short.MAX_VALUE)));
+			jPanel2Layout.setVerticalGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+					.addGroup(
+							jPanel2Layout
+									.createSequentialGroup()
+									// .addComponent(jToolBar2,
+									// javax.swing.GroupLayout.PREFERRED_SIZE,
+									// 48,
+									// javax.swing.GroupLayout.PREFERRED_SIZE)
+									.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+									.addGroup(
+											jPanel2Layout
+													.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+													.addComponent(jToolBar3, javax.swing.GroupLayout.DEFAULT_SIZE, 31,
+															Short.MAX_VALUE)
+													.addComponent(sysSetButton, javax.swing.GroupLayout.PREFERRED_SIZE,
+															31, javax.swing.GroupLayout.PREFERRED_SIZE))));
 
-			javax.swing.GroupLayout friendPanelLayout = new javax.swing.GroupLayout(
-					friendPanel);
+			javax.swing.GroupLayout friendPanelLayout = new javax.swing.GroupLayout(friendPanel);
 			friendPanel.setLayout(friendPanelLayout);
-			friendPanelLayout.setHorizontalGroup(friendPanelLayout
-					.createParallelGroup(
-							javax.swing.GroupLayout.Alignment.LEADING)
-					.addComponent(sampleJList,
-							javax.swing.GroupLayout.DEFAULT_SIZE, 240,
-							Short.MAX_VALUE));
-			friendPanelLayout.setVerticalGroup(friendPanelLayout
-					.createParallelGroup(
-							javax.swing.GroupLayout.Alignment.LEADING)
-					.addComponent(sampleJList,
-							javax.swing.GroupLayout.DEFAULT_SIZE, 260,
-							Short.MAX_VALUE));
+			friendPanelLayout.setHorizontalGroup(friendPanelLayout.createParallelGroup(
+					javax.swing.GroupLayout.Alignment.LEADING).addComponent(sampleJList,
+					javax.swing.GroupLayout.DEFAULT_SIZE, 240, Short.MAX_VALUE));
+			friendPanelLayout.setVerticalGroup(friendPanelLayout.createParallelGroup(
+					javax.swing.GroupLayout.Alignment.LEADING).addComponent(sampleJList,
+					javax.swing.GroupLayout.DEFAULT_SIZE, 260, Short.MAX_VALUE));
 
 			mainTabbedPanel.addTab("\u597d\u53cb\u5217\u8868", friendPanel);
 
-			javax.swing.GroupLayout teamPanelLayout = new javax.swing.GroupLayout(
-					teamPanel);
+			javax.swing.GroupLayout teamPanelLayout = new javax.swing.GroupLayout(teamPanel);
 			teamPanel.setLayout(teamPanelLayout);
-			teamPanelLayout.setHorizontalGroup(teamPanelLayout
-					.createParallelGroup(
-							javax.swing.GroupLayout.Alignment.LEADING).addGap(
-							0, 240, Short.MAX_VALUE));
-			teamPanelLayout.setVerticalGroup(teamPanelLayout
-					.createParallelGroup(
-							javax.swing.GroupLayout.Alignment.LEADING).addGap(
-							0, 260, Short.MAX_VALUE));
+			teamPanelLayout.setHorizontalGroup(teamPanelLayout.createParallelGroup(
+					javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 240, Short.MAX_VALUE));
+			teamPanelLayout.setVerticalGroup(teamPanelLayout.createParallelGroup(
+					javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 260, Short.MAX_VALUE));
 			mainTabbedPanel.addTab("\u7fa4\u5217\u8868", teamPanel);
 
-			javax.swing.GroupLayout zuijinPanelLayout = new javax.swing.GroupLayout(
-					zuijinPanel);
+			javax.swing.GroupLayout zuijinPanelLayout = new javax.swing.GroupLayout(zuijinPanel);
 			zuijinPanel.setLayout(zuijinPanelLayout);
-			zuijinPanelLayout.setHorizontalGroup(zuijinPanelLayout
-					.createParallelGroup(
-							javax.swing.GroupLayout.Alignment.LEADING).addGap(
-							0, 240, Short.MAX_VALUE));
-			zuijinPanelLayout.setVerticalGroup(zuijinPanelLayout
-					.createParallelGroup(
-							javax.swing.GroupLayout.Alignment.LEADING).addGap(
-							0, 260, Short.MAX_VALUE));
-			mainTabbedPanel.addTab("\u6700\u8fd1\u8054\u7cfb\u4eba",
-					zuijinPanel);
+			zuijinPanelLayout.setHorizontalGroup(zuijinPanelLayout.createParallelGroup(
+					javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 240, Short.MAX_VALUE));
+			zuijinPanelLayout.setVerticalGroup(zuijinPanelLayout.createParallelGroup(
+					javax.swing.GroupLayout.Alignment.LEADING).addGap(0, 260, Short.MAX_VALUE));
+			mainTabbedPanel.addTab("\u6700\u8fd1\u8054\u7cfb\u4eba", zuijinPanel);
 
-			javax.swing.GroupLayout layout = new javax.swing.GroupLayout(
-					getContentPane());
+			javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 			getContentPane().setLayout(layout);
 			layout.setHorizontalGroup(layout
-					.createParallelGroup(
-							javax.swing.GroupLayout.Alignment.LEADING)
-					.addComponent(jPanel1,
-							javax.swing.GroupLayout.DEFAULT_SIZE,
-							javax.swing.GroupLayout.DEFAULT_SIZE,
+					.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+					.addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
 							Short.MAX_VALUE)
-					.addComponent(jPanel2,
-							javax.swing.GroupLayout.DEFAULT_SIZE,
-							javax.swing.GroupLayout.DEFAULT_SIZE,
+					.addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE,
 							Short.MAX_VALUE)
-					.addComponent(mainTabbedPanel,
-							javax.swing.GroupLayout.DEFAULT_SIZE, 245,
-							Short.MAX_VALUE));
-			layout.setVerticalGroup(layout
-					.createParallelGroup(
-							javax.swing.GroupLayout.Alignment.LEADING)
-					.addGroup(
-							layout.createSequentialGroup()
-									.addComponent(
-											jPanel1,
-											javax.swing.GroupLayout.PREFERRED_SIZE,
-											118,
-											javax.swing.GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(
-											javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-									.addComponent(
-											mainTabbedPanel,
-											javax.swing.GroupLayout.DEFAULT_SIZE,
-											289, Short.MAX_VALUE)
-									.addPreferredGap(
-											javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-									.addComponent(
-											jPanel2,
-											javax.swing.GroupLayout.PREFERRED_SIZE,
-											javax.swing.GroupLayout.DEFAULT_SIZE,
-											javax.swing.GroupLayout.PREFERRED_SIZE)));
+					.addComponent(mainTabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 245, Short.MAX_VALUE));
+			layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(
+					layout.createSequentialGroup()
+							.addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 118,
+									javax.swing.GroupLayout.PREFERRED_SIZE)
+							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+							.addComponent(mainTabbedPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 289, Short.MAX_VALUE)
+							.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+							.addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE,
+									javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)));
 			addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent e) {
 					setVisible(false);
@@ -474,10 +395,8 @@ public class MainFrame extends BaseFrame {
 			this.setAlwaysOnTop(true);
 			NettyClient client = null;
 			try {
-				client = new NettyClient("https://www.han2011.com/"
-						+ "/getmessage/"
-						+ SConfig.getInstance().getProfile().getSession()
-						+ "/call.xml");
+				client = new NettyClient("https://www.han2011.com/" + "/getmessage/"
+						+ SConfig.getInstance().getProfile().getSession() + "/call.xml");
 			} catch (URISyntaxException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -614,8 +533,7 @@ public class MainFrame extends BaseFrame {
 							// TODO Auto-generated method stub
 							Point p = frame.getLocation();
 
-							frame.setLocation(p.x + arg0.getX() - origin.x, p.y
-									+ arg0.getY() - origin.y);
+							frame.setLocation(p.x + arg0.getX() - origin.x, p.y + arg0.getY() - origin.y);
 						}
 					});
 					frame.setVisible(true);
@@ -636,8 +554,7 @@ public class MainFrame extends BaseFrame {
 		public void valueChanged(ListSelectionEvent e) {
 			// TODO Auto-generated method stub
 			if (!e.getValueIsAdjusting())
-				System.out.println(((JavaLocation) sampleJList
-						.getSelectedValue()).getPeerId());
+				System.out.println(((JavaLocation) sampleJList.getSelectedValue()).getPeerId());
 
 		}
 	}

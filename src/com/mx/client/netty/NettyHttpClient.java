@@ -15,7 +15,6 @@ import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpVersion;
 
-
 public class NettyHttpClient {
 	private ClientBootstrap mBootstrap;
 	private String mScheme = "https";
@@ -78,10 +77,10 @@ public class NettyHttpClient {
 		// Send the HTTP request.
 		channel.write(request);
 		NettyStatus.isRettyRunning = true;
-		//Log.v("netty", "start block waiting");
+		// Log.v("netty", "start block waiting");
 		// Wait for the server to close the connection.
 		channel.getCloseFuture().awaitUninterruptibly();
-		//Log.v("netty", "start block waiting end");
+		// Log.v("netty", "start block waiting end");
 		// Shut down executor threads to exit.
 		mBootstrap.shutdown();
 		// bootstrap.releaseExternalResources();

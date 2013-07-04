@@ -9,33 +9,26 @@ import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.codec.binary.StringUtils;
 import org.apache.http.client.ClientProtocolException;
 
 import com.mx.clent.vo.Profile;
 import com.mx.client.db.GenDao;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
-
-
-
-
-
 public class SConfig {
 	public String sessionkey = "";
 	public final static String TB_PREFERENCE = "tb_preference";
 	private final Object[] dbLock = new Object[0];
-	private String m_psk;// ·ÅÔÚÄÚ´æÖÐµÄÃÜÔ¿
-	private String ApplicationPSKey="";
+	private String m_psk;
+	private String ApplicationPSKey = "";
 	public String applicationPSK = "";
 	private static final String KEY_ALGORITHM = "RSA";
 	private static final String DEFAULT_SEED = "2C87BA8BC9A364D8CB0C8AB926039E06";
 	public final static String COL_PRE_KEY = "key";
 	public final static String COL_PRE_VALUE = "value";
-    public Profile profile;
+	public Profile profile;
+
 	public Profile getProfile() {
 		return profile;
 	}
@@ -47,7 +40,7 @@ public class SConfig {
 	public String getApplicationPSKey() {
 		return ApplicationPSKey;
 	}
-	
+
 	private SConfig() {
 
 	}
@@ -76,7 +69,7 @@ public class SConfig {
 	}
 
 	/**
-	 * ÉèÖÃÃÜÂë
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * 
 	 * @param password
 	 * @return
@@ -88,22 +81,18 @@ public class SConfig {
 		return str;
 	}
 
-
 	public String getMagicContent() throws Exception {
 		try {
 			String result = ConnectionUtils.getInstance().getRequest(
-					"/magic/" + SConfig.getInstance().getSessionKey()
-							+ "/call.aspx");
+					"/magic/" + SConfig.getInstance().getSessionKey() + "/call.aspx");
 
 			if (result == null || "".equals(result)) {
 				return null;
 			}
 
 			if (XmlUtil.instance().parseXmltoString(result, "UTF-8", "r") != null) {
-				if (XmlUtil.instance().parseXmltoString(result, "UTF-8", "r")
-						.equalsIgnoreCase("ok")) {
-					String magic = XmlUtil.instance().parseXmltoString(result,
-							"UTF-8", "magic");
+				if (XmlUtil.instance().parseXmltoString(result, "UTF-8", "r").equalsIgnoreCase("ok")) {
+					String magic = XmlUtil.instance().parseXmltoString(result, "UTF-8", "magic");
 					;
 					return magic;
 				} else {
@@ -141,7 +130,7 @@ public class SConfig {
 			// ResetTiemer();
 			return keyPass;
 		} catch (CryptorException e) {
-			System.out.println("SConfig --- ³õÊ¼»¯AESÃÜÂë´íÎó");
+			System.out.println("SConfig --- ï¿½ï¿½Ê¼ï¿½ï¿½AESï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -154,16 +143,14 @@ public class SConfig {
 		cv.put("magic", magic);
 		String result = null;
 		try {
-			result = ConnectionUtils.getInstance().postRequest(
-					"/magic/" + getSessionKey() + "/call.aspx", cv);
+			result = ConnectionUtils.getInstance().postRequest("/magic/" + getSessionKey() + "/call.aspx", cv);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		// HashMap<String, String> map = SXmlParser.xmlResponse(result);
 		if (XmlUtil.instance().parseXmltoString(result, "UTF-8", "r") != null) {
-			if (XmlUtil.instance().parseXmltoString(result, "UTF-8", "r")
-					.equals("ok")) {
+			if (XmlUtil.instance().parseXmltoString(result, "UTF-8", "r").equals("ok")) {
 				setMagicSynServer(true);
 				// LOG.i("debug", "SConfig --- setMagic success");
 				return true;
@@ -183,12 +170,13 @@ public class SConfig {
 	public boolean isMagicSynServer() {
 		return MAGIC_SYN_SERVER;
 	}
+
 	public String getApplicationPSK() throws Exception {
 		String psk = getApplicationPSKey();
 		Cryptor crypt;
-		if ("".equals(psk)||psk==null) {
+		if ("".equals(psk) || psk == null) {
 			psk = getMagicContent();
-			if ("".equals(psk)||psk==null) {
+			if ("".equals(psk) || psk == null) {
 				String pwd = getHelpKey();
 				psk = initApplicationPSK(pwd);
 			} else {
@@ -200,7 +188,7 @@ public class SConfig {
 		} else {
 			try {
 				String sHelpKey = getHelpKey();
-				//Log.v("mixun", sHelpKey);
+				// Log.v("mixun", sHelpKey);
 				crypt = new Cryptor(getHelpKey());
 			} catch (CryptorException e) {
 				e.printStackTrace();
@@ -211,26 +199,27 @@ public class SConfig {
 				decodeKeyPass = crypt.decrypt(Base64.decodeBase64(psk.getBytes()));
 				psk = new String(decodeKeyPass);
 			} catch (CryptorException e) {
-				//LOG.i("wj", "½âÃÜ³ö´í");
+				// LOG.i("wj", "ï¿½ï¿½ï¿½Ü³ï¿½ï¿½ï¿½");
 				throw new CryptorException("Could not decrypt the encoded password. Might mismatched key.");
 			}
 		}
 		return psk;
 	}
-	
+
 	/**
-	 * °ü×°ÓÃkey
+	 * ï¿½ï¿½×°ï¿½ï¿½key
 	 * 
 	 * @throws CryptorException
 	 */
 	public void setHelpKey(String psk) {
-		 m_psk = psk;
+		m_psk = psk;
 	}
-	
-	public String getHelpKey(){
-		
+
+	public String getHelpKey() {
+
 		return m_psk;
 	}
+
 	private String holdMonkey(String str) {
 		if (str == null)
 			return null;
@@ -241,7 +230,7 @@ public class SConfig {
 		}
 		return new String(Base64.decodeBase64(temp));
 	}
-	
+
 	public static String decodeContacts(String tmp) {
 		String psk = null;
 		try {
@@ -252,90 +241,64 @@ public class SConfig {
 		}
 		System.out.println("psk===");
 		String result = null;
-		if(psk!=null||!"".equals(psk)) {
+		if (psk != null || !"".equals(psk)) {
 			try {
 				Cryptor c = new Cryptor(psk);
 				byte[] data = c.decrypt(Base64.decodeBase64(tmp.getBytes()));
 				result = new String(data);
 			} catch (CryptorException e) {
-				//LOG.e("debug" , "SXmlTool --- decodeContacts error");
+				// LOG.e("debug" , "SXmlTool --- decodeContacts error");
 				e.printStackTrace();
 			}
 		}
 		return result;
 	}
-	public KeyPair updateSelfEncryptKey(String peerid) throws CryptorException {
-		KeyPair kp = null;
 
+	public KeyPair generateRsaKey() throws CryptorException {
+		KeyPair kp = null;
 		try {
 			KeyPairGenerator keygen = KeyPairGenerator.getInstance(KEY_ALGORITHM);
-			// ³õÊ¼»¯Ëæ»ú²úÉúÆ÷
 			SecureRandom secureRandom = new SecureRandom();
 			secureRandom.setSeed(DEFAULT_SEED.getBytes());
-			keygen.initialize(1024, secureRandom);
-
+			keygen.initialize(2048, secureRandom);
 			kp = keygen.genKeyPair();
-			//saveKey(peerid, kp);
-			// StorageManager.GetInstance().getUserProfile().keyupdatetime =
-			// System.currentTimeMillis() + "";
-			// StorageManager.GetInstance().getUserProfile().Save();
-			// savePeerKey(name, kp.getPublic());
-			//LOG.System.out("Generate the new Private/Publick KeyPair successful.");
 		} catch (NoSuchAlgorithmException e) {
 			throw new CryptorException(e);
 		}
 		return kp;
 	}
-	
+
 	/**
-	 * ½«±¾µØµÄ¹«Ô¿ÉÏ´«µ½·þÎñÆ÷ÉÏ
 	 * 
 	 * @param ctx
-	 *            Ó¦ÓÃ»·¾³ÉÏÏÂÎÄ
 	 * @param uid
-	 *            ¹«Ô¿±êÊ¶
-	 * @throws CryptorException
-	 *             µ±¹«Ô¿ÄÚÈÝ±¾Éí³ö´íÊ±µÄÒì³£
-	 * @throws IOException
-	 *             µ±¹«Ô¿´«Êä¹ý³ÌÖÐµÄ³ö´íÒì³£
+	 * @throws Exception
 	 */
-	public KeyPair updatePublicKeyToServer(String peerid) throws CryptorException, IOException {
-		KeyPair kp = null;
-		kp = updateSelfEncryptKey(peerid);
-		PublicKey key = kp.getPublic();
-		System.out.println("key"+key);
-		//LOG.d("wsl", "pubkeyis:" + key);
-		String encode_key = new String(Base64.encodeBase64(PubkeyUtils.getEncodedPublic(key)));
-		//LOG.d("comet", "pubkeyis:" + encode_key);
-		try {
-			SPubkey.getInstance().postPubKey(encode_key);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		// LOG.v("wjy",
-		// "getUpdatePubkeyTime(String peerid)====="+getUpdatePubkeyTime(peerid));
-		return kp;
+	public void updatePublicKeyToServer(PublicKey pubkey) throws Exception {
+		String encode_key = new String(Base64.encodeBase64(PubkeyUtils.getEncodedPublic(pubkey)));
+		String result = SPubkey.getInstance().postPubKey(encode_key);
+		System.out.println("updatePublicKeyToServer:" + result);
 	}
+
 	public void setApplicationPSK(String psk) {
 		save("applicationPSK", psk);
 		CryptorManager.getInstance().clearCryptor();
 	}
 
 	/**
-	 * TODO »ñµÃmagic
+	 * TODO ï¿½ï¿½ï¿½magic
 	 * 
 	 * @return
 	 */
 	public boolean getMagic() {
 		try {
-            HashMap<String, Object> cv = new HashMap<String, Object>();
+			HashMap<String, Object> cv = new HashMap<String, Object>();
 			String result = ConnectionUtils.getInstance().getRequest("/magic/" + getSessionKey() + "/call.aspx");
-            System.out.println("result====="+result);
-			//HashMap<String, String> map = SXmlParser.xmlResponse(result);
+			System.out.println("result=====" + result);
+			// HashMap<String, String> map = SXmlParser.xmlResponse(result);
 
 			if (result != null && XmlUtil.instance().parseXmltoString(result, "UTF-8", "r") != null) {
-				if (XmlUtil.instance().parseXmltoString(result, "UTF-8", "r").equals("ok")) {// »ñÈ¡³É¹¦
+				if (XmlUtil.instance().parseXmltoString(result, "UTF-8", "r").equals("ok")) {// ï¿½ï¿½È¡ï¿½É¹ï¿½
 					String magic = XmlUtil.instance().parseXmltoString(result, "UTF-8", "magic");
 					if (magic != null) {
 						Cryptor crypt = null;
@@ -346,7 +309,8 @@ public class SConfig {
 							setMagicSynServer(true);
 							return true;
 						} catch (CryptorException e) {
-							//LOG.e("debug", "SConfig --- ·þÎñÆ÷ÉÏµÄMagic²»ÕýÈ·£¬ÖØÐÂÉèÖÃ");
+							// LOG.e("debug",
+							// "SConfig --- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½Magicï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
 							SConfig.getInstance().initApplicationPSK(getHelpKey());
 							if (setMagic(this.applicationPSK)) {
 								setApplicationPSK(magic);
@@ -359,7 +323,7 @@ public class SConfig {
 					}
 				}
 
-				if (XmlUtil.instance().parseXmltoString(result, "UTF-8", "r").equals("none")) {// Î´ÉèÖÃ
+				if (XmlUtil.instance().parseXmltoString(result, "UTF-8", "r").equals("none")) {// Î´ï¿½ï¿½ï¿½ï¿½
 					if (setMagic(this.applicationPSK))
 						return true;
 				}
@@ -376,22 +340,19 @@ public class SConfig {
 
 		return false;
 	}
-	
+
 	private boolean save(String key, String value) {
 
 		synchronized (dbLock) {
 			Hashtable<String, Object> condition = new Hashtable<String, Object>();
 			condition.put(COL_PRE_KEY, key);
-			Boolean boolean1 = GenDao.getInstance().executeUpdate(
-					TB_PREFERENCE, new String[] { COL_PRE_VALUE },
+			Boolean boolean1 = GenDao.getInstance().executeUpdate(TB_PREFERENCE, new String[] { COL_PRE_VALUE },
 					new Object[] { value }, condition);
 			if (boolean1) {
 				return true;
 			} else {
-				Boolean a = GenDao.getInstance().executeInsert(
-						TB_PREFERENCE,
-						new String[] { COL_PRE_KEY, COL_PRE_VALUE},
-						new Object[] { key, value });
+				Boolean a = GenDao.getInstance().executeInsert(TB_PREFERENCE,
+						new String[] { COL_PRE_KEY, COL_PRE_VALUE }, new Object[] { key, value });
 				if (a) {
 					return true;
 				} else {
@@ -401,6 +362,7 @@ public class SConfig {
 			}
 		}
 	}
+
 	public static void main(String[] args) {
 		System.out.println(SUtil.toSHAString64("123456", null));
 	}

@@ -18,7 +18,7 @@ import com.mx.clent.vo.AnPeersBean;
 import com.mx.clent.vo.Profile;
 
 /**
- * ¹ÜÀíËùÓĞµÄ¹«Ë½Ô¿
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ĞµÄ¹ï¿½Ë½Ô¿
  * 
  * @author tweety
  * 
@@ -51,20 +51,25 @@ public class KeyManager {
 	private static final String DEFAULT_SEED = "2C87BA8BC9A364D8CB0C8AB926039E06";
 
 	/**
-	 * »ñÈ¡½âÃÜÓÃË½Ô¿
+	 * ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë½Ô¿
 	 * 
 	 * @param ctx
 	 * @param name
-	 *            ÃÜÔ¿¶ÔµÄÃû³Æ
+	 *            ï¿½ï¿½Ô¿ï¿½Ôµï¿½ï¿½ï¿½ï¿½
 	 * @param withPrivateKey
-	 *            ÊÇ·ñ°üº¬½âÃÜÓÃË½Ô¿²ÎÊı
-	 * @return ÓÃÓÚ½âÃÜÊı¾İµÄË½Ô¿
+	 *            ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë½Ô¿ï¿½ï¿½ï¿½ï¿½
+	 * @return ï¿½ï¿½ï¿½Ú½ï¿½ï¿½ï¿½ï¿½ï¿½İµï¿½Ë½Ô¿
 	 */
 	public PrivateKey getDecryptKey(String name) throws CryptorException {
 		KeyPair kp = SConfig.getInstance().getProfile().getKeyPair();
 		// KeyPair kp = mRSAKeyMap.get(name);
 		if (kp == null) {
+			System.out.println("user " + name + " kp is null");
 			kp = initRSAKeyPair(name, DEFAULT_SEED);
+		} else {
+			System.out.println("user " + name + " kp isn't null");
+			System.out.println("private length:" + kp.getPrivate().getEncoded().length);
+			System.out.println("public length:" + kp.getPublic().getEncoded().length);
 		}
 
 		return kp == null ? null : kp.getPrivate();
@@ -75,18 +80,12 @@ public class KeyManager {
 
 		try {
 			KeyPairGenerator keygen = KeyPairGenerator.getInstance(KEY_ALGORITHM);
-			// ³õÊ¼»¯Ëæ»ú²úÉúÆ÷
 			SecureRandom secureRandom = new SecureRandom();
 			secureRandom.setSeed(DEFAULT_SEED.getBytes());
-			keygen.initialize(1024, secureRandom);
+			keygen.initialize(2048, secureRandom);
 
 			kp = keygen.genKeyPair();
 			saveKey(peerid, kp);
-			// StorageManager.GetInstance().getUserProfile().keyupdatetime =
-			// System.currentTimeMillis() + "";
-			// StorageManager.GetInstance().getUserProfile().Save();
-			// savePeerKey(name, kp.getPublic());
-			// LOG.System.out("Generate the new Private/Publick KeyPair successful.");
 		} catch (NoSuchAlgorithmException e) {
 			throw new CryptorException(e);
 		}
@@ -108,10 +107,10 @@ public class KeyManager {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// ³õÊ¼»¯Ëæ»ú²úÉúÆ÷
+			// ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 			SecureRandom secureRandom = new SecureRandom();
 			secureRandom.setSeed(DEFAULT_SEED.getBytes());
-			keygen.initialize(1024, secureRandom);
+			keygen.initialize(2048, secureRandom);
 
 			kp = keygen.genKeyPair();
 			saveKey(name, kp);
@@ -136,10 +135,9 @@ public class KeyManager {
 
 		try {
 			KeyPairGenerator keygen = KeyPairGenerator.getInstance(KEY_ALGORITHM);
-			// ³õÊ¼»¯Ëæ»ú²úÉúÆ÷
 			SecureRandom secureRandom = new SecureRandom();
 			secureRandom.setSeed(seed.getBytes());
-			keygen.initialize(1024, secureRandom);
+			keygen.initialize(2048, secureRandom);
 
 			kp = keygen.genKeyPair();
 			saveKey(name, kp);
@@ -156,12 +154,10 @@ public class KeyManager {
 	}
 
 	/**
-	 * »ñÈ¡¼ÓÃÜÓÃ¹«Ô¿
 	 * 
-	 * @param ctx
 	 * @param name
-	 *            ¶Ô·½¹«Ô¿µÄÃû³Æ
-	 * @return ÓÃÓÚ¼ÓÃÜÊı¾İµÄRSA¹«Ô¿
+	 * @return
+	 * @throws CryptorException
 	 */
 	public PublicKey getEncryptKey(String name) throws CryptorException {
 		System.out.println("RSA:" + "getEncryptKey:" + name);
@@ -175,31 +171,23 @@ public class KeyManager {
 
 		System.out.println("RSA:" + "getPeerEncryptKey:" + name);
 		peer = AnPeersBean.getInstance().getUserByPeerID(name);
-		System.out.println("RSA:" + "getPeerEncryptKey:peer:" + peer);
 		if (peer.publicKey != null) {
-			// Êı¾İ¿âÖĞÒÑ¾­´æÔÚ¶Ô·½µÄ¼ÇÂ¼
-			System.out.println("RSA:" + "getPeerEncryptKey:pubkeylength:" + peer.publicKey.getEncoded().length);
 			pkey = peer.publicKey;
 		} else {
-			// Êı¾İ¿âÖĞÕÒ²»µ½¶Ô·½µÄ¼ÇÂ¼£¬ÔòÈ¥·şÎñÆ÷ÇëÇó£¬²¢ÇÒ½«²éÑ¯»ØÀ´µÄ½á¹û±£´æÈëÊı¾İ¿â
-			System.out.println("RSA:" + "getPeerEncryptKey:nopubkey");
 			String pubkey_str;
 			String pubkey_time;
 			byte[] decoded;
 			try {
-				System.out.println("RSA:1");
 				pubkey_str = SPubkey.getInstance().getPubKey(name);
 				pubkey_time = SPubkey.getInstance().getPubTime(name);
 				decoded = Base64.decodeBase64(pubkey_str.getBytes());
 				pkey = PubkeyUtils.decodePublic(decoded, "RSA");
-				// ÓĞ½çÃæÒÔºóÔÙsava
 				AnPeersBean.getInstance().savePeerKey(name, pkey, pubkey_time);
 				System.out.println("RSA:2");
 			} catch (NoSuchAlgorithmException e) {
 				System.out.println("RSA:3");
 				throw new CryptorException(e);
 			} catch (InvalidKeySpecException e) {
-				// ÕâÀï³¢ÊÔÖ±½Ó´Ó´«»ØÀ´µÄÊı×éÖĞ¶ÁÈ¡ÃÜÔ¿
 				try {
 					System.out.println("RSA:4");
 					pubkey_str = SPubkey.getInstance().getPubKey(name);
@@ -222,7 +210,6 @@ public class KeyManager {
 				}
 			} catch (IOException e) {
 				System.out.println("RSA:7");
-				// LOG.e("pubkey", "»ñÈ¡pubkey network error or ioexception ");
 				e.printStackTrace();
 			}
 		}
@@ -234,13 +221,14 @@ public class KeyManager {
 		PublicKey key = null;
 		if (ifUpdatePubkeyPair)
 			key = KeyManager.getInstance().updateSelfEncryptKey();
-		// LOG.d("wjy", "pubkey=======:" + key);
 		String encode_key = new String(Base64.encodeBase64(PubkeyUtils.getEncodedPublic(key)));
-		// LOG.d("wjy", "pubkey=========:" + encode_key);
 		try {
+			System.out.println("update private key:"
+					+ Base64.encodeBase64String(KeyManager.getInstance().getDecryptKey("3").getEncoded()));
+			System.out.println("update public key:"
+					+ Base64.encodeBase64String(KeyManager.getInstance().getEncryptKey("3").getEncoded()));
 			SPubkey.getInstance().postPubKey(encode_key);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -259,7 +247,7 @@ public class KeyManager {
 	}
 
 	/**
-	 * »ñÈ¡ÉÏ´«¹«Ô¿µÄÊ±¼ä
+	 * ï¿½ï¿½È¡ï¿½Ï´ï¿½ï¿½ï¿½Ô¿ï¿½ï¿½Ê±ï¿½ï¿½
 	 * 
 	 * @param peerid
 	 * @return
