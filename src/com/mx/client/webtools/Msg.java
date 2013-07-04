@@ -69,14 +69,14 @@ public class Msg {
 	}
 
 	/*
-	 * ÅĞ¶¨ÊÇ·ñÊÇÒ»¸öºÏ·¨µÄÏûÏ¢
+	 * ï¿½Ğ¶ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 	 */
 	public static boolean isMsg(String sMsg) {
 		return sMsg.startsWith("mime:");
 	}
 
 	/*
-	 * »ñµÃÏûÏ¢µÄÀàĞÍ getTypeOfMsg("mime:txt:abcdefgsdfsdfsdfsd");
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ getTypeOfMsg("mime:txt:abcdefgsdfsdfsdfsd");
 	 */
 	public static int getTypeOfMsg(String sMsg) {
 		if (isMsg(sMsg)) {
@@ -90,9 +90,6 @@ public class Msg {
 		return TYPE_ERROR;
 	}
 
-	/*
-	 * »ñµÃÏûÏ¢µÄÄÚÈİ
-	 */
 	public static String getContentOfMsg(String sMsg) {
 		if (isMsg(sMsg)) {
 			return sMsg.substring(9);
