@@ -11,20 +11,16 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
-import javax.swing.text.StyledEditorKit.BoldAction;
-
 import com.mx.client.db.SQLCommandBuilder.SQLCommandType;
 
 /**
- * �����ѯ��������ʵ�����ݿ����
- * 
  * @author majiajue
  * 
  */
 public class GenDao {
-	private Connection conn = null; // ��ݿ����Ӷ���
-	private PreparedStatement ps = null; // Ԥ�����SQL����ִ�ж���
-	private ResultSet rs = null; // ������
+	private Connection conn = null;
+	private PreparedStatement ps = null;
+	private ResultSet rs = null;
 
 	private static class SingletonHolder {
 		public static final GenDao INSTANCE = new GenDao();
@@ -45,8 +41,7 @@ public class GenDao {
 	 *            SQL参数列表
 	 * @return true-成功/false-失败
 	 */
-	public boolean executeInsert(String tableName, String[] columnName,
-			Object[] param) {
+	public boolean executeInsert(String tableName, String[] columnName, Object[] param) {
 
 		int rowCount = 0; // 保存执行SQL插入数据命令后受影响的行数
 
@@ -55,9 +50,8 @@ public class GenDao {
 			// 获取数据库连接对象
 			this.conn = DBTools.getH2SQLConnection();
 			// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
-			this.ps = this.conn.prepareStatement(SQLCommandBuilder
-					.getInstance().getSQLCommand(SQLCommandType.INSERT,
-							tableName, columnName, param, null));
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder.getInstance().getSQLCommand(SQLCommandType.INSERT,
+					tableName, columnName, param, null));
 
 			// 自动映射SQL参数
 			if (param != null && param.length > 0) {
@@ -91,8 +85,7 @@ public class GenDao {
 	 *            SQL条件列表
 	 * @return true-成功/false-失败
 	 */
-	public boolean executeDelete(String tableName,
-			Hashtable<String, Object> condition) {
+	public boolean executeDelete(String tableName, Hashtable<String, Object> condition) {
 
 		int rowCount = 0; // 保存执行SQL更新命令受影响的行数
 
@@ -101,14 +94,12 @@ public class GenDao {
 			// 获取数据库连接对象
 			this.conn = DBTools.getH2SQLConnection();
 			// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
-			this.ps = this.conn.prepareStatement(SQLCommandBuilder
-					.getInstance().getSQLCommand(SQLCommandType.DELETE,
-							tableName, null, null, condition));
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder.getInstance().getSQLCommand(SQLCommandType.DELETE,
+					tableName, null, null, condition));
 
 			// 自动映射SQL参数
 			if (condition != null && condition.size() > 0) {
-				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
-						.toArray(), this.ps);
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values().toArray(), this.ps);
 			}
 
 			// 执行SQL更新命令并保存返回的受影响行数
@@ -143,8 +134,8 @@ public class GenDao {
 	 *            SQL条件列表
 	 * @return true-成功/false-失败
 	 */
-	public boolean executeUpdate(String tableName, String[] columnName,
-			Object[] param, Hashtable<String, Object> condition) {
+	public boolean executeUpdate(String tableName, String[] columnName, Object[] param,
+			Hashtable<String, Object> condition) {
 
 		int rowCount = 0; // 保存执行SQL更新命令受影响的行数
 
@@ -153,9 +144,8 @@ public class GenDao {
 			// 获取数据库连接对象
 			this.conn = DBTools.getH2SQLConnection();
 			// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
-			this.ps = this.conn.prepareStatement(SQLCommandBuilder
-					.getInstance().getSQLCommand(SQLCommandType.UPDATE,
-							tableName, columnName, param, condition));
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder.getInstance().getSQLCommand(SQLCommandType.UPDATE,
+					tableName, columnName, param, condition));
 
 			// 自动映射SQL参数
 			if (param != null && param.length > 0) {
@@ -208,18 +198,16 @@ public class GenDao {
 	 * @param condition
 	 * @return
 	 */
-	public String getValue(String tableName, String[] columnName,
-			String valueColumn, Hashtable<String, Object> condition) {
+	public String getValue(String tableName, String[] columnName, String valueColumn,
+			Hashtable<String, Object> condition) {
 		this.conn = DBTools.getH2SQLConnection();
 		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
 		String value = "";
 		try {
-			this.ps = this.conn.prepareStatement(SQLCommandBuilder
-					.getInstance().getSQLCommand(SQLCommandType.SELECT,
-							tableName, columnName, null, condition));
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder.getInstance().getSQLCommand(SQLCommandType.SELECT,
+					tableName, columnName, null, condition));
 			if (condition != null && condition.size() > 0) {
-				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
-						.toArray(), this.ps);
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values().toArray(), this.ps);
 			}
 
 			// 执行SQL更新命令并保存取回的结果集对象
@@ -246,21 +234,16 @@ public class GenDao {
 	 * @param condition
 	 * @return
 	 */
-	public String getOrderByValue(String tableName, String[] columnName,
-			String valueColumn, Hashtable<String, Object> condition,
-			String orderBySQL) {
+	public String getOrderByValue(String tableName, String[] columnName, String valueColumn,
+			Hashtable<String, Object> condition, String orderBySQL) {
 		this.conn = DBTools.getH2SQLConnection();
 		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
 		String value = "";
 		try {
-			this.ps = this.conn
-					.prepareStatement(SQLCommandBuilder.getInstance()
-							.getOrderBySQLCommand(SQLCommandType.SELECT,
-									tableName, columnName, null, condition,
-									orderBySQL));
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder.getInstance().getOrderBySQLCommand(
+					SQLCommandType.SELECT, tableName, columnName, null, condition, orderBySQL));
 			if (condition != null && condition.size() > 0) {
-				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
-						.toArray(), this.ps);
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values().toArray(), this.ps);
 			}
 
 			// 执行SQL更新命令并保存取回的结果集对象
@@ -287,18 +270,16 @@ public class GenDao {
 	 * @param condition
 	 * @return
 	 */
-	public Blob getBlobValue(String tableName, String[] columnName,
-			String valueColumn, Hashtable<String, Object> condition) {
+	public Blob getBlobValue(String tableName, String[] columnName, String valueColumn,
+			Hashtable<String, Object> condition) {
 		this.conn = DBTools.getH2SQLConnection();
 		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
 		Blob blob = null;
 		try {
-			this.ps = this.conn.prepareStatement(SQLCommandBuilder
-					.getInstance().getSQLCommand(SQLCommandType.SELECT,
-							tableName, columnName, null, condition));
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder.getInstance().getSQLCommand(SQLCommandType.SELECT,
+					tableName, columnName, null, condition));
 			if (condition != null && condition.size() > 0) {
-				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
-						.toArray(), this.ps);
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values().toArray(), this.ps);
 			}
 
 			// 执行SQL更新命令并保存取回的结果集对象
@@ -359,8 +340,7 @@ public class GenDao {
 	 *            SQL参数列表
 	 * @return true-成功/false-失败
 	 */
-	public int executeInsertRId(String tableName, String[] columnName,
-			Object[] param) {
+	public int executeInsertRId(String tableName, String[] columnName, Object[] param) {
 
 		int rowId = 0; // 保存执行SQL插入数据命令后受影响的行数
 
@@ -370,9 +350,8 @@ public class GenDao {
 			this.conn = DBTools.getH2SQLConnection();
 			// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
 			this.ps = this.conn.prepareStatement(
-					SQLCommandBuilder.getInstance().getSQLCommand(
-							SQLCommandType.INSERT, tableName, columnName,
-							param, null), Statement.RETURN_GENERATED_KEYS);
+					SQLCommandBuilder.getInstance().getSQLCommand(SQLCommandType.INSERT, tableName, columnName, param,
+							null), Statement.RETURN_GENERATED_KEYS);
 
 			// 自动映射SQL参数
 			if (param != null && param.length > 0) {

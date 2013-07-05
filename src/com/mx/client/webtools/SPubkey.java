@@ -17,7 +17,7 @@ public class SPubkey {
 
 	public String getPubKey(String uid) throws IOException {
 		/**
-		 * 返回的xml: <b><r>ok</r><pubkey>...</pubkey></b>
+		 * 杩斿洖鐨剎ml: <b><r>ok</r><pubkey>...</pubkey></b>
 		 */
 
 		String xml = ConnectionUtils.getInstance().getRequest(
@@ -36,7 +36,7 @@ public class SPubkey {
 
 	public String postPubKey(String key) throws Exception {
 		/**
-		 * 返回的xml: <b><r>ok</r></b>
+		 * 杩斿洖鐨剎ml: <b><r>ok</r></b>
 		 */
 		HashMap<String, Object> values = new HashMap<String, Object>();
 		values.put("pubkey", key);
@@ -45,7 +45,7 @@ public class SPubkey {
 			String xml = ConnectionUtils.getInstance().postRequest(
 					"/pubkey/" + SConfig.getInstance().getSessionKey()
 							+ "/call.xml", values);
-			System.out.println("公匙==提交" + xml);
+			System.out.println("鍏寵==鎻愪氦" + xml);
 			return XmlUtil.instance().parseXmltoString(xml, "UTF-8", "r");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
