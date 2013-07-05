@@ -170,23 +170,13 @@ public class MainFrame extends BaseFrame {
 					if (e.getClickCount() == 2) {
 						String peerid = ((JavaLocation) sampleJList
 								.getSelectedValue()).getPeerId();
-						System.out.println("peerid===" + peerid);
-						ConnectionUtils.getInstance().getPubkey(peerid);
-						String mMimeSend = "mime:txt:" + "helloworld!";
-						String mecode = "";
-						try {
-							mecode = RSAEncryptor.getInstance()
-									.encryptBase64Encode(mMimeSend.getBytes(),
-											peerid);
-						} catch (CryptorException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						Map<String, Object> map = new HashMap<String, Object>();
-						map.put("duid", peerid);
-						map.put("msg", mecode);
-						ConnectionUtils.getInstance().postTxtMessage(map);
-						System.out.println();
+						MsgUser user  =new MsgUser();
+						user.setUserID(peerid);
+						user.setUserName(peerid);
+						TalkFrame frame = new TalkFrame(user);
+						frame.setVisible(true);
+						
+//						System.out.println("peerid===" + peerid);
 					}
 				}
 			});

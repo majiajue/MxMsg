@@ -179,6 +179,8 @@ public class NettyClientHandler extends SimpleChannelUpstreamHandler {
 					AncodeFactory.getInstance().LastMsgIdStatus = DBDataSQL.MSGID_STATUS_GOT;
 					ProcessingMsg(xmlMap);
 				}
+				
+				ConnectionUtils.getInstance().delTxtMessage(xmlMap.get("msgid"));
 			}
 		//}
 	}

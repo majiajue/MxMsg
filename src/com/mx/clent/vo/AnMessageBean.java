@@ -260,23 +260,18 @@ public class AnMessageBean {
 
 		Hashtable<String, Object> table = new Hashtable<String, Object>();
 		table.put(DBDataSQL.COL_MES_PEERID, peerid);
-		boolean b = GenDao.getInstance().executeUpdate(
+//		boolean b = GenDao.getInstance().executeUpdate(
+//				DBDataSQL.TB_MESSAGE,
+//				columns,
+//				new Object[] { peerid, direction, msg, msg_extra, msgtime,
+//						msgType, status, unread }, null);
+		
+		int a = GenDao.getInstance().executeInsertRId(
 				DBDataSQL.TB_MESSAGE,
 				columns,
 				new Object[] { peerid, direction, msg, msg_extra, msgtime,
-						msgType, status, unread }, null);
-		if (!b) {
-
-			int a = GenDao.getInstance().executeInsertRId(
-					DBDataSQL.TB_MESSAGE,
-					columns,
-					new Object[] { peerid, direction, msg, msg_extra, msgtime,
-							msgType, status, unread });
-			return a;
-		} else {
-
-			return 0;
-		}
+						msgType, status, unread });
+	   return a;
 
 	}
 }

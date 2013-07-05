@@ -62,8 +62,8 @@ public class ConnectionUtils {
 		mHttpParams = new BasicHttpParams();
 		HttpProtocolParams.setVersion(mHttpParams, HttpVersion.HTTP_1_1);
 		HttpProtocolParams.setContentCharset(mHttpParams, HTTP.UTF_8);
-		HttpConnectionParams.setConnectionTimeout(mHttpParams, 3000); // Ã»ÓĞ½¨Á¢Á¬½Ó³¬Ê±£¬ÉèÖÃ³¬Ê±Ê±¼ä£¬1000ºÁÃë=1Ãë
-		HttpConnectionParams.setSoTimeout(mHttpParams, 12000); // Ã»ÓĞÊÕµ½
+		HttpConnectionParams.setConnectionTimeout(mHttpParams, 3000); // Ã»ï¿½Ğ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó³ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ã³ï¿½Ê±Ê±ï¿½ä£¬1000ï¿½ï¿½ï¿½ï¿½=1ï¿½ï¿½
+		HttpConnectionParams.setSoTimeout(mHttpParams, 12000); // Ã»ï¿½ï¿½ï¿½Õµï¿½
 		KeyStore trustStore;
 		try {
 			trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
@@ -284,7 +284,7 @@ public class ConnectionUtils {
 	}
 
 	/**
-	 * «@È¡Â“ÀMÈË
+	 * ï¿½@È¡Â“ï¿½Mï¿½ï¿½
 	 * 
 	 * @return
 	 */
@@ -370,27 +370,27 @@ public class ConnectionUtils {
 		httpclient.getParams().setParameter("http.connection-manager.timeout",300000000L);
 
 //
-//		// »ñµÃÃÜ³×¿â
+//		// ï¿½ï¿½ï¿½ï¿½Ü³×¿ï¿½
 //		KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
 //		// FileInputStream instream = new FileInputStream(new File("D:/zzaa"));
-//		// ÃÜ³×¿âµÄÃÜÂë
+//		// ï¿½Ü³×¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //		trustStore.load(null, null);
-//		// ×¢²áÃÜ³×¿â
+//		// ×¢ï¿½ï¿½ï¿½Ü³×¿ï¿½
 //		SSLSocketFactory socketFactory = new AnSSLSocketFactory(trustStore);
-//		// ²»Ğ£ÑéÓòÃû
+//		// ï¿½ï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 //		socketFactory.setHostnameVerifier(AnSSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
 //		Scheme sch = new Scheme("https", 443, socketFactory);
 //		httpclient.getConnectionManager().getSchemeRegistry().register(sch);
 	    
 		
-		// »ñµÃHttpGet¶ÔÏó
+		// ï¿½ï¿½ï¿½HttpGetï¿½ï¿½ï¿½ï¿½
 		HttpGet httpGet = null;
 		
 		httpGet = new HttpGet(url);
 	
-		// ·¢ËÍÇëÇó
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 		HttpResponse response = httpclient.execute(httpGet);
-		// Êä³ö·µ»ØÖµ
+		// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
 		InputStream is = response.getEntity().getContent();
 		BufferedReader br = new BufferedReader(new InputStreamReader(is));
 		StringBuffer sb = new StringBuffer("");
@@ -404,7 +404,7 @@ public class ConnectionUtils {
        return sb.toString();
 	}
 	/**
-	 * ÓÃ»§»ñÈ¡httpcliectÁ´½Ó
+	 * ï¿½Ã»ï¿½ï¿½ï¿½È¡httpcliectï¿½ï¿½ï¿½ï¿½
 	 * @param base
 	 * @return
 	 */
@@ -469,6 +469,64 @@ public class ConnectionUtils {
 				UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(
 						postParameters, "UTF-8");
 				request.setEntity(formEntity);
+				HttpResponse response = client.execute(request);
+				in = new BufferedReader(new InputStreamReader(response.getEntity()
+						.getContent()));
+				StringBuffer sb = new StringBuffer("");
+				String line = "";
+				String NL = System.getProperty("line.separator");
+				while ((line = in.readLine()) != null) {
+					sb.append(line + NL);
+				}
+				in.close();
+
+				System.out.println(sb.toString());
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ClientProtocolException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} finally {
+				if (in != null) {
+					try {
+						in.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+				if (client != null && client.getConnectionManager() != null) {
+					client.getConnectionManager().shutdown();
+				}
+			}
+		  
+	  }
+	  
+/**
+ * å¤„ç†ä¿¡æ¯	  
+ * @param MsgId
+ */
+ public  void delTxtMessage(String MsgId){
+		  
+		  BufferedReader in = null;
+		  String url = "https://www.han2011.com/delmessage/" + SConfig.getInstance().getProfile().getSession() + "/" + MsgId
+					+ "/call.aspx";;
+			
+		  PoolingClientConnectionManager connectionManager=new PoolingClientConnectionManager();
+
+			connectionManager.setMaxTotal(1);
+
+			HttpClient client = new DefaultHttpClient(connectionManager);
+			client = wrapClient(client);
+			client.getParams().setParameter("http.socket.timeout",3000);
+			client.getParams().setParameter("http.connection.timeout",3000);
+			client.getParams().setParameter("http.connection-manager.timeout",300000000L);
+			System.out.println("url" + url);
+			try {
+				HttpPost request = new HttpPost(url);
 				HttpResponse response = client.execute(request);
 				in = new BufferedReader(new InputStreamReader(response.getEntity()
 						.getContent()));

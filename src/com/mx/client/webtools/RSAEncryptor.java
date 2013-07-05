@@ -128,7 +128,8 @@ public class RSAEncryptor {
 	public synchronized byte[] decrypt(byte[] data, String keynick) throws CryptorException {
 		// 对数据解密
 		Cipher cipher = getDecryptCipher(keynick);
-		int blockSize = cipher.getBlockSize();
+		PublicKey key = KeyManager.getInstance().getEncryptKey(keynick);
+		int blockSize = getBlockSize(cipher.getBlockSize(), key);
 		byte[] bBuffer = new byte[blockSize];
 		int nLoop = data.length / blockSize;
 

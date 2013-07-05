@@ -5,16 +5,33 @@ import java.awt.Image;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
 
+import org.h2.table.Table;
+
 import com.mx.clent.vo.MsgUser;
+import com.mx.client.db.DBDataSQL;
+import com.mx.client.db.GenDao;
 import com.mx.client.msg.ShockMsg;
+import com.mx.client.webtools.ConnectionUtils;
+import com.mx.client.webtools.CryptorException;
+import com.mx.client.webtools.RSAEncryptor;
+import com.mx.client.webtools.SConfig;
+import com.sun.xml.internal.ws.resources.SenderMessages;
 
 
 
@@ -500,8 +517,28 @@ public class TalkFrame extends BaseFrame implements Runnable{
 	    doc=showMsg_jTextPane.getStyledDocument();
 	    getContentPane().add(glassBox1, java.awt.BorderLayout.CENTER);
 	    this.pack();
+		new  SwingWorker<Void, Void>(){
+
+			@Override
+			protected Void doInBackground() throws Exception {
+				// TODO Auto-generated method stub
+				  Timer timer = new Timer();     
+				  timer.schedule(new MessageRecived(), 1000, 5000);
+			return null;
+				
+			
+			}
+			@Override
+			protected void done() {
+				// TODO Auto-generated method stub
+				
+				super.done();
+			}
+			
+			  
+		  }.execute(); 
     }// </editor-fold>    
-    
+
     
     private void insert(FontAttrib userAttrib,FontAttrib textAttrib) {
     	  try { // 插入文本
@@ -623,7 +660,7 @@ public class TalkFrame extends BaseFrame implements Runnable{
     }    
     
     public void sendTalkMessage(){
-    	String msgStr=sendMsg_jTextPane.getText();
+    	final String msgStr=sendMsg_jTextPane.getText();
     	if(msgStr.length()==0){
     		javax.swing.JOptionPane.showMessageDialog(this,"聊天信息不能为空!!..");
     	}else{
@@ -633,7 +670,19 @@ public class TalkFrame extends BaseFrame implements Runnable{
         	//msg.setTalkMsg(msgStr);
         	//ConnectSession connectSession=ConnectSession.getInstance();
         	//connectSession.sendTextMessage(msg);
-        	showMsg(owerUser.getUserName(),msgStr);
+        	
+        	new SwingWorker<Void, Void>(){
+
+				@Override
+				protected Void doInBackground() throws Exception {
+					// TODO Auto-generated method stub
+					showMsg(SConfig.getInstance().getProfile().myPeerBean.PPeerid,msgStr);
+					sendMessage(msgStr);
+					return null;
+				}
+        		
+        	}.execute();
+        	
         	sendMsg_jTextPane.setText("");
     	}
     }
@@ -649,6 +698,14 @@ public class TalkFrame extends BaseFrame implements Runnable{
 		this.insert(userInfoFontAttrib, textFontAttrib);
     }
    
+    public void showRecivedMsg(String peak,String msg,String date){
+    	SimpleDateFormat  sf   =new SimpleDateFormat("HH:mm:ss");//这里的格式自己按需要写   
+		Date d = new Date(Long.parseLong(date));	
+		userInfoFontAttrib.setText(peak+"  "+sf.format(d));
+		System.out.println("textInfo:"+msg);
+		textFontAttrib.setText(msg);
+		this.insert(userInfoFontAttrib, textFontAttrib);
+    }
 
  
     
@@ -741,7 +798,51 @@ public class TalkFrame extends BaseFrame implements Runnable{
 	public static void setOwerUser(MsgUser owerUser) {
 		TalkFrame.owerUser = owerUser;
 	}
+	
+	class MessageRecived extends TimerTask{
+
+		@Override
+		public void run() {
+			// TODO Auto-generated method stub
+			Hashtable<String, Object>  condition = new Hashtable<String, Object>();
+			condition.put(DBDataSQL.COL_MES_PEERID, friend.getUserID());
+			System.out.println("peerid"+friend.getUserID());
+			condition.put(DBDataSQL.COL_MES_UNREAD, "false");
+			List<String> msg = GenDao.getInstance().getArrayValue(DBDataSQL.TB_MESSAGE.toUpperCase(), new String[]{DBDataSQL.COL_MES_MSG.toLowerCase()}, DBDataSQL.COL_MES_MSG.toUpperCase(), condition);
+			System.out.println("msg"+msg);
+			List<String> msgtime = GenDao.getInstance().getArrayValue(DBDataSQL.TB_MESSAGE, new String[]{DBDataSQL.COL_MES_MSGTIME}, DBDataSQL.COL_MES_MSGTIME, condition);
+			for (int i = 0; i < msg.size(); i++) {
+				String m = msg.get(i);
+				String time = msgtime.get(i);
+				showRecivedMsg(friend.getUserID(), m, time);
+			}
+			if(msg.size()>0)
+			GenDao.getInstance().executeUpdate(DBDataSQL.TB_MESSAGE.toUpperCase(), new String[]{DBDataSQL.COL_MES_UNREAD.toUpperCase()}, new Object[]{"true"},condition);
+		}
+		
+		
+	}
+	
+ public void sendMessage(String msg){
+		ConnectionUtils.getInstance().getPubkey(friend.getUserID());
+		String mMimeSend = "mime:txt:" + msg;
+		String mecode = "";
+		try {
+			mecode = RSAEncryptor.getInstance()
+					.encryptBase64Encode(mMimeSend.getBytes(),
+							friend.getUserID());
+		} catch (CryptorException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Map<String, Object> map = new HashMap<String, Object>();
+		map.put("duid", friend.getUserID());
+		map.put("msg", mecode);
+		ConnectionUtils.getInstance().postTxtMessage(map);
+		System.out.println("发送信息聊~~~~~~");
+	 
+ }
    public static void main(String[] args) {
-	 new TalkFrame(new MsgUser()).setVisible(true);
-}
+	 
+   }
 }

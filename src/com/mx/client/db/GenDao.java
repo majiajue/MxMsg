@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
@@ -402,5 +403,43 @@ public class GenDao {
 		return rowId;
 
 	}
+
+	/**
+	 * 获取某一字段条记录的值
+	 * 
+	 * @param tableName
+	 * @param columnName
+	 * @param condition
+	 * @return
+	 */
+	public List<String> getArrayValue(String tableName, String[] columnName,
+			String valueColumn, Hashtable<String, Object> condition) {
+		this.conn = DBTools.getH2SQLConnection();
+		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
+		String value = "";
+		List<String> valList = new ArrayList<String>();
+		try {
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder
+					.getInstance().getSQLCommand(SQLCommandType.SELECT,
+							tableName, columnName, null, condition));
+			if (condition != null && condition.size() > 0) {
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
+						.toArray(), this.ps);
+			}
+
+			// 执行SQL更新命令并保存取回的结果集对象
+		
+			this.rs = this.ps.executeQuery();
+			while (rs.next()) {
+				valList.add(rs.getString(valueColumn));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+
+		// 自动映射SQL参数
+		return valList;
+	};
 
 }

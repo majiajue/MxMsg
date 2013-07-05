@@ -188,4 +188,58 @@ public final class SQLParamHelper {
 		 return pojo;
 	 }
 	 
+		public static <T> T SQLParam2JavaParam(String[] classColumn, Class<?> pojoClass, ResultSet rs) {
+			  
+			 // 定义泛型 pojo 实例
+			 T pojo = null;
+			 
+			 try {
+				 
+				 // 生成单个泛型 pojo 实例
+				 pojo = (T)pojoClass.newInstance();
+				 
+				 // 遍历数据集的每一列，通过共同遵守的Pascal命名规则反射查找并执行对应 
+				 // pojo 类的赋值(getter)方法以实现结果集到pojo泛型集合的自动映射
+				 for (int i = 1; i <= classColumn.length; i++) {
+		
+					 // 取得第i列列名
+					 String setMethodName = classColumn[i];
+					 // 通过命名规则处理第i列列名,取得 pojo 中对应字段的取值(setter)方法名
+					 setMethodName = "set"
+						+ setMethodName.substring(0, 1).toUpperCase()
+						+ setMethodName.substring(1);
+					 // 取得第i列的数据类型
+					
+					 // 当前反射方法
+					 Method method = null;
+					 // 对应第i列的SQL数据类型人工映射到对应的Java数据类型，
+					 // 并反射执行该列的在 pojo 中对应属性的 setter 方法完成赋值
+					
+						 method = pojoClass.getMethod(setMethodName, String.class);
+						 method.invoke(pojo, rs.getString(i));
+					 
+				 }
+			 } catch (InstantiationException ex) {
+				 System.err.println("异常信息：参数错误，指定的类对象无法被 Class 类中的 newInstance 方法实例化！\r\n" + ex.getMessage());
+			 } catch (NoSuchMethodException ex) {
+				 System.err.println("异常信息：参数错误，无法找到某一特定的方法！\r\n" + ex.getMessage());
+			 } catch (IllegalAccessException ex) {
+				 System.err.println("异常信息：参数错误，对象定义无法访问，无法反射性地创建一个实例！\r\n" + ex.getMessage());
+			 } catch (InvocationTargetException ex) {
+				 System.err.println("异常信息：参数错误，由调用方法或构造方法所抛出异常的经过检查的异常！\r\n" + ex.getMessage());
+			 } catch (SecurityException ex) {
+				 System.err.println("异常信息：参数错误，安全管理器检测到安全侵犯！\r\n" + ex.getMessage());
+			 } catch (IllegalArgumentException ex) {
+				 System.err.println("异常信息：参数错误，向方法传递了一个不合法或不正确的参数！\r\n" + ex.getMessage());
+			 } catch (SQLException ex) {
+				 System.err.println("异常信息：参数错误，获取数据库连接对象错误！\r\n" + ex.getMessage());
+			 } catch (Exception ex) {
+			 	 System.err.println("异常信息：程序兼容问题！\r\n" + ex.getMessage());
+			 }
+				 
+			 // 返回结果
+			 return pojo;
+		 }
+		 
+	 
 }
