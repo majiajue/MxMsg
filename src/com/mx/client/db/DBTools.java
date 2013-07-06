@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 /**
- * ��ݿ����ӹ�����
+ * 锟斤拷菘锟斤拷锟斤拷庸锟斤拷锟斤拷锟�
  * 
  * @author majiajue
  * 
@@ -17,15 +17,15 @@ public class DBTools {
 	private static Statement statement = null;
 	private static ResultSet resultSet = null;
 	private static Connection connection = null;
-	private static String H2_URL = "jdbc:h2:/data/MX;";// ��ݿ����ӵ�ַ
-	private static final String H2_DRIVER = "org.h2.Driver"; // H2 ��
-	private static final String H2_USERNAME = "sa";// ��ݿ��û���
-	private static final String H2_PASSWORD = "";// ��ݿ�����
+	private static String H2_URL = "jdbc:h2:/data/MX;";// 锟斤拷菘锟斤拷锟斤拷拥锟街�
+	private static final String H2_DRIVER = "org.h2.Driver"; // H2 锟斤拷
+	private static final String H2_USERNAME = "sa";// 锟斤拷菘锟斤拷没锟斤拷锟�
+	private static final String H2_PASSWORD = "";// 锟斤拷菘锟斤拷锟斤拷锟�
 
 	/**
-	 * ��ȡH2SQL��ݿ�����
+	 * 锟斤拷取H2SQL锟斤拷菘锟斤拷锟斤拷锟�
 	 * 
-	 * @return ��ݿ������
+	 * @return 锟斤拷菘锟斤拷锟斤拷锟斤拷
 	 */
 
 	public static Connection getH2SQLConnection() {
@@ -37,7 +37,7 @@ public class DBTools {
 		}
 		Connection conn = null;
 		try {
-			// �Զ�����������ʵ�����Զ�����DriverManager��ע����
+			// 锟皆讹拷锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷实锟斤拷锟斤拷锟皆讹拷锟斤拷锟斤拷DriverManager锟斤拷注锟斤拷锟斤拷
 			conn = DriverManager.getConnection(H2_URL, H2_USERNAME, H2_PASSWORD);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -48,7 +48,7 @@ public class DBTools {
 	}
 
 	/**
-	 * ִ��
+	 * 执锟斤拷
 	 * 
 	 * @param sql
 	 * @throws SQLException
@@ -61,7 +61,7 @@ public class DBTools {
 			// statement.execute(sql);
 			int a = statement.executeUpdate(sql);
 			System.out.println(a);
-			System.out.println("ִ�гɹ�");
+			System.out.println("执锟叫成癸拷");
 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -146,7 +146,7 @@ public class DBTools {
 	}
 
 	/**
-	 * 初始化密讯的数据库结构
+	 * 鍒濆鍖栧瘑璁殑鏁版嵁搴撶粨鏋�
 	 * 
 	 * @param userId
 	 * @throws SQLException

@@ -154,11 +154,10 @@ public class RSAEncryptor {
 		Cipher cipher = getDecryptCipher(keynick);
 		PublicKey key = KeyManager.getInstance().getEncryptKey(keynick);
 		int blockSize = getBlockSize(cipher.getBlockSize(), key);
-<<<<<<< HEAD
-=======
+
 		System.out.println("decrypt blockSize:" + blockSize);
 		System.out.println("keynick:" + keynick);
->>>>>>> 5875410dce950b2e346c84bf736d7bb55f308f3b
+
 		byte[] bBuffer = new byte[blockSize];
 		int nLoop = data.length / blockSize;
 

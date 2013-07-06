@@ -64,7 +64,7 @@ public class BaseDao<T> implements IBaseDao<T> {
 			rowCount = this.ps.executeUpdate();
 			 
 		} catch (SQLException ex) {
-			
+			ex.printStackTrace();
 			System.err.println("异常信息：执行SQL添加命令时发生错误！\r\n" + ex.getMessage());
 			 
 	 	 } finally {

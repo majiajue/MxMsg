@@ -14,6 +14,7 @@ import org.jboss.netty.util.CharsetUtil;
 import com.mx.client.db.DBDataSQL;
 import com.mx.client.msg.MessagerHandler;
 import com.mx.client.msg.TextHandler;
+import com.mx.client.webtools.ConnectionUtils;
 import com.mx.client.webtools.XmlUtil;
 
 public class NettyClientHandler extends SimpleChannelUpstreamHandler {
@@ -178,17 +179,17 @@ public class NettyClientHandler extends SimpleChannelUpstreamHandler {
 					// ack已经发过了，难道服务器没收到，重连，或者再发一个呢？
 					break;
 				}
-<<<<<<< HEAD
+
 				
 				ConnectionUtils.getInstance().delTxtMessage(xmlMap.get("msgid"));
-=======
+
 			} else {
 				// 如果msgid不同，不管上个msgid的状态如何，进行一个全新的处理
 				// Log.v("netty", "DataDefine.else");
 				AncodeFactory.getInstance().LastMsgId = xmlMap.get("msgid");
 				AncodeFactory.getInstance().LastMsgIdStatus = DBDataSQL.MSGID_STATUS_GOT;
 				ProcessingMsg(xmlMap);
->>>>>>> 5875410dce950b2e346c84bf736d7bb55f308f3b
+
 			}
 		}
 		// }

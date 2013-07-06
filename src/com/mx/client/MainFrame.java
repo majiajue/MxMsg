@@ -177,7 +177,7 @@ public class MainFrame extends BaseFrame {
 				public void mouseClicked(MouseEvent e) {
 					// TODO Auto-generated method stub
 					if (e.getClickCount() == 2) {
-<<<<<<< HEAD
+
 						String peerid = ((JavaLocation) sampleJList
 								.getSelectedValue()).getPeerId();
 						MsgUser user  =new MsgUser();
@@ -187,24 +187,24 @@ public class MainFrame extends BaseFrame {
 						frame.setVisible(true);
 						
 //						System.out.println("peerid===" + peerid);
-=======
-						String peerid = ((JavaLocation) sampleJList.getSelectedValue()).getPeerId();
-						System.out.println("peerid===" + peerid);
-						ConnectionUtils.getInstance().getPubkey(peerid);
-						String mMimeSend = "mime:txt:" + "helloworld!";
-						String mecode = "";
-						try {
-							mecode = RSAEncryptor.getInstance().encryptBase64Encode(mMimeSend.getBytes(), peerid);
-						} catch (CryptorException e1) {
-							// TODO Auto-generated catch block
-							e1.printStackTrace();
-						}
-						Map<String, Object> map = new HashMap<String, Object>();
-						map.put("duid", peerid);
-						map.put("msg", mecode);
-						ConnectionUtils.getInstance().postTxtMessage(map);
-						System.out.println();
->>>>>>> 5875410dce950b2e346c84bf736d7bb55f308f3b
+
+//						String peerid = ((JavaLocation) sampleJList.getSelectedValue()).getPeerId();
+//						System.out.println("peerid===" + peerid);
+//						ConnectionUtils.getInstance().getPubkey(peerid);
+//						String mMimeSend = "mime:txt:" + "helloworld!";
+//						String mecode = "";
+//						try {
+//							mecode = RSAEncryptor.getInstance().encryptBase64Encode(mMimeSend.getBytes(), peerid);
+//						} catch (CryptorException e1) {
+//							// TODO Auto-generated catch block
+//							e1.printStackTrace();
+//						}
+//						Map<String, Object> map = new HashMap<String, Object>();
+//						map.put("duid", peerid);
+//						map.put("msg", mecode);
+//						ConnectionUtils.getInstance().postTxtMessage(map);
+//						System.out.println();
+
 					}
 				}
 			});

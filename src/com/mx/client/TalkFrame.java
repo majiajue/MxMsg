@@ -37,7 +37,7 @@ import com.sun.xml.internal.ws.resources.SenderMessages;
 
 public class TalkFrame extends BaseFrame implements Runnable{
     
-	public com.mx.clent.vo.MsgUser friend;  //ÁÄÌìµÄ¶Ô·½µÄQQ
+	public com.mx.clent.vo.MsgUser friend;  //èŠå¤©çš„å¯¹æ–¹çš„QQ
 	public static com.mx.clent.vo.MsgUser owerUser;
 	private TalkFrame qqTalkFrame;
     private boolean isFileSndOrGeting=false;
@@ -56,7 +56,7 @@ public class TalkFrame extends BaseFrame implements Runnable{
 
                        
     private void initComponents() {
-    	changeTile("Óë "+friend.getUserName()+"  ½»Ì¸ÖĞ...");
+    	changeTile("ä¸ "+friend.getUserName()+"  äº¤è°ˆä¸­...");
     	//intSubstance();
     	//Image icon=ResourcesManagement.getImage("icon/message.gif");
         //this.setIconImage(icon);
@@ -507,13 +507,13 @@ public class TalkFrame extends BaseFrame implements Runnable{
         
         textFontAttrib.setSize(22);
         textFontAttrib.setColor(new Color(255, 0, 0));
-        textFontAttrib.setName("ËÎÌå");
+        textFontAttrib.setName("å®‹ä½“");
         textFontAttrib.setStyle(1);
 	    sendMsg_jTextPane.setCharacterAttributes(textFontAttrib.getAttrSet(), true);
 	    
 	    userInfoFontAttrib.setSize(14);
 	    userInfoFontAttrib.setColor(new Color(0, 0, 255));
-	    userInfoFontAttrib.setName("ËÎÌå");
+	    userInfoFontAttrib.setName("å®‹ä½“");
 	    doc=showMsg_jTextPane.getStyledDocument();
 	    getContentPane().add(glassBox1, java.awt.BorderLayout.CENTER);
 	    this.pack();
@@ -523,7 +523,7 @@ public class TalkFrame extends BaseFrame implements Runnable{
 			protected Void doInBackground() throws Exception {
 				// TODO Auto-generated method stub
 				  Timer timer = new Timer();     
-				  timer.schedule(new MessageRecived(), 1000, 5000);
+				  timer.schedule(new MessageRecived(), 1000, 1000);
 			return null;
 				
 			
@@ -541,7 +541,7 @@ public class TalkFrame extends BaseFrame implements Runnable{
 
     
     private void insert(FontAttrib userAttrib,FontAttrib textAttrib) {
-    	  try { // ²åÈëÎÄ±¾
+    	  try { // æ’å…¥æ–‡æœ¬
     		  doc.insertString(doc.getLength(), userAttrib.getText()+"\r\n", userAttrib.getAttrSet());
     		  doc.insertString(doc.getLength(),    "    "+textAttrib.getText()+"\r\n", textAttrib.getAttrSet());
     	  } catch (BadLocationException e) {
@@ -550,7 +550,7 @@ public class TalkFrame extends BaseFrame implements Runnable{
     	 }
 
 
-	//Ñ¡ÔñÎÄ¼ş»¹»ØÎÄ¼şµÄ¶ÔÏó
+	//é€‰æ‹©æ–‡ä»¶è¿˜å›æ–‡ä»¶çš„å¯¹è±¡
     private File slecetFile(){
 		javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
 		fileChooser.showOpenDialog(this);
@@ -583,7 +583,7 @@ public class TalkFrame extends BaseFrame implements Runnable{
 
     /**
      * 
-     * @param ·¢ËÍÕğ¶¯ÏûÏ¢
+     * @param å‘é€éœ‡åŠ¨æ¶ˆæ¯
      */
     private void shock_ButtonMouseClicked(java.awt.event.MouseEvent evt) {
     	if(friend.isOnline()){
@@ -594,13 +594,13 @@ public class TalkFrame extends BaseFrame implements Runnable{
         	//FrameEarthquakeCenter dec = new FrameEarthquakeCenter (this);
         	//dec.startShake();
     	}else{
-    		javax.swing.JOptionPane.showMessageDialog(this,"ÄúµÄºÃÓÑÃ»ÔÚÏß»òÕßÒşÉí£¡");
+    		javax.swing.JOptionPane.showMessageDialog(this,"æ‚¨çš„å¥½å‹æ²¡åœ¨çº¿æˆ–è€…éšèº«ï¼");
     	}
     	
     }                                         
 
     private void sendImage_jButtonMouseClicked(java.awt.event.MouseEvent evt) {                                               
-// TODO ½«ÔÚ´Ë´¦Ìí¼ÓÄúµÄ´¦Àí´úÂë£º
+// TODO å°†åœ¨æ­¤å¤„æ·»åŠ æ‚¨çš„å¤„ç†ä»£ç ï¼š
     }                                              
 
     /**
@@ -613,38 +613,38 @@ public class TalkFrame extends BaseFrame implements Runnable{
     }                                              
 
     private void remoteHlep_ButtonMouseClicked(java.awt.event.MouseEvent evt) {                                               
-// TODO ½«ÔÚ´Ë´¦Ìí¼ÓÄúµÄ´¦Àí´úÂë£º
+// TODO å°†åœ¨æ­¤å¤„æ·»åŠ æ‚¨çš„å¤„ç†ä»£ç ï¼š
     }                                              
 
     private void qqMusic_ButtonMouseClicked(java.awt.event.MouseEvent evt) {                                            
-// TODO ½«ÔÚ´Ë´¦Ìí¼ÓÄúµÄ´¦Àí´úÂë£º
+// TODO å°†åœ¨æ­¤å¤„æ·»åŠ æ‚¨çš„å¤„ç†ä»£ç ï¼š
     }                                           
 
     private void qqSpace_jButtonMouseClicked(java.awt.event.MouseEvent evt) {                                             
-// TODO ½«ÔÚ´Ë´¦Ìí¼ÓÄúµÄ´¦Àí´úÂë£º
+// TODO å°†åœ¨æ­¤å¤„æ·»åŠ æ‚¨çš„å¤„ç†ä»£ç ï¼š
     }                                            
 
     private void qqGame_jButtonMouseClicked(java.awt.event.MouseEvent evt) {                                            
-// TODO ½«ÔÚ´Ë´¦Ìí¼ÓÄúµÄ´¦Àí´úÂë£º
+// TODO å°†åœ¨æ­¤å¤„æ·»åŠ æ‚¨çš„å¤„ç†ä»£ç ï¼š
     }                                           
 
     /**
-     * ÒôÆµÇëÇó°´Å¥
+     * éŸ³é¢‘è¯·æ±‚æŒ‰é’®
      * @param evt
      */
     private void voice_ButtonMouseClicked(java.awt.event.MouseEvent evt) {                                          
-    	System.out.println("ÒôÆµÇëÇó°´Å¥");
+    	System.out.println("éŸ³é¢‘è¯·æ±‚æŒ‰é’®");
     
     }                                         
 
     /**
-     * ´«ËÍÎÄ¼şµÄ°´Å¥µÄÊÂ¼ş
+     * ä¼ é€æ–‡ä»¶çš„æŒ‰é’®çš„äº‹ä»¶
      * @param evt
      */
                         
 
     /**
-     * ¹Ø±Õ°´Å¥µÄ¼¤·¢ÊÂ¼ş
+     * å…³é—­æŒ‰é’®çš„æ¿€å‘äº‹ä»¶
      * @param evt
      */
     private void exit_ButtonMouseClicked(java.awt.event.MouseEvent evt) {   
@@ -652,7 +652,7 @@ public class TalkFrame extends BaseFrame implements Runnable{
     }                                        
 
     /**
-     * ·¢ËÍ°´Å¥µÄ¼¤·¢ÊÂ¼ş
+     * å‘é€æŒ‰é’®çš„æ¿€å‘äº‹ä»¶
      * @param evt
      */
     private void send_ButtonMouseClicked(java.awt.event.MouseEvent evt) { 
@@ -662,7 +662,7 @@ public class TalkFrame extends BaseFrame implements Runnable{
     public void sendTalkMessage(){
     	final String msgStr=sendMsg_jTextPane.getText();
     	if(msgStr.length()==0){
-    		javax.swing.JOptionPane.showMessageDialog(this,"ÁÄÌìĞÅÏ¢²»ÄÜÎª¿Õ!!..");
+    		javax.swing.JOptionPane.showMessageDialog(this,"èŠå¤©ä¿¡æ¯ä¸èƒ½ä¸ºç©º!!..");
     	}else{
     		//TalkMessage msg=new TalkMessage();
         	//msg.setDestQQ(friend.getUserID());
@@ -689,7 +689,7 @@ public class TalkFrame extends BaseFrame implements Runnable{
     
     
     public void showMsg(String peak,String msg){
-    	SimpleDateFormat  sf   =new SimpleDateFormat("HH:mm:ss");//ÕâÀïµÄ¸ñÊ½×Ô¼º°´ĞèÒªĞ´   
+    	SimpleDateFormat  sf   =new SimpleDateFormat("HH:mm:ss");//è¿™é‡Œçš„æ ¼å¼è‡ªå·±æŒ‰éœ€è¦å†™   
 		Date d=new Date();   
 		String dataString   = sf.format(d);
 		userInfoFontAttrib.setText(peak+"  "+dataString);
@@ -699,7 +699,7 @@ public class TalkFrame extends BaseFrame implements Runnable{
     }
    
     public void showRecivedMsg(String peak,String msg,String date){
-    	SimpleDateFormat  sf   =new SimpleDateFormat("HH:mm:ss");//ÕâÀïµÄ¸ñÊ½×Ô¼º°´ĞèÒªĞ´   
+    	SimpleDateFormat  sf   =new SimpleDateFormat("HH:mm:ss");//è¿™é‡Œçš„æ ¼å¼è‡ªå·±æŒ‰éœ€è¦å†™   
 		Date d = new Date(Long.parseLong(date));	
 		userInfoFontAttrib.setText(peak+"  "+sf.format(d));
 		System.out.println("textInfo:"+msg);
@@ -728,12 +728,12 @@ public class TalkFrame extends BaseFrame implements Runnable{
 
     private  FontAttrib userInfoFontAttrib=new FontAttrib();
     private  FontAttrib textFontAttrib=new FontAttrib();
-    private  StyledDocument doc = null; // ·Ç³£ÖØÒª²åÈëÎÄ×ÖÑùÊ½¾Í¿¿ËüÁË
+    private  StyledDocument doc = null; // éå¸¸é‡è¦æ’å…¥æ–‡å­—æ ·å¼å°±é å®ƒäº†
     
 
 
     private javax.swing.JButton deleteFriend_Button;
-    private javax.swing.JButton exit_Button;        //¹Ø±ÕµÄ°´Å¥
+    private javax.swing.JButton exit_Button;        //å…³é—­çš„æŒ‰é’®
     private javax.swing.JButton face_jButton;
     private javax.swing.JLabel fenMusic_jLabel;
     private javax.swing.JButton findShare_jButton;
@@ -772,23 +772,23 @@ public class TalkFrame extends BaseFrame implements Runnable{
     private javax.swing.JButton remoteHlep_Button;
     private javax.swing.JButton sendImage_jButton;
     
-    private javax.swing.JTextPane sendMsg_jTextPane;      //Ğ´ÈëÁÄÌìĞÅÏ¢µÄTextArea
+    private javax.swing.JTextPane sendMsg_jTextPane;      //å†™å…¥èŠå¤©ä¿¡æ¯çš„TextArea
     
-    private javax.swing.JButton send_Button;              //·¢ËÍĞÅÏ¢µÄ°´Å¥
-    private javax.swing.JButton setKey_Button;            //ÉèÖÃ¿ì½İ¼üµÄ°´Å¥
-    private javax.swing.JButton shock_Button;             //·¢ËÍÕğ¶¯µÄ°´Å¥
+    private javax.swing.JButton send_Button;              //å‘é€ä¿¡æ¯çš„æŒ‰é’®
+    private javax.swing.JButton setKey_Button;            //è®¾ç½®å¿«æ·é”®çš„æŒ‰é’®
+    private javax.swing.JButton shock_Button;             //å‘é€éœ‡åŠ¨çš„æŒ‰é’®
     
-    public javax.swing.JTextPane showMsg_jTextPane;        //ÏÔÊ¾ÁÄÌìĞÅÏ¢µÄTextArea
+    public javax.swing.JTextPane showMsg_jTextPane;        //æ˜¾ç¤ºèŠå¤©ä¿¡æ¯çš„TextArea
     
-    private javax.swing.JButton snedFile_Button;           //´«ËÍÎÄ¼şµÄ°´Å¥
+    private javax.swing.JButton snedFile_Button;           //ä¼ é€æ–‡ä»¶çš„æŒ‰é’®
     private javax.swing.JButton talkRecord_Button;
     
     private javax.swing.JTextPane talkRecord_jTextPane;
     
-    private javax.swing.JButton video_Button;               //ÊÓÆµÇëÇó°´Å¥
-    private javax.swing.JButton voice_Button;              // ÒôÆµÇëÇó°´Å¥
+    private javax.swing.JButton video_Button;               //è§†é¢‘è¯·æ±‚æŒ‰é’®
+    private javax.swing.JButton voice_Button;              // éŸ³é¢‘è¯·æ±‚æŒ‰é’®
     private GlassBox glassBox1;
-    // ±äÁ¿ÉùÃ÷½áÊø      
+    // å˜é‡å£°æ˜ç»“æŸ      
 
 
 	public static MsgUser getOwerUser() {
@@ -839,7 +839,7 @@ public class TalkFrame extends BaseFrame implements Runnable{
 		map.put("duid", friend.getUserID());
 		map.put("msg", mecode);
 		ConnectionUtils.getInstance().postTxtMessage(map);
-		System.out.println("·¢ËÍĞÅÏ¢ÁÄ~~~~~~");
+		System.out.println("å‘é€ä¿¡æ¯èŠ~~~~~~");
 	 
  }
    public static void main(String[] args) {
