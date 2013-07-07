@@ -362,14 +362,15 @@ public class GenDao {
 			this.ps.executeUpdate();
 
 			ResultSet resultSet = ps.getGeneratedKeys();
+			System.out.println(resultSet.toString());
 			if (resultSet.next()) {
-
-				rowId = rs.getInt(1);
-
+                
+				rowId = resultSet.getInt(1);
+				System.out.println("rowId---"+rowId);
 			}
 
 		} catch (SQLException ex) {
-
+            ex.printStackTrace();
 			System.err.println("异常信息：执行SQL添加命令时发生错误！\r\n" + ex.getMessage());
 
 		} finally {

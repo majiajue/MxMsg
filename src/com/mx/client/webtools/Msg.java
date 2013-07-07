@@ -1,6 +1,8 @@
 package com.mx.client.webtools;
 
+
 import java.util.HashMap;
+
 
 public class Msg {
 	public static final int TYPE_ERROR = 0;
@@ -13,6 +15,7 @@ public class Msg {
 	public static final int TYPE_LOCATION = 7;
 	private static final HashMap<String, Integer> mTypeMaps = new HashMap<String, Integer>();
 
+
 	static {
 		mTypeMaps.put("txt", TYPE_TXT);
 		mTypeMaps.put("jpg", TYPE_IMAGE);
@@ -22,6 +25,7 @@ public class Msg {
 		mTypeMaps.put("voc", TYPE_VOICE_CALL);
 		mTypeMaps.put("loc", TYPE_LOCATION);
 	}
+
 
 	public static String packMsg(int iType, String sMsg) {
 		switch (iType) {
@@ -44,39 +48,47 @@ public class Msg {
 		}
 	}
 
+
 	public static String packTxtMsg(String sMsg) {
 		return packMsg(TYPE_TXT, sMsg);
 	}
+
 
 	public static String packJpgMsg(String sJpg) {
 		return packMsg(TYPE_IMAGE, sJpg);
 	}
 
+
 	public static String packAmrMsg(String sAmr) {
 		return packMsg(TYPE_VOICE, sAmr);
 	}
+
 
 	public static String packFileMsg(String sFile) {
 		return packMsg(TYPE_FILE, sFile);
 	}
 
+
 	public static String packVoiceMsg(String sVoc) {
 		return packMsg(TYPE_VOICE_CALL, sVoc);
 	}
+
 
 	public static String packLocationMsg(String sLoc) {
 		return packMsg(TYPE_LOCATION, sLoc);
 	}
 
+
 	/*
-	 * �ж��Ƿ���һ���Ϸ�����Ϣ
+	 * 判定是否是一个合法的消息
 	 */
 	public static boolean isMsg(String sMsg) {
 		return sMsg.startsWith("mime:");
 	}
 
+
 	/*
-	 * �����Ϣ������ getTypeOfMsg("mime:txt:abcdefgsdfsdfsdfsd");
+	 * 获得消息的类型 getTypeOfMsg("mime:txt:abcdefgsdfsdfsdfsd");
 	 */
 	public static int getTypeOfMsg(String sMsg) {
 		if (isMsg(sMsg)) {
@@ -90,7 +102,13 @@ public class Msg {
 		return TYPE_ERROR;
 	}
 
+
+	/*
+	 * 获得消息的内容
+	 */
 	public static String getContentOfMsg(String sMsg) {
+		System.out.println("msg-----------"+sMsg);
+		System.out.println("msg------------"+isMsg(sMsg));
 		if (isMsg(sMsg)) {
 			return sMsg.substring(9);
 		}

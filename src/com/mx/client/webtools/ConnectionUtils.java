@@ -432,11 +432,11 @@ public class ConnectionUtils {
       }
 	  
 	  
-	  public  void postTxtMessage(Map<String, Object> postContent){
+	  public  HashMap<String, String>  postTxtMessage(Map<String, Object> postContent){
 		  
 		  BufferedReader in = null;
 		  String url = "https://www.han2011.com/postmessage/" + SConfig.getInstance().getProfile().getSession() + "/call.xml";;
-		
+		  HashMap<String, String> map = new HashMap<String, String>();
 		  PoolingClientConnectionManager connectionManager=new PoolingClientConnectionManager();
 
 			connectionManager.setMaxTotal(1);
@@ -479,8 +479,10 @@ public class ConnectionUtils {
 					sb.append(line + NL);
 				}
 				in.close();
-
-				System.out.println(sb.toString());
+               
+                map = XmlUtil.instance().parseXmltoMap(sb.toString(), "UTF-8");
+				System.out.println("===发送一条消息的"+sb.toString());
+				return map;
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -488,6 +490,9 @@ public class ConnectionUtils {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} finally {
@@ -501,6 +506,8 @@ public class ConnectionUtils {
 				if (client != null && client.getConnectionManager() != null) {
 					client.getConnectionManager().shutdown();
 				}
+				
+				return null;
 			}
 		  
 	  }

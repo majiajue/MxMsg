@@ -125,6 +125,7 @@ public class TextHandler implements MessagerHandler {
 			// LOG.v(TAG, time - HandlerHelper.lastRingTime + "      " +
 			// NoVoice);
 		} catch (CryptorException e) {
+			e.printStackTrace();
 			messageBean.PMsg = "系统提示：可能由于密钥的更换，导致对方发给您的历史消息无法解析，已丢弃，您需要请对方重发！";
 			messageBean.PStatusId = DBDataSQL.STATUS_CRYPTERROR;
 			AnMessageBean.getInstance().saveMessage(messageBean.PPeerid, messageBean.PMsg, "-1",
@@ -175,13 +176,13 @@ public class TextHandler implements MessagerHandler {
 		data = RSAEncryptor.getInstance().myDecryptBase64String(sMsg);
 		sData = new String(data);
 		System.out.println("sData:" + sData.trim());
-		String result = Msg.getContentOfMsg(sData);
+		String result = Msg.getContentOfMsg(sData.trim());
 		System.out.println("解析结果===" + result);
 		System.out.println("-----------------------------------------------");
 		if (result == null) {
 			throw new CryptorException("文本解析错误");
 		}
-		return sData;
+		return sData.trim();
 	}
 
 }
