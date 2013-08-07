@@ -3,6 +3,7 @@ package com.mx.client;
 import java.awt.Color;
 import java.awt.HeadlessException;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
@@ -21,6 +22,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
 import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
 import javax.swing.text.StyledDocument;
 
 import org.h2.table.Table;
@@ -928,15 +930,16 @@ public class TalkFrame extends BaseFrame implements Runnable {
 								msgStr);
 						HashMap<String, String> map = new HashMap<String, String>();
 						map = sendMessage(msgStr);
+						System.out.println("map==="+map.get("r"));
 						if (map.get("r").equals("ok")) {
-
+							sendMsg_jTextPane.setText("");
 							AnMessageBean
 									.getInstance()
 									.saveMessage(
 											SConfig.getInstance().getProfile().myPeerBean.PPeerid,
 											msgStr, "-1", DBDataSQL.OUT, "0",
 											map.get("time"), "true", "1");
-							sendMsg_jTextPane.setText("");
+							
 						} else {
 
 							JOptionPane.showMessageDialog(null, "消息发送失败，请重发");
@@ -962,7 +965,9 @@ public class TalkFrame extends BaseFrame implements Runnable {
 		userInfoFontAttrib.setText(peak + "  " + dataString);
 		System.out.println("textInfo:" + msg);
 		textFontAttrib.setText(msg);
-		this.insert(userInfoFontAttrib, textFontAttrib);
+		this.insert(userInfoFontAttrib, textFontAttrib); 
+	    Document doc = showMsg_jTextPane.getDocument();
+	    showMsg_jTextPane.select(doc.getLength(), doc.getLength()); 
 	}
 
 	public void showRecivedMsg(String peak, String msg, String date) {
@@ -972,6 +977,8 @@ public class TalkFrame extends BaseFrame implements Runnable {
 		System.out.println("textInfo:" + msg);
 		textFontAttrib.setText(msg);
 		this.insert(userInfoFontAttrib, textFontAttrib);
+		Document doc = showMsg_jTextPane.getDocument();
+		showMsg_jTextPane.select(doc.getLength(), doc.getLength()); 
 	}
 
 	public void run() {
@@ -1111,7 +1118,7 @@ public class TalkFrame extends BaseFrame implements Runnable {
 		// ConnectionUtils.getInstance().postTxtMessage(map);
 		HashMap<String, String> hashMap = new HashMap<String, String>();
 		hashMap = ConnectionUtils.getInstance().postTxtMessage(map);
-		System.out.println("发送信息聊~~~~~~");
+		System.out.println("发送信息聊~~~~~~"+hashMap.toString());
 		return hashMap;
 
 	}

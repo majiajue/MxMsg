@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import com.mx.client.JavaLocation;
 import com.mx.client.db.SQLCommandBuilder.SQLCommandType;
 
 /**
@@ -412,6 +413,46 @@ public class GenDao {
 			this.rs = this.ps.executeQuery();
 			while (rs.next()) {
 				valList.add(rs.getString(valueColumn));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+
+		// 自动映射SQL参数
+		return valList;
+	};
+    
+	/**
+	 * 获取某一字段条记录的值
+	 * 
+	 * @param tableName
+	 * @param columnName
+	 * @param condition
+	 * @return
+	 */
+	public List<JavaLocation> getArrayValue(String peerId) {
+		this.conn = DBTools.getH2SQLConnection();
+		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
+		String value = "";
+		List<JavaLocation> valList = new ArrayList<JavaLocation>();
+		try {
+			Hashtable<String, Object> condition = new Hashtable<String, Object>();
+			condition.put(DBDataSQL.COL_PEER_FROMPEERID, peerId);
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder
+					.getInstance().getSQLCommand(SQLCommandType.SELECT,
+							DBDataSQL.TB_PEERS, new String[]{DBDataSQL.COL_PEER_PEERID,DBDataSQL.COL_PEER_USERNAME}, null, condition));
+			
+			if (condition != null && condition.size() > 0) {
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
+						.toArray(), this.ps);
+			}
+
+			// 执行SQL更新命令并保存取回的结果集对象
+		
+			this.rs = this.ps.executeQuery();
+			while (rs.next()) {
+				valList.add(new JavaLocation(rs.getString(DBDataSQL.COL_PEER_PEERID.toUpperCase()), rs.getString(DBDataSQL.COL_PEER_USERNAME.toUpperCase()), "head_boy_01_32.jpg"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

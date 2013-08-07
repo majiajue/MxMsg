@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -12,16 +14,22 @@ import java.awt.event.WindowEvent;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JList;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.mx.clent.vo.MsgFriendGroup;
 import com.mx.clent.vo.MsgUser;
+import com.mx.client.db.DBDataSQL;
+import com.mx.client.db.GenDao;
 import com.mx.client.netty.NettyClient;
 import com.mx.client.webtools.ConnectionUtils;
 import com.mx.client.webtools.CryptorException;
@@ -29,6 +37,7 @@ import com.mx.client.webtools.RSAEncryptor;
 import com.mx.client.webtools.SConfig;
 
 public class MainFrame extends BaseFrame {
+	List<JavaLocation> defaultLocations = new ArrayList<JavaLocation>();
 	static Point origin = new Point();
 	private static List<MsgFriendGroup> friends = new ArrayList<MsgFriendGroup>();
 	private static MsgUser ower = new MsgUser();
@@ -72,6 +81,26 @@ public class MainFrame extends BaseFrame {
 
 	private void initComponents() {
 		try {
+			final JPopupMenu popupMenu = new JPopupMenu();
+			JMenuItem menuItem = new JMenuItem("删除该好友");
+		    menuItem.addActionListener(new ActionListener() {
+				
+				@Override
+				public void actionPerformed(ActionEvent e) {
+					// TODO Auto-generated method stub
+					String peerid = ((JavaLocation) sampleJList
+							.getSelectedValue()).getPeerId();
+					Hashtable<String, Object> table = new Hashtable<String, Object>();
+					table.put(DBDataSQL.COL_PEER_PEERID, table);
+					GenDao.getInstance().executeDelete(DBDataSQL.TB_PEERS, table);
+					defaultLocations.remove(sampleJList.getSelectedIndex());
+					sampleJList.setListData(defaultLocations.toArray());
+				}
+			});
+		    popupMenu.add(menuItem);
+		   
+			defaultLocations.add(new JavaLocation("27631", "majiajue", "head_boy_01_32.jpg"));
+			defaultLocations.add(new JavaLocation("27632", "None", "head_boy_01_32.jpg"));
 			this.setSize(340, 600);
 			this.setAlwaysOnTop(true);
 			setMinimumSize(new java.awt.Dimension(340, 400));
@@ -128,6 +157,7 @@ public class MainFrame extends BaseFrame {
 			jToolBar3 = new javax.swing.JToolBar();
 			infoButton = new javax.swing.JButton();
 			findButton = new javax.swing.JButton();
+			addButton = new javax.swing.JButton();
 			// Icon
 			// infoIcon=ResourcesManagement.getImageIcon(this.getClass().getResource("/com/csu/client/resourse/ui/sysIfo.gif").toString());
 			// infoButton.setIcon(infoIcon);
@@ -140,13 +170,15 @@ public class MainFrame extends BaseFrame {
 			// friendTree=new JListCustomModel();
 			teamPanel = new javax.swing.JPanel();
 			zuijinPanel = new javax.swing.JPanel();
-			JavaLocationCollection collection = new JavaLocationCollection();
+			//GenDao.getInstance().getArrayValue(, columnName, valueColumn, condition)(, columnName, valueColumn, condition)
+			JavaLocationCollection collection = new JavaLocationCollection(GenDao.getInstance().getArrayValue(SConfig.getInstance().getProfile().myPeerBean.PPeerid));
 			JavaLocationListModel listModel = new JavaLocationListModel(collection);
 			sampleJList = new JList(listModel);
 			sampleJList.setCellRenderer(new JavaLocationRenderer());
 			Font displayFont = new Font("Serif", Font.BOLD, 18);
 			sampleJList.setFont(displayFont);
 			sampleJList.addListSelectionListener(new ValueReporter());
+			 sampleJList.add(popupMenu);
 			sampleJList.addMouseListener(new MouseListener() {
 
 				@Override
@@ -206,6 +238,11 @@ public class MainFrame extends BaseFrame {
 //						System.out.println();
 
 					}
+					   if(e.getButton() == 3 && sampleJList.getSelectedIndex() >=0){
+
+	                    popupMenu.show(sampleJList,e.getX(),e.getY());
+
+	      }
 				}
 			});
 			// friendPanel.add(sampleJList);
@@ -320,6 +357,50 @@ public class MainFrame extends BaseFrame {
 
 			findButton.setText("\u67e5\u627e");
 			jToolBar3.add(findButton);
+			addButton.setText("\u6dfb\u52a0");
+			addButton.addMouseListener(new MouseListener() {
+				
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void mousePressed(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					// TODO Auto-generated method stub
+					String inputValue = JOptionPane.showInputDialog(null,"请输入好友的密讯号","添加好友",JOptionPane.PLAIN_MESSAGE);
+					if(inputValue!=null){
+						defaultLocations.add(new JavaLocation(inputValue, "None", "head_boy_01_32.jpg"));
+						GenDao.getInstance().executeInsert(DBDataSQL.TB_PEERS, new String[]{DBDataSQL.COL_PEER_PEERID,DBDataSQL.COL_PEER_USERNAME,DBDataSQL.COL_PEER_FROMPEERID},new Object[]{inputValue,inputValue,SConfig.getInstance().getProfile().myPeerBean.PPeerid});
+						sampleJList.setListData(defaultLocations.toArray());
+					}else{
+						
+						JOptionPane.showInternalMessageDialog(null, "亲，请输入好友的密讯号!");
+					}
+					
+					//sampleJList.updateUI();
+				}
+			});
+			jToolBar3.add(addButton);
 
 			javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
 			jPanel2.setLayout(jPanel2Layout);
@@ -479,6 +560,7 @@ public class MainFrame extends BaseFrame {
 	private javax.swing.JLabel headImage;
 	private javax.swing.JButton iEButton;
 	private javax.swing.JButton infoButton;
+	private javax.swing.JButton addButton;
 	private javax.swing.JPanel jPanel1;
 	private javax.swing.JPanel jPanel2;
 	// private javax.swing.JToolBar jToolBar1;

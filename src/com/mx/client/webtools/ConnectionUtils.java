@@ -481,7 +481,7 @@ public class ConnectionUtils {
 				in.close();
                
                 map = XmlUtil.instance().parseXmltoMap(sb.toString(), "UTF-8");
-				System.out.println("===发送一条消息的"+sb.toString());
+				System.out.println("===发送一条消息的"+map.toString());
 				return map;
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
@@ -507,9 +507,9 @@ public class ConnectionUtils {
 					client.getConnectionManager().shutdown();
 				}
 				
-				return null;
+				
 			}
-		  
+			return null;
 	  }
 	  
 /**

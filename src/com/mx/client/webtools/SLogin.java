@@ -68,6 +68,29 @@ public class SLogin {
 	public String login(String uid, String skey, String pwd) throws IOException {
 		return register4(uid, skey, pwd);
 	}
+	/**
+	 * 注册
+	 * @param pwd
+	 * @param nickname
+	 * @param phone
+	 * @return
+	 * @throws Exception
+	 */
+	public String register3(String pwd, String nickname, String phone) throws Exception {
+		/*
+		 * 返回的xml: <b><skey>skey</skey><r>ok</r></b>
+		 */
+		String skey = SConfig.getInstance().getSessionKey();
+		Map<String, Object> values = new HashMap<String, Object>();
+		values.put("password", pwd);
+		if (nickname != null)
+			values.put("nickname", nickname);
+		if (phone != null)
+			values.put("tel", phone);
+		String result = ConnectionUtils.getInstance().postRequestwithVersion("/register3/" + skey + "/call.aspx", values);
+		return XmlUtil.instance().parseXmltoString(result, "UTF-8","r");
+		
+	}
 	
     public String register4(String uid, String skey, String pwd) throws ClientProtocolException, IOException {
 		try {

@@ -107,8 +107,6 @@ public class Msg {
 	 * 获得消息的内容
 	 */
 	public static String getContentOfMsg(String sMsg) {
-		System.out.println("msg-----------"+sMsg);
-		System.out.println("msg------------"+isMsg(sMsg));
 		if (isMsg(sMsg)) {
 			return sMsg.substring(9);
 		}

@@ -147,7 +147,7 @@ public class Profile {
 			String[] cloumes = new String[] { DBDataSQL.COL_PEER_LASTCONTACT, DBDataSQL.COL_PEER_PEERID,
 					DBDataSQL.COL_PEER_PHONE, DBDataSQL.COL_PEER_PINYIN, DBDataSQL.COL_PEER_PUBLIC,
 					DBDataSQL.COL_PEER_UPDTAETIME, DBDataSQL.COL_PEER_USERNAME, DBDataSQL.COL_PEER_REMARK };
-			Object[] values = new Object[] { Peerid, Username, Pinyin, PhoneNumber, UpdateTime, Lastcontact, Public };
+			Object[] values = new Object[] { Lastcontact,Peerid, PhoneNumber,Pinyin,Public,UpdateTime,Username, Remark };
 			Hashtable<String, Object> condition = new Hashtable<String, Object>();
 			condition.put(DBDataSQL.COL_PEER_PEERID, Peerid);
 			Boolean boolean1 = GenDao.getInstance().executeUpdate(DBDataSQL.TB_PEERS, cloumes, values, condition);

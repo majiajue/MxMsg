@@ -17,11 +17,11 @@ public class JavaLocationListModel implements ListModel {
   }
 
   public Object getElementAt(int index) {
-    return(collection.getLocations()[index]);
+    return(collection.getLocations().get(index));
   }
 
   public int getSize() {
-    return(collection.getLocations().length);
+    return(collection.getLocations().size());
   }
 
   public void addListDataListener(ListDataListener l) {}

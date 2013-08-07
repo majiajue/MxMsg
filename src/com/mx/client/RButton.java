@@ -50,8 +50,8 @@ public class RButton extends JButton {
 
 	public RButton(int style) {
 		this.style = style;
-		Icon icon=new ImageIcon(this.getClass().getResource("/com/mx/client/image/sysSet-1.png"));
-		setIcon(icon);
+		//Icon icon=new ImageIcon(this.getClass().getResource("/com/mx/client/image/sysSet-1.png"));
+		//setIcon(icon);
 		if (BALL == style) {
 			setPreferredSize(new Dimension(42, 42));
 		} else if (STAR == style) {
@@ -64,15 +64,15 @@ public class RButton extends JButton {
 		setContentAreaFilled(false);
 		addMouseListener(new MouseAdapter() {
 			public void mouseEntered(MouseEvent e) {
-				Icon icon=new ImageIcon(this.getClass().getResource("/com/mx/client/image/sysSet-2.png"));
-				setIcon(icon);
+				//Icon icon=new ImageIcon(this.getClass().getResource("/com/mx/client/image/sysSet-2.png"));
+				//setIcon(icon);
 				hover = true;
 				repaint();
 			}
 
 			public void mouseExited(MouseEvent e) {
-				Icon icon=new ImageIcon(this.getClass().getResource("/com/mx/client/image/sysSet-1.png"));
-				setIcon(icon);
+				//Icon icon=new ImageIcon(this.getClass().getResource("/com/mx/client/image/sysSet-1.png"));
+				//setIcon(icon);
 				hover = false;
 				repaint();
 			}
