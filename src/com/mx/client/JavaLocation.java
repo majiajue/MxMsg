@@ -6,7 +6,7 @@ public class JavaLocation {
 
   @Override
 public String toString() {
-	return  PeerId + System.getProperty("line.separator")+ NickName;
+	return  PeerId + System.getProperty("line.separator");
 }
 
 public JavaLocation(String PeerId, String NickName,

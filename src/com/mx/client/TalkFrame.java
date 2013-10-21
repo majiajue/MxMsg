@@ -20,6 +20,7 @@ import java.util.TimerTask;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JTabbedPane;
+import javax.swing.SwingUtilities;
 import javax.swing.SwingWorker;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
@@ -391,7 +392,7 @@ public class TalkFrame extends BaseFrame implements Runnable {
 												jLabel4,
 												javax.swing.GroupLayout.DEFAULT_SIZE,
 												227, Short.MAX_VALUE)));
-		jTabbedPane2.addTab("\u4e2a\u4eba\u79c0\u79c0", jPanel6);
+		// jTabbedPane2.addTab("\u4e2a\u4eba\u79c0\u79c0", jPanel6);
 
 		jScrollPane4.setViewportView(talkRecord_jTextPane);
 
@@ -911,15 +912,14 @@ public class TalkFrame extends BaseFrame implements Runnable {
 	public void sendTalkMessage() {
 		final String msgStr = sendMsg_jTextPane.getText();
 		if (msgStr.length() == 0) {
-			javax.swing.JOptionPane.showMessageDialog(this, "聊天信息不能为空!!..");
+			SwingUtilities.invokeLater(new Runnable() {
+				public void run() {
+					javax.swing.JOptionPane.showMessageDialog(null, "聊天信息不能为空!!..");
+				}
+			});
+			
 		} else {
-			// TalkMessage msg=new TalkMessage();
-			// msg.setDestQQ(friend.getUserID());
-			// msg.setSrcQQ(owerUser.getUserID());
-			// msg.setTalkMsg(msgStr);
-			// ConnectSession connectSession=ConnectSession.getInstance();
-			// connectSession.sendTextMessage(msg);
-
+	
 			new SwingWorker<Void, Void>() {
 
 				@Override
@@ -930,8 +930,9 @@ public class TalkFrame extends BaseFrame implements Runnable {
 								msgStr);
 						HashMap<String, String> map = new HashMap<String, String>();
 						map = sendMessage(msgStr);
-						System.out.println("map==="+map.get("r"));
-						if (map.get("r").equals("ok")) {
+						System.out.println(map.toString());
+						System.out.println("map===" + map.get("r"));
+						if (map.get("r").equals("ok")||map.get("r").equals("inbox")) {
 							sendMsg_jTextPane.setText("");
 							AnMessageBean
 									.getInstance()
@@ -939,16 +940,26 @@ public class TalkFrame extends BaseFrame implements Runnable {
 											SConfig.getInstance().getProfile().myPeerBean.PPeerid,
 											msgStr, "-1", DBDataSQL.OUT, "0",
 											map.get("time"), "true", "1");
-							
+
 						} else {
 
-							JOptionPane.showMessageDialog(null, "消息发送失败，请重发");
+							SwingUtilities.invokeLater(new Runnable() {
+								public void run() {
+									JOptionPane.showMessageDialog(null,
+											"消息发送失败，请重发");
+								}
+							});
 
 						}
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
-						JOptionPane.showMessageDialog(null, "消息发送失败，请重发");
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								JOptionPane.showMessageDialog(null,
+										"消息发送失败，请重发"+e.getMessage());
+							}
+						});
 					}
 					return null;
 				}
@@ -965,9 +976,9 @@ public class TalkFrame extends BaseFrame implements Runnable {
 		userInfoFontAttrib.setText(peak + "  " + dataString);
 		System.out.println("textInfo:" + msg);
 		textFontAttrib.setText(msg);
-		this.insert(userInfoFontAttrib, textFontAttrib); 
-	    Document doc = showMsg_jTextPane.getDocument();
-	    showMsg_jTextPane.select(doc.getLength(), doc.getLength()); 
+		this.insert(userInfoFontAttrib, textFontAttrib);
+		Document doc = showMsg_jTextPane.getDocument();
+		showMsg_jTextPane.select(doc.getLength(), doc.getLength());
 	}
 
 	public void showRecivedMsg(String peak, String msg, String date) {
@@ -978,7 +989,7 @@ public class TalkFrame extends BaseFrame implements Runnable {
 		textFontAttrib.setText(msg);
 		this.insert(userInfoFontAttrib, textFontAttrib);
 		Document doc = showMsg_jTextPane.getDocument();
-		showMsg_jTextPane.select(doc.getLength(), doc.getLength()); 
+		showMsg_jTextPane.select(doc.getLength(), doc.getLength());
 	}
 
 	public void run() {
@@ -1118,7 +1129,7 @@ public class TalkFrame extends BaseFrame implements Runnable {
 		// ConnectionUtils.getInstance().postTxtMessage(map);
 		HashMap<String, String> hashMap = new HashMap<String, String>();
 		hashMap = ConnectionUtils.getInstance().postTxtMessage(map);
-		System.out.println("发送信息聊~~~~~~"+hashMap.toString());
+		System.out.println("发送信息聊~~~~~~" + hashMap.toString());
 		return hashMap;
 
 	}

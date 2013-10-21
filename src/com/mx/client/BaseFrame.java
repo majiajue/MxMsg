@@ -16,9 +16,9 @@ import org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel;
 
 public class BaseFrame extends JFrame {
 	private static final long serialVersionUID = 1L;
-	private  String owerID;                //µÇÈë´ËQQµÄËùÓÐÕß
+	private  String owerID;                //ï¿½ï¿½ï¿½ï¿½ï¿½QQï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	//private  String icon=this.getClass().getResource("/com/csu/client/resourse/ui/icon.png").toString();
-	private  String baseTitle="º£ÁÁ-EIM¿Í»§¶Ë";   //±êÌâ
+	private  String baseTitle="å¯†è®¯";   //ï¿½ï¿½ï¿½ï¿½
 
 	public BaseFrame(){
 		super();

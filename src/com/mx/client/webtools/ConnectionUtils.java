@@ -479,7 +479,7 @@ public class ConnectionUtils {
 					sb.append(line + NL);
 				}
 				in.close();
-               
+                
                 map = XmlUtil.instance().parseXmltoMap(sb.toString(), "UTF-8");
 				System.out.println("===发送一条消息的"+map.toString());
 				return map;

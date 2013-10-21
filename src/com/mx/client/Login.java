@@ -127,56 +127,7 @@ public class Login extends JFrame {
 							frame.setLocation(p.x + arg0.getX() - origin.x, p.y + arg0.getY() - origin.y);
 						}
 					});
-					frame.addMouseListener(new MouseListener() {
-
-						@Override
-						public void mouseReleased(MouseEvent arg0) {
-							// TODO Auto-generated method stub
-
-						}
-
-						@Override
-						public void mousePressed(MouseEvent arg0) {
-							// TODO Auto-generated method stub
-							origin.x = arg0.getX();
-							origin.y = arg0.getY();
-						}
-
-						@Override
-						public void mouseExited(MouseEvent arg0) {
-							// TODO Auto-generated method stub
-
-						}
-
-						@Override
-						public void mouseEntered(MouseEvent arg0) {
-							// TODO Auto-generated method stub
-
-						}
-
-						@Override
-						public void mouseClicked(MouseEvent arg0) {
-							// TODO Auto-generated method stub
-
-						}
-					});
-
-					frame.addMouseMotionListener(new MouseMotionListener() {
-
-						@Override
-						public void mouseMoved(MouseEvent arg0) {
-							// TODO Auto-generated method stub
-
-						}
-
-						@Override
-						public void mouseDragged(MouseEvent arg0) {
-							// TODO Auto-generated method stub
-							Point p = frame.getLocation();
-
-							frame.setLocation(p.x + arg0.getX() - origin.x, p.y + arg0.getY() - origin.y);
-						}
-					});
+		
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -352,7 +303,7 @@ public class Login extends JFrame {
 		lbl忘记密码 = new JLabel("\u5FD8\u8BB0\u5BC6\u7801");
 		lbl忘记密码.setFont(new Font("SansSerif", Font.PLAIN, 13));
 		lbl忘记密码.setForeground(new Color(0, 51, 255));
-		lbl忘记密码.setBounds(288, 167, 55, 18);
+		lbl忘记密码.setBounds(320, 167, 55, 18);
 		contentPane.add(lbl忘记密码);
 
 		lbl最小化 = new JLabel("");
@@ -466,7 +417,7 @@ public class Login extends JFrame {
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) // 鼠标双击
 				{
-					tray.remove(trayIcon); // 从系统的托盘实例中移除托盘图标
+					//tray.remove(trayIcon); // 从系统的托盘实例中移除托盘图标
 					setExtendedState(JFrame.NORMAL);
 					setVisible(true); // 显示窗口
 					toFront();
