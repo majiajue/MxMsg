@@ -238,7 +238,8 @@ public class MainFrame extends BaseFrame {
 			JavaLocationListModel listModel = new JavaLocationListModel(
 					collection);
 			sampleJList = new JList(listModel);
-			sampleJList.setBackground(new Color(204,204,204));
+			sampleJList.setBackground(new Color(217,204,217));
+			
 			sampleJList.setCellRenderer(new JavaLocationRenderer());
 			Font displayFont = new Font("Serif", Font.BOLD, 18);
 			sampleJList.setFont(displayFont);
@@ -758,6 +759,8 @@ public class MainFrame extends BaseFrame {
 			javax.swing.GroupLayout friendPanelLayout = new javax.swing.GroupLayout(
 					friendPanel);
 			friendPanel.setLayout(friendPanelLayout);
+		    //friendPanel.setBackground(new Color(217,204,217));
+			friendPanel.setOpaque(false);
 			friendPanelLayout.setHorizontalGroup(friendPanelLayout
 					.createParallelGroup(
 							javax.swing.GroupLayout.Alignment.LEADING)
