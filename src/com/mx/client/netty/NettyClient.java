@@ -38,9 +38,8 @@ public class NettyClient implements Runnable {
 			long time1 = System.currentTimeMillis();
 			String result = XmlUtil.instance().parseXmltoString(
 					ConnectionUtils.getInstance().getRequest(
-							"/gettime/" + SConfig.getInstance().getSessionKey()
-									+ "/call.xml"), "UTF-8", "time");
-			System.out.println("同步时间=="+ result);
+							"/gettime/" + SConfig.getInstance().getSessionKey() + "/call.xml"), "UTF-8", "time");
+			System.out.println("同步时间==" + result);
 			if (result != null) {
 				long servertime = Long.valueOf(result);
 				long time2 = System.currentTimeMillis();
@@ -76,8 +75,7 @@ public class NettyClient implements Runnable {
 		System.out.println("进来了-----");
 		try {
 			this.uri = new URI("https://www.han2011.com/" + "getmessage/"
-					+ SConfig.getInstance().getProfile().getSession()
-					+ "/call.xml");
+					+ SConfig.getInstance().getProfile().getSession() + "/call.xml");
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -93,8 +91,7 @@ public class NettyClient implements Runnable {
 			}
 		}
 
-		if (!"http".equalsIgnoreCase(scheme)
-				&& !"https".equalsIgnoreCase(scheme)) {
+		if (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme)) {
 			System.err.println("Only HTTP(S) is supported.");
 			return;
 		}
@@ -102,17 +99,14 @@ public class NettyClient implements Runnable {
 		boolean ssl = "https".equalsIgnoreCase(scheme);
 
 		// Configure the client.
-		ClientBootstrap bootstrap = new ClientBootstrap(
-				new NioClientSocketChannelFactory(
-						Executors.newCachedThreadPool(),
-						Executors.newCachedThreadPool()));
+		ClientBootstrap bootstrap = new ClientBootstrap(new NioClientSocketChannelFactory(
+				Executors.newCachedThreadPool(), Executors.newCachedThreadPool()));
 
 		// Set up the event pipeline factory.
 		bootstrap.setPipelineFactory(new NettyPipelineFactory(ssl));
 
 		// Start the connection attempt.
-		ChannelFuture future = bootstrap.connect(new InetSocketAddress(host,
-				port));
+		ChannelFuture future = bootstrap.connect(new InetSocketAddress(host, port));
 
 		// Wait until the connection attempt succeeds or fails.
 		Channel channel = future.awaitUninterruptibly().getChannel();
@@ -123,13 +117,10 @@ public class NettyClient implements Runnable {
 		}
 
 		// Prepare the HTTP request.
-		HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1,
-				HttpMethod.GET, uri.getRawPath());
+		HttpRequest request = new DefaultHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, uri.getRawPath());
 		request.setHeader(HttpHeaders.Names.HOST, host);
-		request.setHeader(HttpHeaders.Names.CONNECTION,
-				HttpHeaders.Values.CLOSE);
-		request.setHeader(HttpHeaders.Names.ACCEPT_ENCODING,
-				HttpHeaders.Values.GZIP);
+		request.setHeader(HttpHeaders.Names.CONNECTION, HttpHeaders.Values.CLOSE);
+		request.setHeader(HttpHeaders.Names.ACCEPT_ENCODING, HttpHeaders.Values.GZIP);
 
 		// Set some example cookies.
 		// CookieEncoder httpCookieEncoder = new CookieEncoder(false);
@@ -153,11 +144,11 @@ public class NettyClient implements Runnable {
 	@Override
 	public void run() {
 		updateTime();
-        
+
 		AncodeFactory.getInstance().setOnLine();
 
 		while (true) {
-			System.out.println("线路线程"+String.valueOf(updateTime()==0));
+			System.out.println("线路线程" + String.valueOf(updateTime() == 0));
 			if (AncodeFactory.isLogin == false) {
 				// Log.v("mixun", "isLogin false");
 				try {
@@ -194,7 +185,7 @@ public class NettyClient implements Runnable {
 				AncodeFactory.getInstance().setOnLine();
 				NettyStatus.retry = 0;
 				comet(); // 如果成功进入一个长连，程序会阻塞在comet里面
-				
+
 				try {
 					AncodeFactory.getInstance().setOffLine();
 					Thread.sleep(NettyStatus.s20);

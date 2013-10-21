@@ -7,8 +7,6 @@ import java.util.HashMap;
 import javax.crypto.NoSuchPaddingException;
 
 import com.mx.clent.vo.AnMessageBean;
-import com.mx.client.cache.FileTransferIdentify;
-import com.mx.client.cache.SCache;
 import com.mx.client.db.DBDataSQL;
 import com.mx.client.netty.NettyStatus;
 import com.mx.client.webtools.CryptorException;
@@ -33,8 +31,7 @@ public class TextHandler implements MessagerHandler {
 		boolean NoVoice = false;
 		AnMessageBean messageBean = new AnMessageBean();
 		messageBean.PDirection = DBDataSQL.IN;
-		messageBean.PMsgtime = String
-				.valueOf((Long.valueOf(xmlMap.get("time")) + NettyStatus.TiemOffset));
+		messageBean.PMsgtime = String.valueOf((Long.valueOf(xmlMap.get("time")) + NettyStatus.TiemOffset));
 		messageBean.PPeerid = xmlMap.get("from");
 		messageBean.PUnread = false;
 		int mMsgType = 0;
@@ -44,24 +41,26 @@ public class TextHandler implements MessagerHandler {
 			mMsgType = Msg.getTypeOfMsg(sData);
 			switch (mMsgType) {
 			case Msg.TYPE_IMAGE:
-//				String[] shit = messageBean.PMsg.split("\\:");
-//				messageBean.PMsgType = DBDataSQL.MSG_PICTURE;
-//				String mId = shit[0];
-//				AnMessageBean.getInstance().saveMessage(messageBean.PPeerid,
-//						messageBean.PMsg, "-1", messageBean.PDirection, "0",
-//						messageBean.PMsgtime,
-//						String.valueOf(messageBean.PUnread),
-//						String.valueOf(mMsgType));
-//				if (mId != null) {
-//					if (SCache.getInstance().getFileTransferIdentify(mId) != null) {
-//						SCache.getInstance().removeFileTransferIdentify(mId);
-//					}
-//					FileTransferIdentify taskIdentify = new FileTransferIdentify();
-//					taskIdentify.MessageID = messageBean._id;
-//					taskIdentify.FileId = mId;
-//					SCache.getInstance().putFileTransferIdentify(mId,
-//							taskIdentify);
-//				}
+				// String[] shit = messageBean.PMsg.split("\\:");
+				// messageBean.PMsgType = DBDataSQL.MSG_PICTURE;
+				// String mId = shit[0];
+				// AnMessageBean.getInstance().saveMessage(messageBean.PPeerid,
+				// messageBean.PMsg, "-1", messageBean.PDirection, "0",
+				// messageBean.PMsgtime,
+				// String.valueOf(messageBean.PUnread),
+				// String.valueOf(mMsgType));
+				// if (mId != null) {
+				// if (SCache.getInstance().getFileTransferIdentify(mId) !=
+				// null) {
+				// SCache.getInstance().removeFileTransferIdentify(mId);
+				// }
+				// FileTransferIdentify taskIdentify = new
+				// FileTransferIdentify();
+				// taskIdentify.MessageID = messageBean._id;
+				// taskIdentify.FileId = mId;
+				// SCache.getInstance().putFileTransferIdentify(mId,
+				// taskIdentify);
+				// }
 				break;
 			case Msg.TYPE_VOICE:
 				// String[] temp = messageBean.PMsg.split("\\|");
@@ -85,10 +84,8 @@ public class TextHandler implements MessagerHandler {
 				// }
 				break;
 			case Msg.TYPE_TXT:
-				AnMessageBean.getInstance().saveMessage(messageBean.PPeerid,
-						messageBean.PMsg, "-1", messageBean.PDirection, "0",
-						messageBean.PMsgtime,
-						String.valueOf(messageBean.PUnread),
+				AnMessageBean.getInstance().saveMessage(messageBean.PPeerid, messageBean.PMsg, "-1",
+						messageBean.PDirection, "0", messageBean.PMsgtime, String.valueOf(messageBean.PUnread),
 						String.valueOf(mMsgType));
 				// Log.v("netty", "TiemOffset=" + NettyStatus.TiemOffset);
 				if (NettyStatus.TiemOffset == 0) {
@@ -98,29 +95,23 @@ public class TextHandler implements MessagerHandler {
 						messageBeanError.PMsgtime = String
 								.valueOf((Long.valueOf(xmlMap.get("time")) + NettyStatus.TiemOffset));
 					} else {
-						messageBeanError.PMsgtime = String.valueOf(System
-								.currentTimeMillis());
+						messageBeanError.PMsgtime = String.valueOf(System.currentTimeMillis());
 					}
 					messageBeanError.PPeerid = xmlMap.get("from");
 					messageBeanError.PUnread = false;
 					if (xmlMap.get("time") != null) {
-						messageBeanError.PMsgtime = String.valueOf((Long
-								.valueOf(xmlMap.get("time"))
+						messageBeanError.PMsgtime = String.valueOf((Long.valueOf(xmlMap.get("time"))
 								+ NettyStatus.TiemOffset + 1000));
 					} else {
-						messageBeanError.PMsgtime = String.valueOf(System
-								.currentTimeMillis());
+						messageBeanError.PMsgtime = String.valueOf(System.currentTimeMillis());
 					}
 					messageBeanError.PPeerid = xmlMap.get("from");
 					messageBeanError.PUnread = false;
 					messageBeanError.PMsg = "系统提示：和服务器的时间差获取失败了，重新连接试试吧";
 					messageBeanError.PStatusId = DBDataSQL.STATUS_CRYPTERROR;
-					AnMessageBean.getInstance().saveMessage(
-							messageBeanError.PPeerid, messageBeanError.PMsg,
-							"-1", messageBeanError.PDirection, "0",
-							messageBeanError.PMsgtime,
-							String.valueOf(messageBeanError.PUnread),
-							String.valueOf(mMsgType));
+					AnMessageBean.getInstance().saveMessage(messageBeanError.PPeerid, messageBeanError.PMsg, "-1",
+							messageBeanError.PDirection, "0", messageBeanError.PMsgtime,
+							String.valueOf(messageBeanError.PUnread), String.valueOf(mMsgType));
 				}
 				break;
 
@@ -138,20 +129,16 @@ public class TextHandler implements MessagerHandler {
 			e.printStackTrace();
 			messageBean.PMsg = "系统提示：可能由于密钥的更换，导致对方发给您的历史消息无法解析，已丢弃，您需要请对方重发！";
 			messageBean.PStatusId = DBDataSQL.STATUS_CRYPTERROR;
-			AnMessageBean.getInstance().saveMessage(messageBean.PPeerid,
-					messageBean.PMsg, "-1", messageBean.PDirection,
-					String.valueOf(messageBean.PStatusId),
-					messageBean.PMsgtime, String.valueOf(messageBean.PUnread),
-					String.valueOf(mMsgType));
+			AnMessageBean.getInstance().saveMessage(messageBean.PPeerid, messageBean.PMsg, "-1",
+					messageBean.PDirection, String.valueOf(messageBean.PStatusId), messageBean.PMsgtime,
+					String.valueOf(messageBean.PUnread), String.valueOf(mMsgType));
 
 		} catch (Exception e) {
 			messageBean.PMsg = "系统提示：对方发给您的历史消息无法解析，已丢弃，您需要请对方重发！";
 			messageBean.PStatusId = DBDataSQL.STATUS_CRYPTERROR;
-			AnMessageBean.getInstance().saveMessage(messageBean.PPeerid,
-					messageBean.PMsg, "-1", messageBean.PDirection,
-					String.valueOf(messageBean.PStatusId),
-					messageBean.PMsgtime, String.valueOf(messageBean.PUnread),
-					String.valueOf(mMsgType));
+			AnMessageBean.getInstance().saveMessage(messageBean.PPeerid, messageBean.PMsg, "-1",
+					messageBean.PDirection, String.valueOf(messageBean.PStatusId), messageBean.PMsgtime,
+					String.valueOf(messageBean.PUnread), String.valueOf(mMsgType));
 			e.printStackTrace();
 		}
 
@@ -178,8 +165,7 @@ public class TextHandler implements MessagerHandler {
 
 	}
 
-	private String decodeChatUser(String sMsg) throws CryptorException,
-			InvalidKeyException, NoSuchAlgorithmException,
+	private String decodeChatUser(String sMsg) throws CryptorException, InvalidKeyException, NoSuchAlgorithmException,
 			NoSuchPaddingException {
 		byte[] data;
 		String sData;
