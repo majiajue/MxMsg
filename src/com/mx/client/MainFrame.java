@@ -68,6 +68,7 @@ public class MainFrame extends BaseFrame {
 	static TrayIcon maintrayIcon = null; // 托盘图标
 	private JLabel big = null;
 	private JLabel close = null;
+	private JavaLocationCollection collection;	
 	private static List<MsgFriendGroup> friends = new ArrayList<MsgFriendGroup>();
 	private static MsgUser ower = new MsgUser();
 
@@ -231,7 +232,7 @@ public class MainFrame extends BaseFrame {
 			zuijinPanel = new javax.swing.JPanel();
 			// GenDao.getInstance().getArrayValue(, columnName, valueColumn,
 			// condition)(, columnName, valueColumn, condition)
-			JavaLocationCollection collection = new JavaLocationCollection(
+			collection = new JavaLocationCollection(
 					GenDao.getInstance()
 							.getArrayValue(
 									SConfig.getInstance().getProfile().myPeerBean.PPeerid));
@@ -839,6 +840,46 @@ public class MainFrame extends BaseFrame {
 								new ImageIcon(
 										MainFrame.class
 												.getResource("/com/mx/client/image/add_down.png")));
+						String inputValue = JOptionPane.showInputDialog(null,
+								"请输入好友的密讯号", "添加好友", JOptionPane.PLAIN_MESSAGE);
+						if (inputValue != null) {
+							collection.getLocations().add(new JavaLocation(inputValue,
+									"None", "head_boy_01_32.jpg"));
+							GenDao.getInstance()
+									.executeInsert(
+											DBDataSQL.TB_PEERS,
+											new String[] {
+													DBDataSQL.COL_PEER_PEERID,
+													DBDataSQL.COL_PEER_USERNAME,
+													DBDataSQL.COL_PEER_FROMPEERID },
+											new Object[] {
+													inputValue,
+													inputValue,
+													SConfig.getInstance()
+															.getProfile().myPeerBean.PPeerid });
+							sampleJList.setListData(collection.getLocations().toArray());
+							tabbedPane.setSelectedIndex(0);
+							tabbedPane.setIconAt(
+									0,
+									new ImageIcon(
+											MainFrame.class
+													.getResource("/com/mx/client/image/friend_down.png")));
+							tabbedPane.setIconAt(
+									1,
+									new ImageIcon(
+											MainFrame.class
+													.getResource("/com/mx/client/image/group_up.png")));
+							tabbedPane.setIconAt(
+									2,
+									new ImageIcon(
+											MainFrame.class
+													.getResource("/com/mx/client/image/add_up.png")));
+						} else {
+
+							JOptionPane.showInternalMessageDialog(null,
+									"亲，请输入好友的密讯号!");
+						}
+						  
 					}
 				}
 
