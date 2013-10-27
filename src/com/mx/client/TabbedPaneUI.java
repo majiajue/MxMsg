@@ -2,6 +2,7 @@ package com.mx.client;
 
 
 import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Composite;
@@ -38,7 +39,7 @@ public class TabbedPaneUI extends BasicTabbedPaneUI {
 	private ColorSet defaultColorSet;
 	private ColorSet hoverColorSet;
 	private boolean contentTopBorderDrawn = true;
-	private Color lineColor = new Color(158, 158, 158);
+	private Color lineColor = new Color(45, 132, 180);
 	private Color dividerColor = new Color(0, 0, 0);
 	private Insets contentInsets = new Insets(1, 1, 1, 1);
 	private int lastRollOverTab = -1;
@@ -147,7 +148,6 @@ public class TabbedPaneUI extends BasicTabbedPaneUI {
             }else{	
             	height = height+0;
             }
-            System.out.println("2---"+height);
         }
         return height;
 
@@ -159,7 +159,7 @@ public class TabbedPaneUI extends BasicTabbedPaneUI {
 	        Component tabComponent = tabPane.getTabComponentAt(tabIndex);
 	        if (tabComponent != null) {
 	            width += tabComponent.getPreferredSize().width;
-	            System.out.println("1"+width);
+	          
 	        } else {
 	            Icon icon = getIconForTab(tabIndex);
 	            View v = getTextViewForTab(tabIndex);
@@ -220,10 +220,11 @@ public class TabbedPaneUI extends BasicTabbedPaneUI {
 
 		super.paintTabArea(g, tabPlacement, selectedIndex);
 
-//		if (contentTopBorderDrawn) {
-//			g2d.setColor(lineColor);
-//			g2d.drawLine(0, 20, tabPane.getWidth() - 1, 20);
-//		}
+		if (contentTopBorderDrawn) {
+			g2d.setColor(lineColor);
+			g2d.setStroke(new BasicStroke(4));
+			g2d.drawLine(0, 42, tabPane.getWidth(), 42);
+		}
 	}
 
 	protected void paintTabBackground(Graphics g, int tabPlacement,
@@ -246,7 +247,7 @@ public class TabbedPaneUI extends BasicTabbedPaneUI {
 				RenderingHints.VALUE_ANTIALIAS_ON);
 
 		int width = rect.width;
-		System.out.println("www"+width);
+		
 		int xpos = rect.x;
 		int yPos = rect.y;
 		if (tabIndex > -1) {
@@ -263,10 +264,10 @@ public class TabbedPaneUI extends BasicTabbedPaneUI {
 				h, colorSet.bottomGradColor2));
 		g2d.fill(this.getDownArea(xpos, yPos, width, h - 2));
 
-//		if (contentTopBorderDrawn) {
-//			g2d.setColor(lineColor);
-//			g2d.drawLine(rect.x, 20, rect.x + rect.width - 1, 20);
-//		}
+		if (contentTopBorderDrawn) {
+			g2d.setColor(lineColor);
+			g2d.drawLine(rect.x, 20, rect.x + rect.width - 1, 20);
+		}
 	}
 
 	private Shape getArea(int x, int y, int w, int h) {

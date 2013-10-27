@@ -28,6 +28,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -128,15 +129,17 @@ public class MainFrame extends BaseFrame {
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
+					
 					// TODO Auto-generated method stub
+					
 					String peerid = ((JavaLocation) sampleJList
 							.getSelectedValue()).getPeerId();
 					Hashtable<String, Object> table = new Hashtable<String, Object>();
 					table.put(DBDataSQL.COL_PEER_PEERID, table);
 					GenDao.getInstance().executeDelete(DBDataSQL.TB_PEERS,
 							table);
-					defaultLocations.remove(sampleJList.getSelectedIndex());
-					sampleJList.setListData(defaultLocations.toArray());
+					collection.getLocations().remove(sampleJList.getSelectedIndex());
+					sampleJList.setListData(collection.getLocations().toArray());
 				}
 			});
 			popupMenu.add(menuItem);
@@ -253,7 +256,7 @@ public class MainFrame extends BaseFrame {
 					// TODO Auto-generated method stub
 
 				}
-
+                
 				@Override
 				public void mousePressed(MouseEvent e) {
 					// TODO Auto-generated method stub
@@ -275,7 +278,7 @@ public class MainFrame extends BaseFrame {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					// TODO Auto-generated method stub
-					if (e.getClickCount() == 2) {
+					if (e.getClickCount() == 2&&e.getButton()!=3) {
 
 						String peerid = ((JavaLocation) sampleJList
 								.getSelectedValue()).getPeerId();
@@ -316,6 +319,7 @@ public class MainFrame extends BaseFrame {
 					}
 					if (e.getButton() == 3
 							&& sampleJList.getSelectedIndex() >= 0) {
+						System.out.println("进来了====");
 
 						popupMenu.show(sampleJList, e.getX(), e.getY());
 
@@ -825,11 +829,12 @@ public class MainFrame extends BaseFrame {
 					}
 
 					if (selectedIndex == 2) {
+						tabbedPane.setSelectedIndex(0);
 						tabbedPane.setIconAt(
 								0,
 								new ImageIcon(
 										MainFrame.class
-												.getResource("/com/mx/client/image/friend_up.png")));
+												.getResource("/com/mx/client/image/friend_down.png")));
 						tabbedPane.setIconAt(
 								1,
 								new ImageIcon(
@@ -839,46 +844,53 @@ public class MainFrame extends BaseFrame {
 								2,
 								new ImageIcon(
 										MainFrame.class
-												.getResource("/com/mx/client/image/add_down.png")));
+												.getResource("/com/mx/client/image/add_up.png")));
 						String inputValue = JOptionPane.showInputDialog(null,
 								"请输入好友的密讯号", "添加好友", JOptionPane.PLAIN_MESSAGE);
-						if (inputValue != null) {
-							collection.getLocations().add(new JavaLocation(inputValue,
-									"None", "head_boy_01_32.jpg"));
-							GenDao.getInstance()
-									.executeInsert(
-											DBDataSQL.TB_PEERS,
-											new String[] {
-													DBDataSQL.COL_PEER_PEERID,
-													DBDataSQL.COL_PEER_USERNAME,
-													DBDataSQL.COL_PEER_FROMPEERID },
-											new Object[] {
-													inputValue,
-													inputValue,
-													SConfig.getInstance()
-															.getProfile().myPeerBean.PPeerid });
-							sampleJList.setListData(collection.getLocations().toArray());
-							tabbedPane.setSelectedIndex(0);
-							tabbedPane.setIconAt(
-									0,
-									new ImageIcon(
-											MainFrame.class
-													.getResource("/com/mx/client/image/friend_down.png")));
-							tabbedPane.setIconAt(
-									1,
-									new ImageIcon(
-											MainFrame.class
-													.getResource("/com/mx/client/image/group_up.png")));
-							tabbedPane.setIconAt(
-									2,
-									new ImageIcon(
-											MainFrame.class
-													.getResource("/com/mx/client/image/add_up.png")));
-						} else {
-
-							JOptionPane.showInternalMessageDialog(null,
-									"亲，请输入好友的密讯号!");
-						}
+						//System.out.println("判断---"+inputValue!= null);
+						if (inputValue!= null&&inputValue!= "null"&&!"".equals(inputValue)&&!"null".equals(inputValue)) {
+							  //System.out.println("1 "+inputValue) ;
+							List<JavaLocation> list = collection.getLocations();
+							int a=0;
+							for (Iterator iterator = list.iterator(); iterator
+									.hasNext();) {
+								JavaLocation javaLocation = (JavaLocation) iterator
+										.next();
+								if(javaLocation.getPeerId().equals(inputValue.trim())){
+									         a=1;
+									         break;
+								}
+								
+							}
+							if(a==1){
+								
+								JOptionPane.showMessageDialog(null, "你添加的好友已经存在你的好友列表中了，不要重复添加了，亲!");
+							}else{
+								collection.getLocations().add(new JavaLocation(inputValue,
+										"None", "head_boy_01_32.jpg"));
+								GenDao.getInstance()
+										.executeInsert(
+												DBDataSQL.TB_PEERS,
+												new String[] {
+														DBDataSQL.COL_PEER_PEERID,
+														DBDataSQL.COL_PEER_USERNAME,
+														DBDataSQL.COL_PEER_FROMPEERID },
+												new Object[] {
+														inputValue,
+														inputValue,
+														SConfig.getInstance()
+																.getProfile().myPeerBean.PPeerid });
+								sampleJList.setListData(collection.getLocations().toArray());
+							}
+							
+							
+							
+						} 
+//						else {
+//                         
+////							JOptionPane.showInternalMessageDialog(null,
+////									"亲，请输入好友的密讯号!");
+//						}
 						  
 					}
 				}
@@ -950,19 +962,10 @@ public class MainFrame extends BaseFrame {
 											javax.swing.GroupLayout.PREFERRED_SIZE,
 											118,
 											javax.swing.GroupLayout.PREFERRED_SIZE)
-									.addPreferredGap(
-											javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 									.addComponent(
 											mainTabbedPanel,
 											javax.swing.GroupLayout.DEFAULT_SIZE,
 											289, Short.MAX_VALUE)
-									.addPreferredGap(
-											javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-					// .addComponent(
-					// jPanel2,
-					// javax.swing.GroupLayout.PREFERRED_SIZE,
-					// javax.swing.GroupLayout.DEFAULT_SIZE,
-					// javax.swing.GroupLayout.PREFERRED_SIZE)
 					));
 			addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent e) {

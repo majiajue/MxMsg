@@ -16,10 +16,11 @@ public class JavaLocationRenderer extends DefaultListCellRenderer {
 			int index, boolean isSelected, boolean hasFocus) {
 		JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
 				index, isSelected, hasFocus);
-		System.out.println("value===" + value.getClass());
+		label.setFont(new Font("微软雅黑",0,14));
+	
 		setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));//
 		if (value instanceof JavaLocation) {
-			System.out.println("===");
+		
 			JavaLocation location = (JavaLocation) value;
 			ImageIcon icon = (ImageIcon) iconTable.get(value);
 			if (icon == null) {
