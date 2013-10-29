@@ -170,7 +170,7 @@ public class Login extends JFrame {
 		}
 		// setTitle("MX");
 		setIconImage(Toolkit.getDefaultToolkit().getImage(
-				Login.class.getResource("/com/mx/client/image/QQ_64.png")));
+				Login.class.getResource("/com/mx/client/image/ic_launcher.png")));
 		setUndecorated(true);// 设置窗体没有边框
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 410, 312);
@@ -200,7 +200,7 @@ public class Login extends JFrame {
 
 		lbl头像 = new JLabel("");
 		lbl头像.setIcon(new ImageIcon(Login.class
-				.getResource("/com/mx/client/image/test2.jpg")));
+				.getResource("/com/mx/client/image/password.png")));
 		lbl头像.setBounds(40, 163, 50, 50);
 		contentPane.add(lbl头像);
 
@@ -357,7 +357,7 @@ public class Login extends JFrame {
 		// lbl注册账号.setForeground(new Color(0, 51, 255));
 		lbl注册账号.setBounds(40, 91, 50, 50);
 		lbl注册账号.setIcon(new ImageIcon(Login.class
-				.getResource("/com/mx/client/image/test.jpg")));
+				.getResource("/com/mx/client/image/login.png")));
 		contentPane.add(lbl注册账号);
 		// lbl注册账号.addMouseListener(new MouseListener() {
 		//
