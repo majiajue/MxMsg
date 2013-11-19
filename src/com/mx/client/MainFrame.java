@@ -61,7 +61,7 @@ import com.mx.client.webtools.RSAEncryptor;
 import com.mx.client.webtools.SConfig;
 import com.sun.awt.AWTUtilities;
 
-public class MainFrame extends BaseFrame {
+public class MainFrame extends JFrame{
 	List<JavaLocation> defaultLocations = new ArrayList<JavaLocation>();
 	static Point origin = new Point();
 	private JLabel small = null;
@@ -78,6 +78,7 @@ public class MainFrame extends BaseFrame {
 	public static MainFrame getInstance() {
 		if (instance == null) {
 			instance = new MainFrame();
+		
 		}
 		return instance;
 	}
@@ -85,7 +86,7 @@ public class MainFrame extends BaseFrame {
 	private MainFrame() {
 		try {
 
-			intSubstance();
+			//intSubstance();
 			initComponents();
 			String s = "test";
 
@@ -115,6 +116,11 @@ public class MainFrame extends BaseFrame {
 	// }
 
 	private void initComponents() {
+		
+		setUndecorated(true);
+		setSize(349, 560);
+		setAlwaysOnTop(true);
+		setMinimumSize(new java.awt.Dimension(349, 400));
 		try {
 
 			if (SystemTray.isSupported()) // 如果操作系统支持托盘
@@ -143,10 +149,6 @@ public class MainFrame extends BaseFrame {
 				}
 			});
 			popupMenu.add(menuItem);
-			this.setUndecorated(true);
-			this.setSize(349, 550);
-			this.setAlwaysOnTop(true);
-			setMinimumSize(new java.awt.Dimension(349, 400));
 			// Shape shape = new RoundRectangle2D.Double(0, 0, this.getWidth(),
 			// this.getHeight(), 10.0D, 10.0D);
 			// AWTUtilities.setWindowShape(this, shape);

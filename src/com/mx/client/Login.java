@@ -87,7 +87,7 @@ public class Login extends JFrame {
 					final Login frame = new Login();// 启动登陆框
 					// AWT.setWindowOpaque(frame, false);//设置窗体完全透明
 					// AWTUtilities.setWindowOpaque(frame, false);
-				 	JFrame.setDefaultLookAndFeelDecorated(true);
+				 	//JFrame.setDefaultLookAndFeelDecorated(true);
 			        JDialog.setDefaultLookAndFeelDecorated(true);
 			       
 			        try {
@@ -328,6 +328,7 @@ public class Login extends JFrame {
 								}
 							}
 							MainFrame frame = MainFrame.getInstance();
+							frame.setUndecorated(true);
 							frame.setVisible(true);
 							setVisible(false);
 						}else{
