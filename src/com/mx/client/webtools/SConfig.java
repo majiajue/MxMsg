@@ -1,5 +1,6 @@
 package com.mx.client.webtools;
 
+import java.io.File;
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -365,5 +366,29 @@ public class SConfig {
 
 	public static void main(String[] args) {
 		System.out.println(SUtil.toSHAString64("123456", null));
+	}
+	
+	public String getDownLdHost() {
+		// return this.getKeyValue("webhost");
+		return "61.4.82.141";
+		// return "192.168.4.233";
+	}
+
+	public String getDownLdPort() {
+		// return this.getKeyValue("webport");
+		return "80";
+	}
+	
+
+	public boolean isFolderExists(String strFolder) {
+		File file = new File(strFolder);
+		if (!file.exists()) {
+			if (file.mkdirs()) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return true;
 	}
 }

@@ -7,7 +7,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Hashtable;
-
 import com.mx.client.db.DBDataSQL;
 import com.mx.client.db.DBTools;
 import com.mx.client.db.GenDao;
@@ -32,7 +31,8 @@ public class Profile {
 	// private gra MyAvatar = null;
 	public String MyUserId = "";
 	public String keyupdatetime = "";
-
+	public static final String NEW_MAIN_DATA_DRI = "MiXun/";
+	public static final String USER_DATA = "users/";
 	/**
 	 * 
 	 * @param context
@@ -247,6 +247,24 @@ public class Profile {
 	public void changeKeyPair(KeyPair k) {
 		this.rSAKeyPair = k;
 		HandleSave();
+	}
+	
+	/**
+	 * 获取用户数据目录，
+	 * 
+	 * @return
+	 */
+	public String getUserDataDir() {
+		return System.getenv("TEMP")+ "/" + NEW_MAIN_DATA_DRI + USER_DATA + myPeerBean.PPeerid + "/";
+	}
+
+	/**
+	 * 获取密讯的根目录
+	 * 
+	 * @return
+	 */
+	public String getMixunRootDir() {
+		return System.getenv("TEMP") + "/" + NEW_MAIN_DATA_DRI;
 	}
 
 }

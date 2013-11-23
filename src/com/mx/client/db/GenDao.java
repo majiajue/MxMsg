@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Vector;
 
 import com.mx.client.JavaLocation;
+import com.mx.client.MessageCollection;
 import com.mx.client.db.SQLCommandBuilder.SQLCommandType;
 
 /**
@@ -431,6 +432,46 @@ public class GenDao {
 	 * @param condition
 	 * @return
 	 */
+	public List<MessageCollection> getMessageArrayValue(String peerId) {
+		this.conn = DBTools.getH2SQLConnection();
+		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
+		String value = "";
+		List<MessageCollection> valList = new ArrayList<MessageCollection>();
+		try {
+			Hashtable<String, Object> condition = new Hashtable<String, Object>();
+			condition.put(DBDataSQL.COL_PEER_FROMPEERID, peerId);
+			this.ps = this.conn.prepareStatement(" SELECT a.aVATARID ,M_PEERID ,count(*) as tj FROM TB_MESSAGE  t, PEERS a where a.PEERID =t.M_PEERID and a.fRIENDID =? and M_unREAD ='false' group by M_PEERID ");
+			ps.setString(1, peerId);
+			
+//			if (condition != null && condition.size() > 0) {
+//				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
+//						.toArray(), this.ps);
+//			}
+
+			// 执行SQL更新命令并保存取回的结果集对象
+		
+			this.rs = this.ps.executeQuery();
+			while (rs.next()) {
+				valList.add(new MessageCollection(rs.getString("AVATARID"), rs.getString("M_PEERID"), rs.getString("TJ")));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+
+		// 自动映射SQL参数
+		return valList;
+	};
+	
+	
+	/**
+	 * 获取某一字段条记录的值
+	 * 
+	 * @param tableName
+	 * @param columnName
+	 * @param condition
+	 * @return
+	 */
 	public List<JavaLocation> getArrayValue(String peerId) {
 		this.conn = DBTools.getH2SQLConnection();
 		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
@@ -462,5 +503,6 @@ public class GenDao {
 		// 自动映射SQL参数
 		return valList;
 	};
+
 
 }

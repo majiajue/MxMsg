@@ -1,5 +1,6 @@
 package com.mx.client.webtools;
 
+import java.io.File;
 import java.security.InvalidKeyException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -36,12 +37,12 @@ public class SUtil {
 	}
 
 	/**
-	 * ¶Ô×Ö·û´®¼ÓÃÜ,¼ÓÃÜËã·¨Ê¹ÓÃMD5,SHA-1,SHA-256,Ä¬ÈÏÊ¹ÓÃSHA-256
+	 * ï¿½ï¿½ï¿½Ö·ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ã·¨Ê¹ï¿½ï¿½MD5,SHA-1,SHA-256,Ä¬ï¿½ï¿½Ê¹ï¿½ï¿½SHA-256
 	 * 
 	 * @param strSrc
-	 *            Òª¼ÓÃÜµÄ×Ö·û´®
+	 *            Òªï¿½ï¿½ï¿½Üµï¿½ï¿½Ö·ï¿½
 	 * @param encName
-	 *            ¼ÓÃÜÀàÐÍ
+	 *            ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	 * @return
 	 */
 	public static String Encrypt(String strSrc, String encName) {
@@ -93,5 +94,17 @@ public class SUtil {
 		}
 		byte[] result = mac.doFinal(str.getBytes());
 		return result;
+	}
+	
+	public boolean RealizeDirectory(String strFolder) {
+		File file = new File(strFolder);
+		if (!file.exists()) {
+			if (file.mkdirs()) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+		return true;
 	}
 }

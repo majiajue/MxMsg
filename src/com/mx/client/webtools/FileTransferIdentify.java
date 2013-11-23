@@ -1,4 +1,4 @@
-package com.mx.client.cache;
+package com.mx.client.webtools;
 
 public class FileTransferIdentify {
 	/**

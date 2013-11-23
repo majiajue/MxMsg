@@ -81,7 +81,6 @@ import com.mx.client.webtools.SConfig;
 import com.sun.awt.AWTUtilities;
 import com.sun.xml.internal.ws.resources.SenderMessages;
 
-
 public class TalkFrame extends JFrame implements Runnable {
 
 	public com.mx.clent.vo.MsgUser friend; // 聊天的对方的QQ
@@ -166,10 +165,12 @@ public class TalkFrame extends JFrame implements Runnable {
 			}
 
 		});
-		JavaLocationCollection collection = new JavaLocationCollection();
-		JavaLocationListModel listModel = new JavaLocationListModel(collection);
+		MessageLocationCollection collection = new MessageLocationCollection(
+				GenDao.getInstance().getMessageArrayValue(
+						SConfig.getInstance().getProfile().myPeerBean.PPeerid));
+		MessageModel listModel = new MessageModel(collection);
 		sampleJList = new JList(listModel);
-		sampleJList.setCellRenderer(new JavaLocationRenderer());
+		sampleJList.setCellRenderer(new MessageRender());
 		sampleJList.addMouseListener(new MouseListener() {
 
 			@Override
@@ -201,8 +202,8 @@ public class TalkFrame extends JFrame implements Runnable {
 				// TODO Auto-generated method stub
 				if (e.getClickCount() == 2 && e.getButton() != 3) {
 
-					String peerid = ((JavaLocation) sampleJList
-							.getSelectedValue()).getPeerId();
+					String peerid = ((MessageCollection) sampleJList
+							.getSelectedValue()).getM_peerid();
 					friend = new MsgUser();
 					friend.setUserID(peerid);
 					friend.setUserName(peerid);
@@ -314,15 +315,25 @@ public class TalkFrame extends JFrame implements Runnable {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
-				String text = "";
-				try {
-					text = buildPicInfo();
-				} catch (BadLocationException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
 
-				showMsg("27631", text);
+				SwingUtilities.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+						String text = "";
+						try {
+							text = buildPicInfo();
+						} catch (BadLocationException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						// TODO Auto-generated method stub
+						HashMap<String, String> map = sendMessage(text);
+
+						System.out.println(map.toString());
+
+					}
+				});
 			}
 		});
 		button_1.setOpaque(true);
@@ -1498,25 +1509,25 @@ public class TalkFrame extends JFrame implements Runnable {
 
 		// getContentPane().add(glassBox1, java.awt.BorderLayout.CENTER);
 		// this.pack();
-		// new SwingWorker<Void, Void>() {
-		//
-		// @Override
-		// protected Void doInBackground() throws Exception {
-		// // TODO Auto-generated method stub
-		//
-		// timer.schedule(new MessageRecived(), 1000, 1000);
-		// return null;
-		//
-		// }
-		//
-		// @Override
-		// protected void done() {
-		// // TODO Auto-generated method stub
-		//
-		// super.done();
-		// }
-		//
-		// }.execute();
+		new SwingWorker<Void, Void>() {
+
+			@Override
+			protected Void doInBackground() throws Exception {
+				// TODO Auto-generated method stub
+
+				timer.schedule(new MessageRecived(), 1000, 1000);
+				return null;
+
+			}
+
+			@Override
+			protected void done() {
+				// TODO Auto-generated method stub
+
+				super.done();
+			}
+
+		}.execute();
 	}// </editor-fold>
 
 	private void insert(FontAttrib userAttrib) {// 插入文本
@@ -1713,28 +1724,27 @@ public class TalkFrame extends JFrame implements Runnable {
 		String dataString = sf.format(d);
 		userInfoFontAttrib.setText(peak + "  " + dataString);
 		// System.out.println("textInfo:" + msg);
-		
+
 		this.insert(userInfoFontAttrib);
 		int index = msg.indexOf("/");
-		//System.out.println("/");
-		System.out.println("index---->"+index);
+		// System.out.println("/");
+		System.out.println("index---->" + index);
 		pos1 = textPane.getCaretPosition();
-		System.out.println("pos1---->"+pos1);
+		System.out.println("pos1---->" + pos1);
 		if (index >= 0 && index < msg.length() - 1) {
 			System.out.println("--------------");
-			
-			
+
 			String m = receivedPicInfo(msg);
-			System.out.println("---->"+m);
+			System.out.println("---->" + m);
 			textFontAttrib.setText(m);
 			insert(textFontAttrib);
-			
-			//Document doc = textPane.getDocument();
-			//textPane.select(doc.getLength(), doc.getLength());
+
+			// Document doc = textPane.getDocument();
+			// textPane.select(doc.getLength(), doc.getLength());
 			insertPics(true);
 		} else {
 
-			//this.insert(userInfoFontAttrib);
+			// this.insert(userInfoFontAttrib);
 			textFontAttrib.setText(msg);
 			this.insert(textFontAttrib);
 			Document doc = textPane.getDocument();
@@ -1745,13 +1755,35 @@ public class TalkFrame extends JFrame implements Runnable {
 
 	public void showRecivedMsg(String peak, String msg, String date) {
 		SimpleDateFormat sf = new SimpleDateFormat("HH:mm:ss");// 这里的格式自己按需要写
-		Date d = new Date(Long.parseLong(date));
-		userInfoFontAttrib.setText(peak + "  " + sf.format(d));
-		System.out.println("textInfo:" + msg);
-		textFontAttrib.setText(msg);
-		//this.insert(userInfoFontAttrib, textFontAttrib);
-		Document doc = textPane_1.getDocument();
-		textPane_1.select(doc.getLength(), doc.getLength());
+		String dataString = sf.format(date);
+		userInfoFontAttrib.setText(peak + "  " + dataString);
+		// System.out.println("textInfo:" + msg);
+
+		this.insert(userInfoFontAttrib);
+		int index = msg.indexOf("/");
+		// System.out.println("/");
+		System.out.println("index---->" + index);
+		pos1 = textPane.getCaretPosition();
+		System.out.println("pos1---->" + pos1);
+		if (index >= 0 && index < msg.length() - 1) {
+			System.out.println("--------------");
+
+			String m = receivedPicInfo(msg);
+			System.out.println("---->" + m);
+			textFontAttrib.setText(m);
+			insert(textFontAttrib);
+
+			// Document doc = textPane.getDocument();
+			// textPane.select(doc.getLength(), doc.getLength());
+			insertPics(true);
+		} else {
+
+			// this.insert(userInfoFontAttrib);
+			textFontAttrib.setText(msg);
+			this.insert(textFontAttrib);
+			Document doc = textPane.getDocument();
+			textPane.select(doc.getLength(), doc.getLength());
+		}
 	}
 
 	public JLabel getPicLabel() {
@@ -1771,31 +1803,31 @@ public class TalkFrame extends JFrame implements Runnable {
 	}
 
 	public String receivedPicInfo(String origi) {
-		int sum = origi.length();//接收到的文字
-		int i = 0;//记录文字位置
-        int j=0;//记录表情
+		int sum = origi.length();// 接收到的文字
+		int i = 0;// 记录文字位置
+		int j = 0;// 记录表情
 		StringBuffer sb = new StringBuffer("");
-        String temp;
-        List<String> list = new ArrayList<String>();//接收到所有表情的文字用于替换
+		String temp;
+		List<String> list = new ArrayList<String>();// 接收到所有表情的文字用于替换
 		while (i < sum) {
 			if (sum < 4) {
 				break;
 			}
 			if (origi.charAt(i) == '/') {
-				
+
 				if (sum - i >= 4) {
-					//System.out.println(sum - i);
+					// System.out.println(sum - i);
 					temp = origi.substring(i, i + 4);
-					System.out.println("temp==>"+temp);
-					
+					System.out.println("temp==>" + temp);
+
 					Integer position = CustomFace.faceStrToInt.get(temp);
 					if (position != null) {
-						
-						System.out.println("i2--->"+j);
+
+						System.out.println("i2--->" + j);
 						PicInfo pic = new PicInfo(j, position + "");
 						receivdPicInfo.add(pic);
 						list.add(temp);
-						i=i+4;
+						i = i + 4;
 						j++;
 					} else {
 						i++;
@@ -1808,66 +1840,70 @@ public class TalkFrame extends JFrame implements Runnable {
 				i++;
 				j++;
 			}
-			
-			System.out.println("i--->"+i);
+
+			System.out.println("i--->" + i);
 		}
 		for (int b = 0; b < list.size(); b++) {
 			String a = list.get(b);
-			origi=origi.replace(a, "");
+			origi = origi.replace(a, "");
 		}
-		j=0;//让j重新计算
+		j = 0;// 让j重新计算
 		System.out.println(origi);
 		return origi;
 	}
-    
+
 	/**
 	 * 插入图片
 	 * 
-	 * @param isFriend 是否为朋友发过来的消息
+	 * @param isFriend
+	 *            是否为朋友发过来的消息
 	 */
-	
+
 	private void insertPics(boolean isFriend) {
 		System.out.println(receivdPicInfo.size());
-		if(isFriend){
-			if(this.receivdPicInfo.size()<=0){
+		if (isFriend) {
+			if (this.receivdPicInfo.size() <= 0) {
 				return;
-			}else{
-				for(int i = 0 ; i < receivdPicInfo.size() ; i++){
-					//pos1 = textPane.getCaretPosition();
+			} else {
+				for (int i = 0; i < receivdPicInfo.size(); i++) {
+					// pos1 = textPane.getCaretPosition();
 					PicInfo pic = receivdPicInfo.get(i);
-					System.out.println("xx-->"+pic.getPos());
+					System.out.println("xx-->" + pic.getPos());
 					String fileName;
-					if(i+1==receivdPicInfo.size()){
-						textPane.setCaretPosition(pos1+pic.getPos()+1);	
-					}else{
-						textPane.setCaretPosition(pos1+pic.getPos());
+					if (i + 1 == receivdPicInfo.size()) {
+						textPane.setCaretPosition(pos1 + pic.getPos() + 1);
+					} else {
+						textPane.setCaretPosition(pos1 + pic.getPos());
 					}
-					 /*设置插入位置*/
-		            fileName= "face/"+pic.getVal()+".gif";/*修改图片路径*/ 
-					textPane.insertIcon(new  ImageIcon(PicsJWindow.class.getResource(fileName))); /*插入图片*/
-/*					jpChat.updateUI();*/
+					/* 设置插入位置 */
+					fileName = "face/" + pic.getVal() + ".gif";/* 修改图片路径 */
+					textPane.insertIcon(new ImageIcon(PicsJWindow.class
+							.getResource(fileName))); /* 插入图片 */
+					/* jpChat.updateUI(); */
 				}
 				receivdPicInfo.clear();
 			}
-		}else{
-			
-			if(myPicInfo.size()<=0){
+		} else {
+
+			if (myPicInfo.size() <= 0) {
 				return;
-			}else{
-				for(int i = 0 ; i < myPicInfo.size() ; i++){
+			} else {
+				for (int i = 0; i < myPicInfo.size(); i++) {
 					PicInfo pic = myPicInfo.get(i);
-					textPane.setCaretPosition(pos2+pic.getPos()); /*设置插入位置*/
+					textPane.setCaretPosition(pos2 + pic.getPos()); /* 设置插入位置 */
 					String fileName;
-		            fileName= "face/"+pic.getVal()+".gif";/*修改图片路径*/ 
-					textPane.insertIcon(new  ImageIcon(PicsJWindow.class.getResource(fileName))); /*插入图片*/
-					/*jpChat.updateUI();*/
+					fileName = "face/" + pic.getVal() + ".gif";/* 修改图片路径 */
+					textPane.insertIcon(new ImageIcon(PicsJWindow.class
+							.getResource(fileName))); /* 插入图片 */
+					/* jpChat.updateUI(); */
 				}
 				myPicInfo.clear();
 			}
 		}
-		textPane.setCaretPosition(doc.getLength()); /*设置滚动到最下边*/
-		//insert(new FontAttrib()); /*这样做可以换行*/
+		textPane.setCaretPosition(doc.getLength()); /* 设置滚动到最下边 */
+		// insert(new FontAttrib()); /*这样做可以换行*/
 	}
+
 	//
 	// public void run() {
 	// }
@@ -1960,13 +1996,11 @@ public class TalkFrame extends JFrame implements Runnable {
 			// TODO Auto-generated method stub
 			Hashtable<String, Object> condition = new Hashtable<String, Object>();
 			condition.put(DBDataSQL.COL_MES_PEERID, friend.getUserID());
-			System.out.println("peerid" + friend.getUserID());
 			condition.put(DBDataSQL.COL_MES_UNREAD, "false");
 			List<String> msg = GenDao.getInstance().getArrayValue(
 					DBDataSQL.TB_MESSAGE.toUpperCase(),
 					new String[] { DBDataSQL.COL_MES_MSG.toLowerCase() },
 					DBDataSQL.COL_MES_MSG.toUpperCase(), condition);
-			System.out.println("msg" + msg);
 			List<String> msgtime = GenDao.getInstance().getArrayValue(
 					DBDataSQL.TB_MESSAGE,
 					new String[] { DBDataSQL.COL_MES_MSGTIME },

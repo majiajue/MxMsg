@@ -1,30 +1,37 @@
 package com.mx.client;
 
-import javax.swing.*;
-
-import sun.swing.SwingUtilities2;
-
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.image.BufferedImage;
-import java.util.*;
+import java.util.Hashtable;
 
+import javax.swing.BorderFactory;
+import javax.swing.DefaultListCellRenderer;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
 
-public class JavaLocationRenderer extends DefaultListCellRenderer {
+public class MessageRender extends DefaultListCellRenderer {
 	private Hashtable iconTable = new Hashtable();
 
 	public Component getListCellRendererComponent(JList list, Object value,
 			int index, boolean isSelected, boolean hasFocus) {
 		JLabel label = (JLabel) super.getListCellRendererComponent(list, value,
 				index, isSelected, hasFocus);
-	
+		//JLabel label = new JLabel();
 		label.setFont(new Font("微软雅黑",0,14));
-	
+	    //JLabel jLabel2 = new JLabel();
 		setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 5));//
-		if (value instanceof JavaLocation) {
+		if (value instanceof MessageCollection) {
 		
-			JavaLocation location = (JavaLocation) value;
+			MessageCollection location = (MessageCollection) value;
 			ImageIcon icon = (ImageIcon) iconTable.get(value);
-			if (icon == null) {
+			if (location.getAvatar() == null||location.getAvatar().equals("null")||location.getAvatar().equals("")) {
 				// System.out.println(location.getFlagFile());
 				icon = new ImageIcon(this.getClass().getResource(
 						"/com/mx/client/headImage/head_boy_01_32.jpg"));
@@ -52,7 +59,10 @@ public class JavaLocationRenderer extends DefaultListCellRenderer {
 			g.dispose();
 			//label = new JLabel(new ImageIcon(bi), JLabel.LEFT);
 			label.setIcon(new ImageIcon(bi));
-			
+			label.setText((char)32+" "+(char)32+location.getM_peerid()+(char)32+" "+(char)32+" "+(char)32+" "+(char)32+"("+location.getTj()+")");
+			//p.add(label);
+			//jLabel2.setText(location.getTj());
+			//p.add(jLabel2);
 			if(index%2==0){
 				label.setOpaque(true);
 				label.setBackground(new Color(238, 238, 239));
@@ -62,10 +72,10 @@ public class JavaLocationRenderer extends DefaultListCellRenderer {
 			}
 		} else {
 
-			label.setIcon(null);
+			//p.setIcon(null);
 		}
-		label.setText((char)32+" "+(char)32+value.toString());
-		System.out.println((char)32+value.toString());
-		return (label);
+		
+		//System.out.println((char)32+value.toString());
+		return label;
 	}
 }
