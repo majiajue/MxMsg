@@ -94,6 +94,7 @@ public class TalkFrame extends JFrame implements Runnable {
 	private JLabel label;// 关闭窗口
 	private JLabel label_2;// 窗口最小化
 	private JLabel label_7;
+	private MessageLocationCollection collection =null;
 	private JTextPane textPane;// 显示聊天窗口
 	private FontAttrib userInfoFontAttrib = new FontAttrib();// 显示字体设置
 	private FontAttrib textFontAttrib = new FontAttrib();// 发送字体设置
@@ -165,7 +166,7 @@ public class TalkFrame extends JFrame implements Runnable {
 			}
 
 		});
-		MessageLocationCollection collection = new MessageLocationCollection(
+		collection = new MessageLocationCollection(
 				GenDao.getInstance().getMessageArrayValue(
 						SConfig.getInstance().getProfile().myPeerBean.PPeerid));
 		MessageModel listModel = new MessageModel(collection);
@@ -283,6 +284,7 @@ public class TalkFrame extends JFrame implements Runnable {
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
 				setVisible(false);
+				//timer.cancel();
 			}
 		});
 		JButton button_1 = new JButton("\u53D1\u9001");
@@ -593,6 +595,7 @@ public class TalkFrame extends JFrame implements Runnable {
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
 				setVisible(false);
+				//timer.cancel();
 			}
 		});
 		label.addMouseMotionListener(new MouseMotionListener() {
@@ -645,6 +648,7 @@ public class TalkFrame extends JFrame implements Runnable {
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
 				setVisible(false);
+				//timer.cancel();
 			}
 		});
 		label_2.addMouseMotionListener(new MouseMotionListener() {
@@ -1526,8 +1530,10 @@ public class TalkFrame extends JFrame implements Runnable {
 
 				super.done();
 			}
+			
 
 		}.execute();
+		
 	}// </editor-fold>
 
 	private void insert(FontAttrib userAttrib) {// 插入文本
@@ -1753,37 +1759,32 @@ public class TalkFrame extends JFrame implements Runnable {
 
 	}
 
-	public void showRecivedMsg(String peak, String msg, String date) {
-		SimpleDateFormat sf = new SimpleDateFormat("HH:mm:ss");// 这里的格式自己按需要写
-		String dataString = sf.format(date);
-		userInfoFontAttrib.setText(peak + "  " + dataString);
-		// System.out.println("textInfo:" + msg);
+	public void showRecivedMsg(String peak, String msg, String date)
+			throws ParseException {
 
+		SimpleDateFormat sf = new SimpleDateFormat("HH:mm:ss");// 这里的格式自己按需要写
+		Date d = new Date();
+		d.setTime(Long.parseLong(date));
+		String dataString = sf.format(d);
+		userInfoFontAttrib.setText(peak + "  " + dataString);
 		this.insert(userInfoFontAttrib);
 		int index = msg.indexOf("/");
-		// System.out.println("/");
 		System.out.println("index---->" + index);
 		pos1 = textPane.getCaretPosition();
 		System.out.println("pos1---->" + pos1);
 		if (index >= 0 && index < msg.length() - 1) {
-			System.out.println("--------------");
-
 			String m = receivedPicInfo(msg);
-			System.out.println("---->" + m);
 			textFontAttrib.setText(m);
 			insert(textFontAttrib);
-
-			// Document doc = textPane.getDocument();
-			// textPane.select(doc.getLength(), doc.getLength());
 			insertPics(true);
 		} else {
-
 			// this.insert(userInfoFontAttrib);
 			textFontAttrib.setText(msg);
 			this.insert(textFontAttrib);
 			Document doc = textPane.getDocument();
 			textPane.select(doc.getLength(), doc.getLength());
 		}
+
 	}
 
 	public JLabel getPicLabel() {
@@ -1993,32 +1994,42 @@ public class TalkFrame extends JFrame implements Runnable {
 
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
-			Hashtable<String, Object> condition = new Hashtable<String, Object>();
-			condition.put(DBDataSQL.COL_MES_PEERID, friend.getUserID());
-			condition.put(DBDataSQL.COL_MES_UNREAD, "false");
-			List<String> msg = GenDao.getInstance().getArrayValue(
-					DBDataSQL.TB_MESSAGE.toUpperCase(),
-					new String[] { DBDataSQL.COL_MES_MSG.toLowerCase() },
-					DBDataSQL.COL_MES_MSG.toUpperCase(), condition);
-			List<String> msgtime = GenDao.getInstance().getArrayValue(
-					DBDataSQL.TB_MESSAGE,
-					new String[] { DBDataSQL.COL_MES_MSGTIME },
-					DBDataSQL.COL_MES_MSGTIME, condition);
-			for (int i = 0; i < msg.size(); i++) {
-				String m = msg.get(i);
-				String time = msgtime.get(i);
-				showRecivedMsg(friend.getUserID(), m, time);
+			collection = new MessageLocationCollection(
+					GenDao.getInstance().getMessageArrayValue(
+							SConfig.getInstance().getProfile().myPeerBean.PPeerid));
+			sampleJList.setListData(collection.getLocations().toArray());//刷新用户消息列表
+			if (label_7.getText().equals(friend.getUserID())) {
+				// TODO Auto-generated method stub
+				Hashtable<String, Object> condition = new Hashtable<String, Object>();
+				condition.put(DBDataSQL.COL_MES_PEERID, friend.getUserID());
+				condition.put(DBDataSQL.COL_MES_UNREAD, "false");
+				List<String> msg = GenDao.getInstance().getArrayValue(
+						DBDataSQL.TB_MESSAGE.toUpperCase(),
+						new String[] { DBDataSQL.COL_MES_MSG.toLowerCase() },
+						DBDataSQL.COL_MES_MSG.toUpperCase(), condition);
+				List<String> msgtime = GenDao.getInstance().getArrayValue(
+						DBDataSQL.TB_MESSAGE,
+						new String[] { DBDataSQL.COL_MES_MSGTIME },
+						DBDataSQL.COL_MES_MSGTIME, condition);
+				for (int i = 0; i < msg.size(); i++) {
+					String m = msg.get(i);
+					String time = msgtime.get(i);
+					try {
+						showRecivedMsg(friend.getUserID(), m, time);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				if (msg.size() > 0)
+					GenDao.getInstance().executeUpdate(
+							DBDataSQL.TB_MESSAGE.toUpperCase(),
+							new String[] { DBDataSQL.COL_MES_UNREAD
+									.toUpperCase() }, new Object[] { "true" },
+							condition);
 			}
-			if (msg.size() > 0)
-				GenDao.getInstance()
-						.executeUpdate(
-								DBDataSQL.TB_MESSAGE.toUpperCase(),
-								new String[] { DBDataSQL.COL_MES_UNREAD
-										.toUpperCase() },
-								new Object[] { "true" }, condition);
+			
 		}
-
 	}
 
 	public HashMap<String, String> sendMessage(String msg) {
@@ -2066,9 +2077,6 @@ public class TalkFrame extends JFrame implements Runnable {
 		// 遍历jtextpane找出所有的图片信息封装成指定格式
 		for (int i = 0; i < this.textPane_1.getText().length(); i++) {
 			if (docMsg.getCharacterElement(i).getName().equals("icon")) {
-
-				System.out.println(textPane_1.getStyledDocument()
-						.getCharacterElement(i).getAttributes());
 				Icon icon = StyleConstants.getIcon(textPane_1
 						.getStyledDocument().getCharacterElement(i)
 						.getAttributes());
