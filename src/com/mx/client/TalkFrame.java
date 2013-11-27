@@ -124,6 +124,7 @@ public class TalkFrame extends JFrame implements Runnable {
 	}
 
 	private void initComponents() {
+		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 776, 532);
 		setUndecorated(true);
@@ -153,6 +154,7 @@ public class TalkFrame extends JFrame implements Runnable {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				TalkFrame.this.picWindow.dispose();
+				
 			}
 
 			@Override
@@ -163,6 +165,8 @@ public class TalkFrame extends JFrame implements Runnable {
 			@Override
 			public void componentHidden(ComponentEvent e) {
 				TalkFrame.this.picWindow.dispose();
+				timer.cancel();
+				dispose();
 			}
 
 		});
@@ -283,7 +287,8 @@ public class TalkFrame extends JFrame implements Runnable {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
-				setVisible(false);
+				 dispose();
+				 timer.cancel();
 				//timer.cancel();
 			}
 		});
@@ -332,7 +337,7 @@ public class TalkFrame extends JFrame implements Runnable {
 						// TODO Auto-generated method stub
 						HashMap<String, String> map = sendMessage(text);
 
-						System.out.println(map.toString());
+						showMsg(SConfig.getInstance().getProfile().myPeerBean.PPeerid, text);
 
 					}
 				});
@@ -345,7 +350,7 @@ public class TalkFrame extends JFrame implements Runnable {
 				.setHorizontalGroup(gl_panel_2.createParallelGroup(
 						Alignment.CENTER).addGroup(
 						Alignment.CENTER,
-						gl_panel_2.createSequentialGroup().addGap(450)
+						gl_panel_2.createSequentialGroup().addGap(420)
 								.addComponent(button).addGap(5)
 								.addComponent(button_1)));
 		gl_panel_2.setVerticalGroup(gl_panel_2.createParallelGroup(
@@ -675,8 +680,7 @@ public class TalkFrame extends JFrame implements Runnable {
 								GroupLayout.PREFERRED_SIZE, 50,
 								GroupLayout.PREFERRED_SIZE)
 						.addComponent(label_7)
-						.addPreferredGap(ComponentPlacement.RELATED, 395,
-								Short.MAX_VALUE).addComponent(label_2)
+						.addGap(368).addComponent(label_2)
 
 						.addComponent(lblNewLabel_2)
 
@@ -1877,7 +1881,7 @@ public class TalkFrame extends JFrame implements Runnable {
 						textPane.setCaretPosition(pos1 + pic.getPos());
 					}
 					/* 设置插入位置 */
-					fileName = "face/" + pic.getVal() + ".gif";/* 修改图片路径 */
+					fileName = "face/smiley_" + pic.getVal() + ".png";/* 修改图片路径 */
 					textPane.insertIcon(new ImageIcon(PicsJWindow.class
 							.getResource(fileName))); /* 插入图片 */
 					/* jpChat.updateUI(); */
@@ -1924,7 +1928,7 @@ public class TalkFrame extends JFrame implements Runnable {
 
 	//
 	// private javax.swing.JButton deleteFriend_Button;
-	// private javax.swing.JButton exit_Button; // 关闭的按钮
+	// private javax.swing.JButton exit_Button; // 的按钮
 	// private javax.swing.JButton face_jButton;
 	// private javax.swing.JLabel fenMusic_jLabel;
 	// private javax.swing.JButton findShare_jButton;

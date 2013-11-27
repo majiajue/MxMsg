@@ -1028,19 +1028,28 @@ public class MainFrame extends JFrame{
 							- origin.y);
 				}
 			});
-			NettyClient client = null;
-			try {
-				client = new NettyClient("https://www.han2011.com/"
-						+ "/getmessage/"
-						+ SConfig.getInstance().getProfile().getSession()
-						+ "/call.xml");
-			} catch (URISyntaxException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			Thread thread = new Thread(client);
-			thread.setDaemon(true);
-			thread.start();
+			SwingUtilities.invokeLater(new Runnable() {
+				
+				@Override
+				public void run() {
+					// TODO Auto-generated method stub
+					NettyClient client = null;
+					try {
+						client = new NettyClient("https://www.han2011.com/"
+								+ "/getmessage/"
+								+ SConfig.getInstance().getProfile().getSession()
+								+ "/call.xml");
+					} catch (URISyntaxException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					Thread thread = new Thread(client);
+					thread.setDaemon(true);
+					thread.setPriority(Thread.MAX_PRIORITY);
+					thread.start();
+				}
+			});
+			
 			System.out.println("线程启动");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

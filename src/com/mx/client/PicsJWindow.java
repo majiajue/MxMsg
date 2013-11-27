@@ -41,7 +41,7 @@ public   class   PicsJWindow  extends   JWindow   {
         p.setBackground(SystemColor.text);		
 		String fileName = "";
         for(i=0;i <ico.length;i++){ 
-            fileName= "face/"+i+".gif";//表情
+            fileName= "face/smiley_"+i+".png";//表情
             ico[i] =new   JLabel(new  ChatPic(PicsJWindow.class.getResource(fileName),i),SwingConstants.CENTER);
             ico[i].setBorder(BorderFactory.createLineBorder(new Color(225,225,225), 1));
             ico[i].setToolTipText(i+"");

@@ -440,7 +440,7 @@ public class GenDao {
 		try {
 			Hashtable<String, Object> condition = new Hashtable<String, Object>();
 			condition.put(DBDataSQL.COL_PEER_FROMPEERID, peerId);
-			this.ps = this.conn.prepareStatement(" SELECT a.aVATARID ,M_PEERID ,count(*) as tj FROM TB_MESSAGE  t, PEERS a where a.PEERID =t.M_PEERID and a.fRIENDID =? and M_unREAD ='false' group by M_PEERID order by t.m_msgtime asc ");
+			this.ps = this.conn.prepareStatement(" SELECT a.aVATARID ,M_PEERID ,count(*) as tj FROM TB_MESSAGE  t, PEERS a where a.PEERID =t.M_PEERID and a.fRIENDID =? and M_unREAD ='false' group by M_PEERID order by M_PEERID asc ");
 			ps.setString(1, peerId);
 			
 //			if (condition != null && condition.size() > 0) {
