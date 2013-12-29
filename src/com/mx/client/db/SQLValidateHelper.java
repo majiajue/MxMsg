@@ -63,9 +63,9 @@ public final class SQLValidateHelper {
 		// 检查SQL参数列表中是否包含null和空字串值
 		if (param != null) {
 			for (int i = 0; i < param.length; i++) {
-				if (param[i] == null 
-					|| param[i].equals("")) {
+				if (param[i] == null) {//去掉对空字符串的判断
 					// 验证失败
+					System.out.println("param---->"+param);
 					throw new SQLParamException("SQL参数列表中不能包含" + notNullMsg);
 				}
 			}
