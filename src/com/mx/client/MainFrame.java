@@ -61,7 +61,7 @@ import com.mx.client.webtools.RSAEncryptor;
 import com.mx.client.webtools.SConfig;
 import com.sun.awt.AWTUtilities;
 
-public class MainFrame extends JFrame{
+public class MainFrame extends JFrame {
 	List<JavaLocation> defaultLocations = new ArrayList<JavaLocation>();
 	static Point origin = new Point();
 	private JLabel small = null;
@@ -69,7 +69,8 @@ public class MainFrame extends JFrame{
 	static TrayIcon maintrayIcon = null; // 托盘图标
 	private JLabel big = null;
 	private JLabel close = null;
-	private JavaLocationCollection collection;	
+	private JavaLocationCollection collection;
+	private GroupLocationCollection groupCollection;
 	private static List<MsgFriendGroup> friends = new ArrayList<MsgFriendGroup>();
 	private static MsgUser ower = new MsgUser();
 
@@ -78,7 +79,7 @@ public class MainFrame extends JFrame{
 	public static MainFrame getInstance() {
 		if (instance == null) {
 			instance = new MainFrame();
-		
+
 		}
 		return instance;
 	}
@@ -86,7 +87,7 @@ public class MainFrame extends JFrame{
 	private MainFrame() {
 		try {
 
-			//intSubstance();
+			// intSubstance();
 			initComponents();
 			String s = "test";
 
@@ -116,7 +117,7 @@ public class MainFrame extends JFrame{
 	// }
 
 	private void initComponents() {
-		
+
 		setUndecorated(true);
 		setSize(349, 560);
 		setAlwaysOnTop(true);
@@ -135,17 +136,19 @@ public class MainFrame extends JFrame{
 
 				@Override
 				public void actionPerformed(ActionEvent e) {
-					
+
 					// TODO Auto-generated method stub
-					
+
 					String peerid = ((JavaLocation) sampleJList
 							.getSelectedValue()).getPeerId();
 					Hashtable<String, Object> table = new Hashtable<String, Object>();
 					table.put(DBDataSQL.COL_PEER_PEERID, table);
 					GenDao.getInstance().executeDelete(DBDataSQL.TB_PEERS,
 							table);
-					collection.getLocations().remove(sampleJList.getSelectedIndex());
-					sampleJList.setListData(collection.getLocations().toArray());
+					collection.getLocations().remove(
+							sampleJList.getSelectedIndex());
+					sampleJList
+							.setListData(collection.getLocations().toArray());
 				}
 			});
 			popupMenu.add(menuItem);
@@ -230,7 +233,7 @@ public class MainFrame extends JFrame{
 
 			mainTabbedPanel = new SnapTipTabbedPane();
 			mainTabbedPanel.setUI(new TabbedPaneUI());
-			//mainTabbedPanel.setFont(new Font("宋体", Font.PLAIN, 16));
+			// mainTabbedPanel.setFont(new Font("宋体", Font.PLAIN, 16));
 			friendPanel = new javax.swing.JPanel();
 			// friendTree=new JListCustomModel();
 			teamPanel = new javax.swing.JPanel();
@@ -244,8 +247,8 @@ public class MainFrame extends JFrame{
 			JavaLocationListModel listModel = new JavaLocationListModel(
 					collection);
 			sampleJList = new JList(listModel);
-			sampleJList.setBackground(new Color(217,204,217));
-			
+			sampleJList.setBackground(new Color(217, 204, 217));
+
 			sampleJList.setCellRenderer(new JavaLocationRenderer());
 			Font displayFont = new Font("Serif", Font.BOLD, 18);
 			sampleJList.setFont(displayFont);
@@ -258,7 +261,7 @@ public class MainFrame extends JFrame{
 					// TODO Auto-generated method stub
 
 				}
-                
+
 				@Override
 				public void mousePressed(MouseEvent e) {
 					// TODO Auto-generated method stub
@@ -280,13 +283,101 @@ public class MainFrame extends JFrame{
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					// TODO Auto-generated method stub
-					if (e.getClickCount() == 2&&e.getButton()!=3) {
+					if (e.getClickCount() == 2 && e.getButton() != 3) {
 
 						String peerid = ((JavaLocation) sampleJList
 								.getSelectedValue()).getPeerId();
 						final MsgUser user = new MsgUser();
 						user.setUserID(peerid);
 						user.setUserName(peerid);
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+
+								TalkFrame frame = new TalkFrame(user);
+								frame.setVisible(true); // 这个就是程序界面初始化
+							}
+						});
+
+						// System.out.println("peerid===" + peerid);
+
+						// String peerid = ((JavaLocation)
+						// sampleJList.getSelectedValue()).getPeerId();
+						// System.out.println("peerid===" + peerid);
+						// ConnectionUtils.getInstance().getPubkey(peerid);
+						// String mMimeSend = "mime:txt:" + "helloworld!";
+						// String mecode = "";
+						// try {
+						// mecode =
+						// RSAEncryptor.getInstance().encryptBase64Encode(mMimeSend.getBytes(),
+						// peerid);
+						// } catch (CryptorException e1) {
+						// // TODO Auto-generated catch block
+						// e1.printStackTrace();
+						// }
+						// Map<String, Object> map = new HashMap<String,
+						// Object>();
+						// map.put("duid", peerid);
+						// map.put("msg", mecode);
+						// ConnectionUtils.getInstance().postTxtMessage(map);
+						// System.out.println();
+
+					}
+					if (e.getButton() == 3
+							&& sampleJList.getSelectedIndex() >= 0) {
+						System.out.println("进来了====");
+
+						popupMenu.show(sampleJList, e.getX(), e.getY());
+
+					}
+				}
+			});
+			groupCollection = new GroupLocationCollection(
+					GenDao.getInstance()
+							.getArrayList(
+									SConfig.getInstance().getProfile().myPeerBean.PPeerid));
+			GroupModel groupModel = new GroupModel(groupCollection);
+			groupJList = new JList(groupModel);
+			groupJList.setCellRenderer(new GroupRender());
+			groupJList.setFont(displayFont);
+			groupJList.addListSelectionListener(new GroupValueReporter());
+			groupJList.addMouseListener(new MouseListener() {
+
+				@Override
+				public void mouseReleased(MouseEvent e) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void mousePressed(MouseEvent e) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void mouseExited(MouseEvent e) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void mouseEntered(MouseEvent e) {
+					// TODO Auto-generated method stub
+
+				}
+
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					// TODO Auto-generated method stub
+					if (e.getClickCount() == 2 && e.getButton() != 3) {
+
+						String group = ((GroupLocation) groupJList
+								.getSelectedValue()).getGroupName();
+						String ownerName = ((GroupLocation) groupJList
+								.getSelectedValue()).getOwnName();
+						final MsgUser user = new MsgUser();
+						user.setGroup(group);
+						user.setUserName(ownerName);
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
 
@@ -766,7 +857,7 @@ public class MainFrame extends JFrame{
 			javax.swing.GroupLayout friendPanelLayout = new javax.swing.GroupLayout(
 					friendPanel);
 			friendPanel.setLayout(friendPanelLayout);
-		    //friendPanel.setBackground(new Color(217,204,217));
+			// friendPanel.setBackground(new Color(217,204,217));
 			friendPanel.setOpaque(false);
 			friendPanelLayout.setHorizontalGroup(friendPanelLayout
 					.createParallelGroup(
@@ -849,27 +940,32 @@ public class MainFrame extends JFrame{
 												.getResource("/com/mx/client/image/add_up.png")));
 						String inputValue = JOptionPane.showInputDialog(null,
 								"请输入好友的密讯号", "添加好友", JOptionPane.PLAIN_MESSAGE);
-						//System.out.println("判断---"+inputValue!= null);
-						if (inputValue!= null&&inputValue!= "null"&&!"".equals(inputValue)&&!"null".equals(inputValue)) {
-							  //System.out.println("1 "+inputValue) ;
+						// System.out.println("判断---"+inputValue!= null);
+						if (inputValue != null && inputValue != "null"
+								&& !"".equals(inputValue)
+								&& !"null".equals(inputValue)) {
+							// System.out.println("1 "+inputValue) ;
 							List<JavaLocation> list = collection.getLocations();
-							int a=0;
+							int a = 0;
 							for (Iterator iterator = list.iterator(); iterator
 									.hasNext();) {
 								JavaLocation javaLocation = (JavaLocation) iterator
 										.next();
-								if(javaLocation.getPeerId().equals(inputValue.trim())){
-									         a=1;
-									         break;
+								if (javaLocation.getPeerId().equals(
+										inputValue.trim())) {
+									a = 1;
+									break;
 								}
-								
+
 							}
-							if(a==1){
-								
-								JOptionPane.showMessageDialog(null, "你添加的好友已经存在你的好友列表中了，不要重复添加了，亲!");
-							}else{
-								collection.getLocations().add(new JavaLocation(inputValue,
-										"None", "head_boy_01_32.jpg"));
+							if (a == 1) {
+
+								JOptionPane.showMessageDialog(null,
+										"你添加的好友已经存在你的好友列表中了，不要重复添加了，亲!");
+							} else {
+								collection.getLocations().add(
+										new JavaLocation(inputValue, "None",
+												"head_boy_01_32.jpg"));
 								GenDao.getInstance()
 										.executeInsert(
 												DBDataSQL.TB_PEERS,
@@ -882,18 +978,17 @@ public class MainFrame extends JFrame{
 														inputValue,
 														SConfig.getInstance()
 																.getProfile().myPeerBean.PPeerid });
-								sampleJList.setListData(collection.getLocations().toArray());
+								sampleJList.setListData(collection
+										.getLocations().toArray());
 							}
-							
-							
-							
-						} 
-//						else {
-//                         
-////							JOptionPane.showInternalMessageDialog(null,
-////									"亲，请输入好友的密讯号!");
-//						}
-						  
+
+						}
+						// else {
+						//
+						// // JOptionPane.showInternalMessageDialog(null,
+						// // "亲，请输入好友的密讯号!");
+						// }
+
 					}
 				}
 
@@ -903,12 +998,17 @@ public class MainFrame extends JFrame{
 			teamPanel.setLayout(teamPanelLayout);
 			teamPanelLayout.setHorizontalGroup(teamPanelLayout
 					.createParallelGroup(
-							javax.swing.GroupLayout.Alignment.LEADING).addGap(
-							0, 240, Short.MAX_VALUE));
+							javax.swing.GroupLayout.Alignment.LEADING)
+					.addGap(0, 240, Short.MAX_VALUE)
+					.addComponent(groupJList,
+							javax.swing.GroupLayout.DEFAULT_SIZE, 240,
+							Short.MAX_VALUE));
 			teamPanelLayout.setVerticalGroup(teamPanelLayout
 					.createParallelGroup(
-							javax.swing.GroupLayout.Alignment.LEADING).addGap(
-							0, 260, Short.MAX_VALUE));
+							javax.swing.GroupLayout.Alignment.LEADING)
+					.addComponent(groupJList,
+							javax.swing.GroupLayout.DEFAULT_SIZE, 260,
+							Short.MAX_VALUE));
 			mainTabbedPanel.addTab(
 					"",
 					new ImageIcon(MainFrame.class
@@ -967,8 +1067,7 @@ public class MainFrame extends JFrame{
 									.addComponent(
 											mainTabbedPanel,
 											javax.swing.GroupLayout.DEFAULT_SIZE,
-											289, Short.MAX_VALUE)
-					));
+											289, Short.MAX_VALUE)));
 			addWindowListener(new WindowAdapter() {
 				public void windowClosing(WindowEvent e) {
 					setVisible(false);
@@ -1029,7 +1128,7 @@ public class MainFrame extends JFrame{
 				}
 			});
 			SwingUtilities.invokeLater(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					// TODO Auto-generated method stub
@@ -1037,8 +1136,8 @@ public class MainFrame extends JFrame{
 					try {
 						client = new NettyClient("https://www.han2011.com/"
 								+ "/getmessage/"
-								+ SConfig.getInstance().getProfile().getSession()
-								+ "/call.xml");
+								+ SConfig.getInstance().getProfile()
+										.getSession() + "/call.xml");
 					} catch (URISyntaxException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
@@ -1049,7 +1148,7 @@ public class MainFrame extends JFrame{
 					thread.start();
 				}
 			});
-			
+
 			System.out.println("线程启动");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -1063,7 +1162,7 @@ public class MainFrame extends JFrame{
 	// this.repaint();
 	// }
 	public void setMainColor(Color bg) {
-		//mainTabbedPanel.setBackground(bg);
+		// mainTabbedPanel.setBackground(bg);
 		friendPanel.setBackground(bg);
 		teamPanel.setBackground(bg);
 		zuijinPanel.setBackground(bg);
@@ -1120,6 +1219,7 @@ public class MainFrame extends JFrame{
 	private javax.swing.JToolBar jToolBar2;
 	private javax.swing.JToolBar jToolBar3;
 	private JList sampleJList;
+	private JList groupJList;
 	private SnapTipTabbedPane mainTabbedPanel;
 	private javax.swing.JButton mySetButton;
 	private javax.swing.JButton news;
@@ -1204,6 +1304,18 @@ public class MainFrame extends JFrame{
 			if (!e.getValueIsAdjusting())
 				System.out.println(((JavaLocation) sampleJList
 						.getSelectedValue()).getPeerId());
+
+		}
+	}
+
+	private class GroupValueReporter implements ListSelectionListener {
+
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			// TODO Auto-generated method stub
+			if (!e.getValueIsAdjusting())
+				System.out.println(((GroupLocation) groupJList
+						.getSelectedValue()).getGroupName());
 
 		}
 	}

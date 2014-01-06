@@ -66,7 +66,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleConstants.CharacterConstants;
 import javax.swing.text.StyleConstants.FontConstants;
 import javax.swing.text.StyledDocument;
-
 import org.h2.table.Table;
 
 import com.mx.clent.vo.AnMessageBean;
@@ -75,6 +74,7 @@ import com.mx.client.db.DBDataSQL;
 import com.mx.client.db.GenDao;
 import com.mx.client.msg.ShockMsg;
 import com.mx.client.webtools.ConnectionUtils;
+import com.mx.client.webtools.Cryptor;
 import com.mx.client.webtools.CryptorException;
 import com.mx.client.webtools.RSAEncryptor;
 import com.mx.client.webtools.SConfig;
@@ -94,7 +94,8 @@ public class TalkFrame extends JFrame implements Runnable {
 	private JLabel label;// 关闭窗口
 	private JLabel label_2;// 窗口最小化
 	private JLabel label_7;
-	private MessageLocationCollection collection =null;
+	private Cryptor mCryptor;
+	private MessageLocationCollection collection = null;
 	private JTextPane textPane;// 显示聊天窗口
 	private FontAttrib userInfoFontAttrib = new FontAttrib();// 显示字体设置
 	private FontAttrib textFontAttrib = new FontAttrib();// 发送字体设置
@@ -124,7 +125,7 @@ public class TalkFrame extends JFrame implements Runnable {
 	}
 
 	private void initComponents() {
-		
+
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 776, 532);
 		setUndecorated(true);
@@ -154,7 +155,7 @@ public class TalkFrame extends JFrame implements Runnable {
 			@Override
 			public void componentResized(ComponentEvent e) {
 				TalkFrame.this.picWindow.dispose();
-				
+
 			}
 
 			@Override
@@ -170,8 +171,8 @@ public class TalkFrame extends JFrame implements Runnable {
 			}
 
 		});
-		collection = new MessageLocationCollection(
-				GenDao.getInstance().getMessageArrayValue(
+		collection = new MessageLocationCollection(GenDao.getInstance()
+				.getMessageArrayValue(
 						SConfig.getInstance().getProfile().myPeerBean.PPeerid));
 		MessageModel listModel = new MessageModel(collection);
 		sampleJList = new JList(listModel);
@@ -206,14 +207,37 @@ public class TalkFrame extends JFrame implements Runnable {
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
 				if (e.getClickCount() == 2 && e.getButton() != 3) {
-
 					String peerid = ((MessageCollection) sampleJList
 							.getSelectedValue()).getM_peerid();
+					String group = ((MessageCollection) sampleJList
+							.getSelectedValue()).getIsGroup();
+					
 					friend = new MsgUser();
 					friend.setUserID(peerid);
 					friend.setUserName(peerid);
+					friend.setGroup(group);
+					if (group.equals("1")) {
+						String g = ((MessageCollection) sampleJList
+								.getSelectedValue()).getGroup_user();
+						Hashtable<String, Object> condition = new Hashtable<String, Object>();
+						condition.put(DBDataSQL.COL_PROOM_ROOMNAME, peerid);
+						friend.setUserName(g);
+						String key = GenDao.getInstance().getValue(
+								DBDataSQL.TB_ROOMS,
+								new String[] { DBDataSQL.COL_PROOM_AESKEY },
+								DBDataSQL.COL_PROOM_AESKEY, condition);
+						System.out.println("key-->" + key);
+						try {
+							mCryptor = new Cryptor(key);
+						} catch (CryptorException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+
+					}
 					label_7.setText(friend.getUserID());
 					label_7.setFont(new Font("微软雅黑", Font.BOLD, 14));
+					textPane.setText("");
 				}
 			}
 		});
@@ -287,9 +311,9 @@ public class TalkFrame extends JFrame implements Runnable {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
-				 dispose();
-				 timer.cancel();
-				//timer.cancel();
+				dispose();
+				timer.cancel();
+				// timer.cancel();
 			}
 		});
 		JButton button_1 = new JButton("\u53D1\u9001");
@@ -337,7 +361,8 @@ public class TalkFrame extends JFrame implements Runnable {
 						// TODO Auto-generated method stub
 						HashMap<String, String> map = sendMessage(text);
 
-						showMsg(SConfig.getInstance().getProfile().myPeerBean.PPeerid, text);
+						showMsg(SConfig.getInstance().getProfile().myPeerBean.PPeerid,
+								text);
 
 					}
 				});
@@ -600,7 +625,7 @@ public class TalkFrame extends JFrame implements Runnable {
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
 				setVisible(false);
-				//timer.cancel();
+				// timer.cancel();
 			}
 		});
 		label.addMouseMotionListener(new MouseMotionListener() {
@@ -653,7 +678,7 @@ public class TalkFrame extends JFrame implements Runnable {
 			public void mouseClicked(MouseEvent e) {
 				// TODO Auto-generated method stub
 				setVisible(false);
-				//timer.cancel();
+				// timer.cancel();
 			}
 		});
 		label_2.addMouseMotionListener(new MouseMotionListener() {
@@ -679,8 +704,8 @@ public class TalkFrame extends JFrame implements Runnable {
 						.addComponent(lblNewLabel_1,
 								GroupLayout.PREFERRED_SIZE, 50,
 								GroupLayout.PREFERRED_SIZE)
-						.addComponent(label_7)
-						.addGap(368).addComponent(label_2)
+						.addComponent(label_7).addGap(368)
+						.addComponent(label_2)
 
 						.addComponent(lblNewLabel_2)
 
@@ -1534,10 +1559,9 @@ public class TalkFrame extends JFrame implements Runnable {
 
 				super.done();
 			}
-			
 
 		}.execute();
-		
+
 	}// </editor-fold>
 
 	private void insert(FontAttrib userAttrib) {// 插入文本
@@ -1999,19 +2023,24 @@ public class TalkFrame extends JFrame implements Runnable {
 		@Override
 		public void run() {
 			collection = new MessageLocationCollection(
-					GenDao.getInstance().getMessageArrayValue(
-							SConfig.getInstance().getProfile().myPeerBean.PPeerid));
-			sampleJList.setListData(collection.getLocations().toArray());//刷新用户消息列表
-			if (label_7.getText().equals(friend.getUserID())) {
+					GenDao.getInstance()
+							.getMessageArrayValue(
+									SConfig.getInstance().getProfile().myPeerBean.PPeerid));
+			sampleJList.setListData(collection.getLocations().toArray());// 刷新用户消息列表
+			Hashtable<String, Object> condition = new Hashtable<String, Object>();
+			List<String> msg = null;
+			List<String> msgtime = null;
+			if (label_7.getText().equals(friend.getUserID())
+					&& friend.getGroup().equals("0")) {
 				// TODO Auto-generated method stub
-				Hashtable<String, Object> condition = new Hashtable<String, Object>();
+
 				condition.put(DBDataSQL.COL_MES_PEERID, friend.getUserID());
 				condition.put(DBDataSQL.COL_MES_UNREAD, "false");
-				List<String> msg = GenDao.getInstance().getArrayValue(
+				msg = GenDao.getInstance().getArrayValue(
 						DBDataSQL.TB_MESSAGE.toUpperCase(),
 						new String[] { DBDataSQL.COL_MES_MSG.toLowerCase() },
 						DBDataSQL.COL_MES_MSG.toUpperCase(), condition);
-				List<String> msgtime = GenDao.getInstance().getArrayValue(
+				msgtime = GenDao.getInstance().getArrayValue(
 						DBDataSQL.TB_MESSAGE,
 						new String[] { DBDataSQL.COL_MES_MSGTIME },
 						DBDataSQL.COL_MES_MSGTIME, condition);
@@ -2025,35 +2054,90 @@ public class TalkFrame extends JFrame implements Runnable {
 						e.printStackTrace();
 					}
 				}
-				if (msg.size() > 0)
+				if (msg.size() > 0) {
 					GenDao.getInstance().executeUpdate(
 							DBDataSQL.TB_MESSAGE.toUpperCase(),
 							new String[] { DBDataSQL.COL_MES_UNREAD
 									.toUpperCase() }, new Object[] { "true" },
 							condition);
+				}
 			}
-			
+			if (label_7.getText().equals(friend.getUserID())
+					&& friend.getGroup().equals("1")) {
+				condition.put(DBDataSQL.COL_MES_GROUP, friend.getUserID());
+				condition.put(DBDataSQL.COL_MES_UNREAD, "false");
+				msg = GenDao.getInstance().getArrayValue(
+						DBDataSQL.TB_MESSAGE.toUpperCase(),
+						new String[] { DBDataSQL.COL_MES_MSG.toLowerCase() },
+						DBDataSQL.COL_MES_MSG.toUpperCase(), condition);
+				msgtime = GenDao.getInstance().getArrayValue(
+						DBDataSQL.TB_MESSAGE,
+						new String[] { DBDataSQL.COL_MES_MSGTIME },
+						DBDataSQL.COL_MES_MSGTIME, condition);
+				for (int i = 0; i < msg.size(); i++) {
+					String m = msg.get(i);
+					String time = msgtime.get(i);
+					try {
+						showRecivedMsg(friend.getUserName(), m, time);
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				if (msg.size() > 0) {
+					GenDao.getInstance().executeUpdate(
+							DBDataSQL.TB_MESSAGE.toUpperCase(),
+							new String[] { DBDataSQL.COL_MES_UNREAD
+									.toUpperCase() }, new Object[] { "true" },
+							condition);
+				}
+			}
+
 		}
 	}
 
 	public HashMap<String, String> sendMessage(String msg) {
-		ConnectionUtils.getInstance().getPubkey(friend.getUserID());
-		String mMimeSend = "mime:txt:" + msg;
-		String mecode = "";
-		try {
-			mecode = RSAEncryptor.getInstance().encryptBase64Encode(
-					mMimeSend.getBytes(), friend.getUserID());
-		} catch (CryptorException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		Map<String, Object> map = new HashMap<String, Object>();
-		map.put("duid", friend.getUserID());
-		map.put("msg", mecode);
-		// ConnectionUtils.getInstance().postTxtMessage(map);
 		HashMap<String, String> hashMap = new HashMap<String, String>();
-		hashMap = ConnectionUtils.getInstance().postTxtMessage(map);
-		System.out.println("发送信息聊~~~~~~" + hashMap.toString());
+		if (friend.getGroup().equals("0")) {
+			ConnectionUtils.getInstance().getPubkey(friend.getUserID());
+			String mMimeSend = "mime:txt:" + msg;
+			String mecode = "";
+			try {
+				mecode = RSAEncryptor.getInstance().encryptBase64Encode(
+						mMimeSend.getBytes(), friend.getUserID());
+			} catch (CryptorException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			Map<String, Object> map = new HashMap<String, Object>();
+			map.put("duid", friend.getUserID());
+			map.put("msg", mecode);
+			// ConnectionUtils.getInstance().postTxtMessage(map);
+
+			hashMap = ConnectionUtils.getInstance().postTxtMessage(map);
+			System.out.println("发送信息聊~~~~~~" + hashMap.toString());
+		}
+		if (friend.getGroup().equals("1")) {
+			try {
+				String mMimeSend = "mime:txt:"+msg;
+				String enc = mCryptor.encryptBase64Encode(msg.getBytes());
+				Hashtable<String, Object> condition = new Hashtable<String, Object>();
+				condition.put(DBDataSQL.COL_PROOM_ROOMNAME, friend.getUserID());
+				String roomId = GenDao.getInstance().getValue(
+						DBDataSQL.TB_ROOMS,
+						new String[] { DBDataSQL.COL_PROOM_ROOMID },
+						DBDataSQL.COL_PROOM_ROOMID, condition);
+				HashMap<String, String> map = new HashMap<String, String>();
+				map = ConnectionUtils.getInstance().roomSendMsg(roomId, enc,
+						DBDataSQL.ROOM_TYPE_NORMAL);
+				System.out.println("群聊信息发送中---》" + map.toString());
+			} catch (CryptorException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}
+
 		return hashMap;
 
 	}

@@ -21,6 +21,7 @@ public class AnMessageBean {
 	public MsgExtraBean PExtra = null;
 	public MsgStatusBean PStatu = null;
 	public int PMsgType = DBDataSQL.MSG_TEXT;
+	public String Group = "";
 
 	// 初始化一些参数
 	private void initparams() {
@@ -81,7 +82,49 @@ public class AnMessageBean {
 		// msgtime, status, msgtime, unread, status);
 		// }
 	}
-
+    
+	/**
+	 * 针对群
+	 * @param title
+	 * @return
+	 */
+	
+	public AnMessageBean(String peerid, String msg, int msg_extra,
+			String direction, int status, String msgtime, Boolean unread,
+			int msgType,String Group) {
+		PPeerid = peerid;
+		PMsg = msg;
+		PMmsgExtraId = msg_extra;
+		PDirection = direction;
+		PStatusId = status;
+		PMsgtime = msgtime;
+		PUnread = unread;
+        this.Group = Group;
+		PMsgType = msgType;
+		PPeersBean = AnPeersBean.getInstance().getUserByPeerID(peerid);
+		if (PPeersBean == null) {
+			// LOG.d("chat", "用户不存在，自动添加到数据库" + peerid);
+			PPeersBean = new AnPeersBean();
+			PPeersBean.PPeerid = PPeerid;
+			PPeersBean.PUsername = PPeerid;
+			AnPeersBean.getInstance().savePeer(PPeersBean.PPeerid,
+					PPeersBean.PUsername, "", "", "", "", "", "");
+		}
+		if (PMmsgExtraId >= 0) {
+			PExtra = MsgExtraBean.getInstance().getExtraBeanById(msg_extra);
+			// PSendBean =
+			// StorageManager.GetInstance().getFileSendList().getSendBeanByTaskId(msg_extra);
+		} else {
+			PExtra = new MsgExtraBean();
+		}
+		PStatu = new MsgStatusBean();
+		// if (PExtra == null) {
+		// PExtra = new MsgExtraBean(DBDataSQL.MSG_TEXT, false, "", msgtime,
+		// msgtime, msgtime, status, status,
+		// msgtime, status, msgtime, unread, status);
+		// }
+	}
+	
 	// 调用notepad提供的方法的参数
 	public HashMap<String, String> getHashMap(String title) {
 		HashMap<String, String> hashmap = new HashMap<String, String>();
@@ -271,6 +314,43 @@ public class AnMessageBean {
 				columns,
 				new Object[] { peerid, direction, msg, msg_extra, msgtime,
 						msgType, status, unread });
+	   return a;
+
+	}
+	/**
+	 * 用于group操作
+	 * @param peerid
+	 * @param msg
+	 * @param msg_extra
+	 * @param direction
+	 * @param status
+	 * @param msgtime
+	 * @param unread
+	 * @param msgType
+	 * @return
+	 */
+	public int saveMessage(String peerid, String msg, String msg_extra,
+			String direction, String status, String msgtime, String unread,
+			String msgType,String group) {
+		String[] columns = new String[] { DBDataSQL.COL_MES_PEERID,
+				DBDataSQL.COL_MES_DIRECTION, DBDataSQL.COL_MES_MSG,
+				DBDataSQL.COL_MES_MSG_EXTRA, DBDataSQL.COL_MES_MSGTIME,
+				DBDataSQL.COL_MES_MSGTYPE, DBDataSQL.COL_MES_STATUS,
+				DBDataSQL.COL_MES_UNREAD,DBDataSQL.COL_MES_GROUP};
+
+		Hashtable<String, Object> table = new Hashtable<String, Object>();
+		table.put(DBDataSQL.COL_MES_PEERID, peerid);
+//		boolean b = GenDao.getInstance().executeUpdate(
+//				DBDataSQL.TB_MESSAGE,
+//				columns,
+//				new Object[] { peerid, direction, msg, msg_extra, msgtime,
+//						msgType, status, unread }, null);
+		
+		int a = GenDao.getInstance().executeInsertRId(
+				DBDataSQL.TB_MESSAGE,
+				columns,
+				new Object[] { peerid, direction, msg, msg_extra, msgtime,
+						msgType, status, unread ,group});
 	   return a;
 
 	}

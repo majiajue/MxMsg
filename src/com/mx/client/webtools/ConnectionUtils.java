@@ -21,6 +21,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.ParserConfigurationException;
 import com.mx.clent.vo.AnPeersBean;
+import com.mx.client.db.DBDataSQL;
 import com.mx.client.webtools.MySSLSocketFactory;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.configuration.MapConfiguration;
@@ -331,12 +332,12 @@ public class ConnectionUtils {
 					.equalsIgnoreCase("ok")) {
 				pubkey = XmlUtil.instance().parseXmltoString(xml, "UTF-8",
 						"pubkey");
-				time = XmlUtil.instance().parseXmltoString(xml, "UTF-8",
-						"time");
+				time = XmlUtil.instance()
+						.parseXmltoString(xml, "UTF-8", "time");
 			}
 			System.out.println(pubkey + " ======== " + time);
-			
-			byte[]decoded = Base64.decodeBase64(pubkey.getBytes());
+
+			byte[] decoded = Base64.decodeBase64(pubkey.getBytes());
 			PublicKey pkey = PubkeyUtils.decodePublic(decoded, "RSA");
 			AnPeersBean bean = new AnPeersBean();
 			bean.savePeerKey(Uid, pkey, time);
@@ -356,38 +357,40 @@ public class ConnectionUtils {
 		} else {
 			url = murl + pos;
 		}
-		System.out.println("url=="+url);
-		PoolingClientConnectionManager connectionManager=new PoolingClientConnectionManager();
+		System.out.println("url==" + url);
+		PoolingClientConnectionManager connectionManager = new PoolingClientConnectionManager();
 
 		connectionManager.setMaxTotal(1);
 
 		HttpClient httpclient = new DefaultHttpClient(connectionManager);
 		httpclient = wrapClient(httpclient);
-		httpclient.getParams().setParameter("http.socket.timeout",3000);
+		httpclient.getParams().setParameter("http.socket.timeout", 3000);
 
-		httpclient.getParams().setParameter("http.connection.timeout",3000);
+		httpclient.getParams().setParameter("http.connection.timeout", 3000);
 
-		httpclient.getParams().setParameter("http.connection-manager.timeout",300000000L);
+		httpclient.getParams().setParameter("http.connection-manager.timeout",
+				300000000L);
 
-//
-//		// ����ܳ׿�
-//		KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
-//		// FileInputStream instream = new FileInputStream(new File("D:/zzaa"));
-//		// �ܳ׿������
-//		trustStore.load(null, null);
-//		// ע���ܳ׿�
-//		SSLSocketFactory socketFactory = new AnSSLSocketFactory(trustStore);
-//		// ��У������
-//		socketFactory.setHostnameVerifier(AnSSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-//		Scheme sch = new Scheme("https", 443, socketFactory);
-//		httpclient.getConnectionManager().getSchemeRegistry().register(sch);
-	    
-		
+		//
+		// // ����ܳ׿�
+		// KeyStore trustStore =
+		// KeyStore.getInstance(KeyStore.getDefaultType());
+		// // FileInputStream instream = new FileInputStream(new
+		// File("D:/zzaa"));
+		// // �ܳ׿������
+		// trustStore.load(null, null);
+		// // ע���ܳ׿�
+		// SSLSocketFactory socketFactory = new AnSSLSocketFactory(trustStore);
+		// // ��У������
+		// socketFactory.setHostnameVerifier(AnSSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+		// Scheme sch = new Scheme("https", 443, socketFactory);
+		// httpclient.getConnectionManager().getSchemeRegistry().register(sch);
+
 		// ���HttpGet����
 		HttpGet httpGet = null;
-		
+
 		httpGet = new HttpGet(url);
-	
+
 		// ��������
 		HttpResponse response = httpclient.execute(httpGet);
 		// �������ֵ
@@ -399,176 +402,259 @@ public class ConnectionUtils {
 		while ((line = br.readLine()) != null) {
 			sb.append(line + NL);
 		}
-	   is.close();
-       System.out.println("sb======"+sb.toString());
-       return sb.toString();
+		is.close();
+		System.out.println("sb======" + sb.toString());
+		return sb.toString();
 	}
+
 	/**
 	 * �û���ȡhttpcliect����
+	 * 
 	 * @param base
 	 * @return
 	 */
-	
-	  public static org.apache.http.client.HttpClient wrapClient(org.apache.http.client.HttpClient base) {
-          try {
-              SSLContext ctx = SSLContext.getInstance("TLS");
-              X509TrustManager tm = new X509TrustManager() {
-                  public X509Certificate[] getAcceptedIssuers() {
-                      return null;
-                  }
-                  public void checkClientTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
-                  public void checkServerTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {}
-              };
-              ctx.init(null, new TrustManager[] { tm }, null);
-              SSLSocketFactory ssf = new SSLSocketFactory(ctx, SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
-              SchemeRegistry registry = new SchemeRegistry();
-              registry.register(new Scheme("https", 443, ssf));
-              ThreadSafeClientConnManager mgr = new ThreadSafeClientConnManager(registry);
-              return new DefaultHttpClient(mgr, base.getParams());
-          } catch (Exception ex) {
-              ex.printStackTrace();
-              return null;
-          }
-      }
-	  
-	  
-	  public  HashMap<String, String>  postTxtMessage(Map<String, Object> postContent){
-		  
-		  BufferedReader in = null;
-		  String url = "https://www.han2011.com/postmessage/" + SConfig.getInstance().getProfile().getSession() + "/call.xml";;
-		  HashMap<String, String> map = new HashMap<String, String>();
-		  PoolingClientConnectionManager connectionManager=new PoolingClientConnectionManager();
 
-			connectionManager.setMaxTotal(1);
+	public static org.apache.http.client.HttpClient wrapClient(
+			org.apache.http.client.HttpClient base) {
+		try {
+			SSLContext ctx = SSLContext.getInstance("TLS");
+			X509TrustManager tm = new X509TrustManager() {
+				public X509Certificate[] getAcceptedIssuers() {
+					return null;
+				}
 
-			HttpClient client = new DefaultHttpClient(connectionManager);
-			client = wrapClient(client);
-			client.getParams().setParameter("http.socket.timeout",3000);
-			client.getParams().setParameter("http.connection.timeout",3000);
-			client.getParams().setParameter("http.connection-manager.timeout",300000000L);
-			System.out.println("url" + url);
-			try {
-				HttpPost request = new HttpPost(url);
-				List<BasicNameValuePair> postParameters = new ArrayList<BasicNameValuePair>();
-				if (postContent != null && postContent.size() > 0) {
-					Iterator<Entry<String, Object>> i = postContent.entrySet()
-							.iterator();
+				public void checkClientTrusted(X509Certificate[] arg0,
+						String arg1) throws CertificateException {
+				}
 
-					while (i.hasNext()) {
-						Entry<String, Object> entry = i.next();
+				public void checkServerTrusted(X509Certificate[] arg0,
+						String arg1) throws CertificateException {
+				}
+			};
+			ctx.init(null, new TrustManager[] { tm }, null);
+			SSLSocketFactory ssf = new SSLSocketFactory(ctx,
+					SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+			SchemeRegistry registry = new SchemeRegistry();
+			registry.register(new Scheme("https", 443, ssf));
+			ThreadSafeClientConnManager mgr = new ThreadSafeClientConnManager(
+					registry);
+			return new DefaultHttpClient(mgr, base.getParams());
+		} catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
+		}
+	}
 
-						if (entry.getValue() == null) {
+	public HashMap<String, String> postTxtMessage(
+			Map<String, Object> postContent) {
 
-							continue;
-						}
-						postParameters.add(new BasicNameValuePair(entry.getKey(),
-								(String) entry.getValue()));
+		BufferedReader in = null;
+		String url = "https://www.han2011.com/postmessage/"
+				+ SConfig.getInstance().getProfile().getSession() + "/call.xml";
+		;
+		HashMap<String, String> map = new HashMap<String, String>();
+		PoolingClientConnectionManager connectionManager = new PoolingClientConnectionManager();
+
+		connectionManager.setMaxTotal(1);
+
+		HttpClient client = new DefaultHttpClient(connectionManager);
+		client = wrapClient(client);
+		client.getParams().setParameter("http.socket.timeout", 3000);
+		client.getParams().setParameter("http.connection.timeout", 3000);
+		client.getParams().setParameter("http.connection-manager.timeout",
+				300000000L);
+		System.out.println("url" + url);
+		try {
+			HttpPost request = new HttpPost(url);
+			List<BasicNameValuePair> postParameters = new ArrayList<BasicNameValuePair>();
+			if (postContent != null && postContent.size() > 0) {
+				Iterator<Entry<String, Object>> i = postContent.entrySet()
+						.iterator();
+
+				while (i.hasNext()) {
+					Entry<String, Object> entry = i.next();
+
+					if (entry.getValue() == null) {
+
+						continue;
 					}
+					postParameters.add(new BasicNameValuePair(entry.getKey(),
+							(String) entry.getValue()));
 				}
+			}
 
-				UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(
-						postParameters, "UTF-8");
-				request.setEntity(formEntity);
-				HttpResponse response = client.execute(request);
-				in = new BufferedReader(new InputStreamReader(response.getEntity()
-						.getContent()));
-				StringBuffer sb = new StringBuffer("");
-				String line = "";
-				String NL = System.getProperty("line.separator");
-				while ((line = in.readLine()) != null) {
-					sb.append(line + NL);
+			UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(
+					postParameters, "UTF-8");
+			request.setEntity(formEntity);
+			HttpResponse response = client.execute(request);
+			in = new BufferedReader(new InputStreamReader(response.getEntity()
+					.getContent()));
+			StringBuffer sb = new StringBuffer("");
+			String line = "";
+			String NL = System.getProperty("line.separator");
+			while ((line = in.readLine()) != null) {
+				sb.append(line + NL);
+			}
+			in.close();
+
+			map = XmlUtil.instance().parseXmltoMap(sb.toString(), "UTF-8");
+			System.out.println("===发送一条消息的" + map.toString());
+			return map;
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
 				}
-				in.close();
-                
-                map = XmlUtil.instance().parseXmltoMap(sb.toString(), "UTF-8");
-				System.out.println("===发送一条消息的"+map.toString());
-				return map;
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			}
+			if (client != null && client.getConnectionManager() != null) {
+				client.getConnectionManager().shutdown();
+			}
+
+		}
+		return null;
+	}
+
+	/**
+	 * 处理信息
+	 * 
+	 * @param MsgId
+	 */
+	public void delTxtMessage(String MsgId) {
+
+		BufferedReader in = null;
+		String url = "https://www.han2011.com/delmessage/"
+				+ SConfig.getInstance().getProfile().getSession() + "/" + MsgId
+				+ "/call.aspx";
+		;
+
+		PoolingClientConnectionManager connectionManager = new PoolingClientConnectionManager();
+
+		connectionManager.setMaxTotal(1);
+
+		HttpClient client = new DefaultHttpClient(connectionManager);
+		client = wrapClient(client);
+		client.getParams().setParameter("http.socket.timeout", 3000);
+		client.getParams().setParameter("http.connection.timeout", 3000);
+		client.getParams().setParameter("http.connection-manager.timeout",
+				300000000L);
+		System.out.println("url" + url);
+		try {
+			HttpPost request = new HttpPost(url);
+			HttpResponse response = client.execute(request);
+			in = new BufferedReader(new InputStreamReader(response.getEntity()
+					.getContent()));
+			StringBuffer sb = new StringBuffer("");
+			String line = "";
+			String NL = System.getProperty("line.separator");
+			while ((line = in.readLine()) != null) {
+				sb.append(line + NL);
+			}
+			in.close();
+
+			System.out.println(sb.toString());
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClientProtocolException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			if (in != null) {
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			if (client != null && client.getConnectionManager() != null) {
+				client.getConnectionManager().shutdown();
+			}
+		}
+
+	}
+
+	/**
+	 * 获取群信息
+	 * 
+	 * @param roomId
+	 * @return
+	 */
+
+	public HashMap<String, String> getRoomInfo(String roomId) {
+		String xml = "";
+		try {
+			xml = postSSLRequest("/room/info/"
+					+ SConfig.getInstance().getProfile().getSession() + "/"
+					+ roomId + "/call.xml", null, "https://www.han2011.com");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("xml-->" + xml.toString());
+		if (!"".equals(xml))
+			try {
+				return XmlUtil.instance().parseXmltoMap(xml, "UTF-8");
 			} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} finally {
-				if (in != null) {
-					try {
-						in.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				if (client != null && client.getConnectionManager() != null) {
-					client.getConnectionManager().shutdown();
-				}
-				
-				
 			}
-			return null;
-	  }
-	  
-/**
- * 处理信息	  
- * @param MsgId
- */
- public  void delTxtMessage(String MsgId){
-		  
-		  BufferedReader in = null;
-		  String url = "https://www.han2011.com/delmessage/" + SConfig.getInstance().getProfile().getSession() + "/" + MsgId
-					+ "/call.aspx";;
-			
-		  PoolingClientConnectionManager connectionManager=new PoolingClientConnectionManager();
+		return null;
+	}
 
-			connectionManager.setMaxTotal(1);
+	/**
+	 * 发送群聊信息
+	 */
 
-			HttpClient client = new DefaultHttpClient(connectionManager);
-			client = wrapClient(client);
-			client.getParams().setParameter("http.socket.timeout",3000);
-			client.getParams().setParameter("http.connection.timeout",3000);
-			client.getParams().setParameter("http.connection-manager.timeout",300000000L);
-			System.out.println("url" + url);
-			try {
-				HttpPost request = new HttpPost(url);
-				HttpResponse response = client.execute(request);
-				in = new BufferedReader(new InputStreamReader(response.getEntity()
-						.getContent()));
-				StringBuffer sb = new StringBuffer("");
-				String line = "";
-				String NL = System.getProperty("line.separator");
-				while ((line = in.readLine()) != null) {
-					sb.append(line + NL);
-				}
-				in.close();
+	public HashMap<String, String> roomSendMsg(String sRoomId, String sMsg,
+			int roomType) {
+		Map<String, Object> postContent = new HashMap<String, Object>();
+		postContent.put("msg", sMsg);
+		String url;
+		switch (roomType) {
+		case DBDataSQL.ROOM_TYPE_NORMAL:
+			url = "/room/sendmsg/"
+					+ SConfig.getInstance().getProfile().getSession() + "/"
+					+ sRoomId + "/call.xml";
+			break;
+		case DBDataSQL.ROOM_TYPE_MASK:
+			url = "/maskroom/sendmsg/"
+					+ SConfig.getInstance().getProfile().getSession() + "/"
+					+ sRoomId + "/call.xml";
+			break;
+		default:
+			url = "/room/sendmsg/"
+					+ SConfig.getInstance().getProfile().getSession() + "/"
+					+ sRoomId + "/call.xml";
+		}
+		HashMap<String, String> map = new HashMap<String, String>();
+		String message;
+		try {
+			message = postRequest(url, postContent,
+					"https://www.han2011.com");
+			map = XmlUtil.instance().parseXmltoMap(message, "UTF-8");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 
-				System.out.println(sb.toString());
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				if (in != null) {
-					try {
-						in.close();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				if (client != null && client.getConnectionManager() != null) {
-					client.getConnectionManager().shutdown();
-				}
-			}
-		  
-	  }
-	  
-	 
+		return map;
+	};
 }

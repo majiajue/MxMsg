@@ -11,6 +11,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Vector;
 
+import com.mx.client.GroupLocation;
 import com.mx.client.JavaLocation;
 import com.mx.client.MessageCollection;
 import com.mx.client.db.SQLCommandBuilder.SQLCommandType;
@@ -440,7 +441,7 @@ public class GenDao {
 		try {
 			Hashtable<String, Object> condition = new Hashtable<String, Object>();
 			condition.put(DBDataSQL.COL_PEER_FROMPEERID, peerId);
-			this.ps = this.conn.prepareStatement(" SELECT a.aVATARID ,M_PEERID ,count(*) as tj FROM TB_MESSAGE  t, PEERS a where a.PEERID =t.M_PEERID and a.fRIENDID =? and M_unREAD ='false' group by M_PEERID order by M_PEERID asc ");
+			this.ps = this.conn.prepareStatement(" SELECT a.aVATARID ,M_PEERID ,M_GROUP,b.aVATARID r,count(*) as tj FROM TB_MESSAGE  t, PEERS a,room b where (a.PEERID =t.M_PEERID  or b.roOMNAME = nvl2(m_group,null,not null)) and a.FRIENDID=b.RECENTMSG and a.FRIENDID=? and M_UNREAD='false' group by  M_PEERID , M_grOUP ");
 			ps.setString(1, peerId);
 			
 //			if (condition != null && condition.size() > 0) {
@@ -452,12 +453,36 @@ public class GenDao {
 		
 			this.rs = this.ps.executeQuery();
 			while (rs.next()) {
-				valList.add(new MessageCollection(rs.getString("AVATARID"), rs.getString("M_PEERID"), rs.getString("TJ")));
+				if(rs.getString("M_GROUP")!=null&&!"".equals(rs.getString("M_GROUP"))){
+					valList.add(new MessageCollection(rs.getString("R"), rs.getString("M_GROUP"), rs.getString("TJ"),"1",rs.getString("M_PEERID")));
+				}else{
+					valList.add(new MessageCollection(rs.getString("AVATARID"), rs.getString("M_PEERID"), rs.getString("TJ"),"0",""));
+				}
+				
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		} finally{
+			try {
+				rs.close();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			try {
+				ps.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 
 		// 自动映射SQL参数
 		return valList;
@@ -504,5 +529,78 @@ public class GenDao {
 		return valList;
 	};
 
+	/**
+	 * 获取某一字段条记录的值
+	 * 
+	 * @param tableName
+	 * @param columnName
+	 * @param condition
+	 * @return
+	 */
+	public ResultSet getResult(String tableName, String[] columnName,
+			Hashtable<String, Object> condition) {
+		this.conn = DBTools.getH2SQLConnection();
+		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
+		try {
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder.getInstance().getSQLCommand(SQLCommandType.SELECT,
+					tableName, columnName, null, condition));
+			if (condition != null && condition.size() > 0) {
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values().toArray(), this.ps);
+			}
 
+			// 执行SQL更新命令并保存取回的结果集对象
+			this.rs = this.ps.executeQuery();
+			rs.last();
+			int a = rs.getRow();
+			if (a == 1) {
+				return rs;
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		// 自动映射SQL参数
+		return null;
+	};
+	
+	/**
+	 * 获取某一字段条记录的值
+	 * 
+	 * @param tableName
+	 * @param columnName
+	 * @param condition
+	 * @return
+	 */
+	public List<GroupLocation> getArrayList(String peerId) {
+		this.conn = DBTools.getH2SQLConnection();
+		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
+		String value = "";
+		List<GroupLocation> valList = new ArrayList<GroupLocation>();
+		try {
+			Hashtable<String, Object> condition = new Hashtable<String, Object>();
+			condition.put(DBDataSQL.COL_PROOM_RECENTMSG, peerId);
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder
+					.getInstance().getSQLCommand(SQLCommandType.SELECT,
+							DBDataSQL.TB_ROOMS, new String[]{DBDataSQL.COL_PROOM_ROOMNAME,DBDataSQL.COL_PROOM_OWNER}, null, condition));
+			
+			if (condition != null && condition.size() > 0) {
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
+						.toArray(), this.ps);
+			}
+
+			// 执行SQL更新命令并保存取回的结果集对象
+		
+			this.rs = this.ps.executeQuery();
+			while (rs.next()) {
+				valList.add(new GroupLocation(rs.getString(DBDataSQL.COL_PROOM_ROOMNAME.toUpperCase()), rs.getString(DBDataSQL.COL_PROOM_OWNER.toUpperCase()), "head_boy_01_32.jpg"));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+
+		// 自动映射SQL参数
+		return valList;
+	};
 }

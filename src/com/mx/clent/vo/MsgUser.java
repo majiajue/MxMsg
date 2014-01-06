@@ -6,11 +6,17 @@ import java.util.Map;
 
 public class MsgUser implements Serializable {
 	private Map<String,Object> attributes=new HashMap<String,Object>();
-	private String userID;            //ÓÃ»§µÄidºÅ
-	private String passWord;          //ÓÃ»§ÃÜÂë
-	
-	private String userName;       //ÓÃ»§µÄÓÃ»§Ãû
-	private String personWord;     //ÓÃ»§µÄ¸öÐÔÇ©Ãû
+	private String userID;            //ï¿½Ã»ï¿½ï¿½ï¿½idï¿½ï¿½
+	private String passWord;          //ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½
+	private String group;
+	public String getGroup() {
+		return group;
+	}
+	public void setGroup(String group) {
+		this.group = group;
+	}
+	private String userName;       //ï¿½Ã»ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½
+	private String personWord;     //ï¿½Ã»ï¿½ï¿½Ä¸ï¿½ï¿½ï¿½Ç©ï¿½ï¿½
 	private boolean isOnline=false;
 	
 	public String getUserID() {

@@ -13,6 +13,8 @@ import org.jboss.netty.util.CharsetUtil;
 
 import com.mx.client.db.DBDataSQL;
 import com.mx.client.msg.MessagerHandler;
+import com.mx.client.msg.RoomCreate;
+import com.mx.client.msg.Roommsg;
 import com.mx.client.msg.Sfs;
 import com.mx.client.msg.TextHandler;
 import com.mx.client.webtools.ConnectionUtils;
@@ -229,10 +231,10 @@ public class NettyClientHandler extends SimpleChannelUpstreamHandler {
 
 		messagerHandlerMap.put("sendmsg", new TextHandler(xmlMap));
 		messagerHandlerMap.put("sfs", new Sfs(xmlMap));
-		// messagerHandlerMap.put("room_create", new RoomCreate(xmlMap));
+		messagerHandlerMap.put("room_create", new RoomCreate(xmlMap));
 		// messagerHandlerMap.put("maskroom_create", new
 		// MaskRoomCreate(xmlMap));
-		// messagerHandlerMap.put("roommsg", new Roommsg(xmlMap));
+		messagerHandlerMap.put("roommsg", new Roommsg(xmlMap));
 		// messagerHandlerMap.put("maskroom_msg", new MaskRoommsg(xmlMap));
 		// messagerHandlerMap.put("room_addone", new RoomAddone(xmlMap));
 		// messagerHandlerMap.put("maskroom_addone", new

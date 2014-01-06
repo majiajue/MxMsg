@@ -30,17 +30,17 @@ public class DBDataSQL {
 		public final static String COL_MES_MSGTIME = "M_msgtime";// ��Ϣ�����ʱ��
 		public final static String COL_MES_UNREAD = "M_unread";// �����Ϣ�Ƿ�δ��
 		public final static String COL_MES_MSGTYPE = "M_msgtype";
-		
+		public final static String COL_MES_GROUP = "M_Group";
 		
       
 		public final static String SQL_CREATE_TB_MESSAGE = "CREATE TABLE IF NOT EXISTS " + TB_MESSAGE + " ( " + _id
 				+ " INT PRIMARY KEY AUTO_INCREMENT, " + COL_MES_PEERID + " VARCHAR2(255) NOT NULL, " + COL_MES_MSG
 				+ " VARCHAR2(255) NOT NULL, " + COL_MES_MSG_EXTRA + " VARCHAR2(255) NOT NULL, " + COL_MES_DIRECTION + " VARCHAR2(255) NOT NULL, "
 				+ COL_MES_STATUS + " VARCHAR2(255) NOT NULL, " + COL_MES_MSGTIME + " VARCHAR2(255) NOT NULL, " + COL_MES_UNREAD
-				+ " VARCHAR2(255) NOT NULL, " + COL_MES_MSGTYPE + " VARCHAR2(255) NOT NULL" + ")";
+				+ " VARCHAR2(255) NOT NULL, " + COL_MES_MSGTYPE + " VARCHAR2(255) NOT NULL, " +COL_MES_GROUP + " VARCHAR2(255)"+ ")";
 		public final static String SQL_CREATE_MESSAGE_INDEX = "CREATE INDEX IF NOT EXISTS imsg ON " + TB_MESSAGE + " ( "
 				+ COL_MES_PEERID + "," + COL_MES_MSG + "," + COL_MES_MSG_EXTRA + "," + COL_MES_DIRECTION + ","
-				+ COL_MES_STATUS + "," + COL_MES_MSGTIME + "," + COL_MES_UNREAD + "," + COL_MES_MSGTYPE + ")";
+				+ COL_MES_STATUS + "," + COL_MES_MSGTIME + "," + COL_MES_UNREAD + "," + COL_MES_MSGTYPE +"," + COL_MES_GROUP + ")";
 		/**
 		 * ��¼�ɹ���½�ĺ���
 		 */
@@ -268,5 +268,40 @@ public class DBDataSQL {
 		public final static int MSGID_STATUS_GOT = 1;
 		public final static int MSGID_STATUS_SAVED = 2;
 		public final static int MSGID_STATUS_ACKED = 3;
+		
+		/**
+		 * TABLE room { Roomid TEXT PRIMARY KEY NOT NULL; 聊天室的id，是主键且唯一 Roomname
+		 * TEXT NOT NULL; 聊天室的名称 Pinyin TEXT NOT NULL; 聊天室的全称信息，用于检索 Avatarid TEXT
+		 * NOT NULL; 聊天室的头像 UpdateTime TEXT; 上次更新的时间 COL_PROOM_RECENTMSG
+		 * TEXT:上次联系的信息内容 COL_PROOM_UNREAD 未读消息的数量 Aeskey TEXT NOT NULL;房间的主aes密钥 }
+		 */
+		public final static String TB_ROOMS = "room";
+		public final static String COL_PROOM_ROOMID = "Roomid";
+		public final static String COL_PROOM_OWNER = "ownerid";
+		public final static String COL_PROOM_ROOMNAME = "Roomname";
+		public final static String COL_PROOM_PINYIN = "Pinyin";
+		public final static String COL_PROOM_AVATAR = "Avatarid";
+		public final static String COL_PROOM_UPDTAETIME = "UpdateTime";
+		public final static String COL_PROOM_RECENTMSG = "recentmsg";
+		public final static String COL_PROOM_UNREAD = "Unread";// 　 INTEGER ;
+																// 未读消息的数量
+		public final static String COL_PROOM_AESKEY = "Aeskey";
+		public final static String COL_PROOM_ROOMTYPE = "Roomtype";
+		public final static String COL_PROOM_ROOMMASKID = "RoomMaskid";
+		public final static String COL_PROOM_MASKTHEME = "Masktheme";
+		public final static String COL_PROOM_ALLOWCHANGE = "Allowchange";
+		public final static String SQL_CREATE_TB_ROOMS = "CREATE TABLE IF NOT EXISTS " + TB_ROOMS + "(" + _id
+				+ "  INT PRIMARY KEY AUTO_INCREMENT, " + COL_PROOM_ROOMID + " VARCHAR2(4000) NOT NULL, " + COL_PROOM_OWNER
+				+ " VARCHAR2(4000) NOT NULL, " + COL_PROOM_ROOMNAME + " VARCHAR2(4000) NOT NULL, " + COL_PROOM_PINYIN + " VARCHAR2(4000) NOT NULL,  "
+				+ COL_PROOM_AVATAR + " VARCHAR2(4000), " + COL_PROOM_UPDTAETIME + " VARCHAR2(4000), " + COL_PROOM_RECENTMSG + " VARCHAR2(4000) , "
+				+ COL_PROOM_AESKEY + " VARCHAR2(4000) NOT NULL," + COL_PROOM_UNREAD + " VARCHAR2(4000), " + COL_PROOM_ROOMMASKID + " VARCHAR2(4000), "
+				+ COL_PROOM_MASKTHEME + " VARCHAR2(4000) NOT NULL DEFAULT -1, " + COL_PROOM_ALLOWCHANGE
+				+ " VARCHAR2(4000) NOT NULL DEFAULT 0, " + COL_PROOM_ROOMTYPE + " VARCHAR2(4000) NOT NULL DEFAULT -1 " + ")";
+		public final static String SQL_CREATE_ROOMS_INDEX = "CREATE INDEX IF NOT EXISTS irooms ON " + TB_ROOMS + " ("
+				+ COL_PROOM_ROOMID + "," + COL_PROOM_OWNER + " ," + COL_PROOM_ROOMNAME + "," + COL_PROOM_PINYIN + ","
+				+ COL_PROOM_AVATAR + "," + COL_PROOM_UPDTAETIME + "," + COL_PROOM_RECENTMSG + "," + COL_PROOM_AESKEY + ","
+				+ COL_PROOM_ROOMMASKID + "," + COL_PROOM_MASKTHEME + "," + COL_PROOM_ALLOWCHANGE + "," + COL_PROOM_ROOMTYPE
+				+ ")";
+
 		
 }

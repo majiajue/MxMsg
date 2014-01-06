@@ -158,6 +158,7 @@ public class DBTools {
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_LOGIN);
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_LOGIN_INDEX);
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_PEERS);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_ROOMS);
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_PEERS_INDEX);
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_PREFERENCE);
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_PREFERENCE_INDEX);

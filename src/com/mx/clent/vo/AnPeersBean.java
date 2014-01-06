@@ -195,7 +195,7 @@ public class AnPeersBean {
 		}
 		synchronized (dbLock) {
 			Hashtable<String, Object> table = new Hashtable<String, Object>();
-			
+			table.put(DBDataSQL.COL_PEER_PEERID, Peerid);
 			try {				
 				boolean a=GenDao.getInstance().executeUpdate(DBDataSQL.TB_PEERS,new String[]{DBDataSQL.COL_PEER_PEERID},new Object[]{Peerid},table);
 				if(a){
@@ -231,14 +231,16 @@ public class AnPeersBean {
 	 * @param time
 	 */
 	public void savePeerKey(String name, PublicKey key, String time) {
+		Hashtable<String, Object> table = new Hashtable<String, Object>();
+		table.put("Peerid",name);
+		String pubkey = Base64.encodeToString(PubkeyUtils.getEncodedPublic(key),
+				Base64.DEFAULT);
+		boolean a = GenDao.getInstance().executeUpdate(DBDataSQL.TB_PEERS, new String[]{DBDataSQL.COL_PEER_PUBLIC,DBDataSQL.COL_PEER_UPDTAETIME},new Object[]{pubkey,time},table);
 		AnPeersBean peer = getUserByPeerID(name);
 		peer.PPubKey = Base64.encodeToString(PubkeyUtils.getEncodedPublic(key),
 				Base64.DEFAULT);
 		peer.PUpdateTime = time;
 		peer.publicKey = key;
-		Hashtable<String, Object> table = new Hashtable<String, Object>();
-		table.put("Peerid",name);
-		boolean a = GenDao.getInstance().executeUpdate(DBDataSQL.TB_PEERS, new String[]{DBDataSQL.COL_PEER_PUBLIC,DBDataSQL.COL_PEER_UPDTAETIME},new Object[]{peer.PPubKey,time},table);
 		if(!a){
 			
 			GenDao.getInstance().executeInsert(DBDataSQL.TB_PEERS, new String[]{DBDataSQL.COL_PEER_PUBLIC,DBDataSQL.COL_PEER_UPDTAETIME,DBDataSQL.COL_PEER_PEERID},new Object[]{peer.PPubKey,time,name});
