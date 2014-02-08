@@ -105,6 +105,7 @@ public class AnRoomsBean {
 			new Exception().printStackTrace();
 			return;
 		}
+		System.out.println("--------------------kk");
 		synchronized (dbLock) {
 			Hashtable<String, Object> table = new Hashtable<String, Object>();
             table.put(DBDataSQL.COL_PROOM_ROOMID, Roomid);

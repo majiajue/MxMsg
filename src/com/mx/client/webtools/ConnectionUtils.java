@@ -617,7 +617,34 @@ public class ConnectionUtils {
 			}
 		return null;
 	}
+    
+	/**
+	 * 获取匿名群信息
+	 * 
+	 * @param roomId
+	 * @return
+	 */
 
+	public HashMap<String, String> getMaskRoomInfo(String roomId) {
+		String xml = "";
+		try {
+			xml = postSSLRequest("/maskroom/info/"
+					+ SConfig.getInstance().getProfile().getSession() + "/"
+					+ roomId + "/call.xml", null, "https://www.han2011.com");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		System.out.println("xml-->" + xml.toString());
+		if (!"".equals(xml))
+			try {
+				return XmlUtil.instance().parseXmltoMap(xml, "UTF-8");
+			} catch (ParserConfigurationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		return null;
+	}
 	/**
 	 * 发送群聊信息
 	 */

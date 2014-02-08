@@ -159,9 +159,16 @@ public class DBTools {
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_LOGIN_INDEX);
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_PEERS);
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_ROOMS);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_ROOMS_INDEX);
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_PEERS_INDEX);
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_PREFERENCE);
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_PREFERENCE_INDEX);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_MASKS);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_MASKS_INDEX);
+		for(int i=0;i<DBDataSQL.MASKNAME.length;i++){
+			GenDao.getInstance().executeInsert(DBDataSQL.TB_MASKS, new String[]{DBDataSQL.COL_MASK_MASKID,DBDataSQL.COL_MASK_MASKNAME}, new Object[]{i+"",DBDataSQL.MASKNAME[i]});
+		}
+		
 	}
 
 }
