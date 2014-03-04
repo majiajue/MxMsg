@@ -26,6 +26,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.RoundRectangle2D;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -47,9 +48,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-
 import sun.applet.Main;
-
+import com.mx.clent.vo.AnRoomsBean;
 import com.mx.clent.vo.MsgFriendGroup;
 import com.mx.clent.vo.MsgUser;
 import com.mx.client.db.DBDataSQL;
@@ -773,29 +773,45 @@ public class MainFrame extends JFrame {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					// TODO Auto-generated method stub
-					String inputValue = JOptionPane.showInputDialog(null,
-							"请输入好友的密讯号", "添加好友", JOptionPane.PLAIN_MESSAGE);
-					if (inputValue != null) {
-						defaultLocations.add(new JavaLocation(inputValue,
-								"None", "head_boy_01_32.jpg"));
-						GenDao.getInstance()
-								.executeInsert(
-										DBDataSQL.TB_PEERS,
-										new String[] {
-												DBDataSQL.COL_PEER_PEERID,
-												DBDataSQL.COL_PEER_USERNAME,
-												DBDataSQL.COL_PEER_FROMPEERID },
-										new Object[] {
-												inputValue,
-												inputValue,
-												SConfig.getInstance()
-														.getProfile().myPeerBean.PPeerid });
-						sampleJList.setListData(defaultLocations.toArray());
-					} else {
+					Object[] options = {" 添加好友 ","创建群 ","创建你命群 ","取消"};
+					int response =JOptionPane.showOptionDialog(null, " 这是个选项对话框，用户可以选择自己的按钮的个数 ", " 选项对话框标题 ",JOptionPane.YES_OPTION,JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+					if(response==0){  
+						String inputValue = JOptionPane.showInputDialog(null,
+								"请输入好友的密讯号", "添加好友", JOptionPane.PLAIN_MESSAGE);
+						if (inputValue != null) {
+							defaultLocations.add(new JavaLocation(inputValue,
+									"None", "head_boy_01_32.jpg"));
+							GenDao.getInstance()
+									.executeInsert(
+											DBDataSQL.TB_PEERS,
+											new String[] {
+													DBDataSQL.COL_PEER_PEERID,
+													DBDataSQL.COL_PEER_USERNAME,
+													DBDataSQL.COL_PEER_FROMPEERID },
+											new Object[] {
+													inputValue,
+													inputValue,
+													SConfig.getInstance()
+															.getProfile().myPeerBean.PPeerid });
+							sampleJList.setListData(defaultLocations.toArray());
+						} else {
 
-						JOptionPane.showInternalMessageDialog(null,
-								"亲，请输入好友的密讯号!");
-					}
+							JOptionPane.showInternalMessageDialog(null,
+									"亲，请输入好友的密讯号!");
+						}
+						
+						  
+						} else if(response==1) {   
+						  
+						
+						  
+						} else if(response==2){   
+						  
+						
+						  
+						}    
+
+				
 
 					// sampleJList.updateUI();
 				}
@@ -938,51 +954,69 @@ public class MainFrame extends JFrame {
 								new ImageIcon(
 										MainFrame.class
 												.getResource("/com/mx/client/image/add_up.png")));
-						String inputValue = JOptionPane.showInputDialog(null,
-								"请输入好友的密讯号", "添加好友", JOptionPane.PLAIN_MESSAGE);
-						// System.out.println("判断---"+inputValue!= null);
-						if (inputValue != null && inputValue != "null"
-								&& !"".equals(inputValue)
-								&& !"null".equals(inputValue)) {
-							// System.out.println("1 "+inputValue) ;
-							List<JavaLocation> list = collection.getLocations();
-							int a = 0;
-							for (Iterator iterator = list.iterator(); iterator
-									.hasNext();) {
-								JavaLocation javaLocation = (JavaLocation) iterator
-										.next();
-								if (javaLocation.getPeerId().equals(
-										inputValue.trim())) {
-									a = 1;
-									break;
+						Object[] options = {" 添加好友 ","创建群 ","取消"};
+						int response =JOptionPane.showOptionDialog(null, " 这是个选项对话框，用户可以选择自己的按钮的个数 ", " 选项对话框标题 ",JOptionPane.YES_OPTION,JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+						if(response==0){  
+							String inputValue = JOptionPane.showInputDialog(null,
+									"请输入好友的密讯号", "添加好友", JOptionPane.PLAIN_MESSAGE);
+							// System.out.println("判断---"+inputValue!= null);
+							if (inputValue != null && inputValue != "null"
+									&& !"".equals(inputValue)
+									&& !"null".equals(inputValue)) {
+								// System.out.println("1 "+inputValue) ;
+								List<JavaLocation> list = collection.getLocations();
+								int a = 0;
+								for (Iterator iterator = list.iterator(); iterator
+										.hasNext();) {
+									JavaLocation javaLocation = (JavaLocation) iterator
+											.next();
+									if (javaLocation.getPeerId().equals(
+											inputValue.trim())) {
+										a = 1;
+										break;
+									}
+
+								}
+								if (a == 1) {
+
+									JOptionPane.showMessageDialog(null,
+											"你添加的好友已经存在你的好友列表中了，不要重复添加了，亲!");
+								} else {
+									collection.getLocations().add(
+											new JavaLocation(inputValue, "None",
+													"head_boy_01_32.jpg"));
+									GenDao.getInstance()
+											.executeInsert(
+													DBDataSQL.TB_PEERS,
+													new String[] {
+															DBDataSQL.COL_PEER_PEERID,
+															DBDataSQL.COL_PEER_USERNAME,
+															DBDataSQL.COL_PEER_FROMPEERID },
+													new Object[] {
+															inputValue,
+															inputValue,
+															SConfig.getInstance()
+																	.getProfile().myPeerBean.PPeerid });
+									sampleJList.setListData(collection
+											.getLocations().toArray());
 								}
 
 							}
-							if (a == 1) {
+							
+							  
+							} else if(response==1) { 
+								
+								GroupDialog dg = new GroupDialog();
+								dg.setVisible(true);
+								
+							  
+							} else if(response==2){   
+							  
+							
+							  
+							}    
 
-								JOptionPane.showMessageDialog(null,
-										"你添加的好友已经存在你的好友列表中了，不要重复添加了，亲!");
-							} else {
-								collection.getLocations().add(
-										new JavaLocation(inputValue, "None",
-												"head_boy_01_32.jpg"));
-								GenDao.getInstance()
-										.executeInsert(
-												DBDataSQL.TB_PEERS,
-												new String[] {
-														DBDataSQL.COL_PEER_PEERID,
-														DBDataSQL.COL_PEER_USERNAME,
-														DBDataSQL.COL_PEER_FROMPEERID },
-												new Object[] {
-														inputValue,
-														inputValue,
-														SConfig.getInstance()
-																.getProfile().myPeerBean.PPeerid });
-								sampleJList.setListData(collection
-										.getLocations().toArray());
-							}
-
-						}
+					
 						// else {
 						//
 						// // JOptionPane.showInternalMessageDialog(null,
@@ -1155,7 +1189,9 @@ public class MainFrame extends JFrame {
 			e.printStackTrace();
 		}
 	}
-
+    
+	
+	
 	// public void initMainTree(List<MsgFriendGroup> groupList){
 	// TreeScrollPane treeScrollPane=new TreeScrollPane(groupList);
 	// friendTree=treeScrollPane;

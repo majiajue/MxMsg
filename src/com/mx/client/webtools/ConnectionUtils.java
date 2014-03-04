@@ -20,6 +20,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.ParserConfigurationException;
+
 import com.mx.clent.vo.AnPeersBean;
 import com.mx.client.db.DBDataSQL;
 import com.mx.client.webtools.MySSLSocketFactory;
@@ -684,4 +685,93 @@ public class ConnectionUtils {
 
 		return map;
 	};
+	/**
+	 * 正常群聊天室创建
+	 * @param sRoomSubject
+	 * @return
+	 * @throws Exception
+	 */
+	public HashMap<String, String> roomCreate3(String sRoomSubject) throws Exception {
+		Map<String, Object> postContent = new HashMap<String, Object>();
+		
+		postContent.put("subject", sRoomSubject);
+		return XmlUtil.instance().parseXmltoMap(postRequest(
+				"/room/create/" + SConfig.getInstance().getProfile().getSession() + "/call.aspx", postContent),"UTF-8");
+	}
+	
+	public String[] getCreateRoomResultFromServer3(String roomName) throws Exception {
+		// 建立一个聊天室
+		/*
+		 * 聊天室建立成功<b><r>room_create</r><id>roomid</id><secret>secret<
+		 * /secret></b> 对room内成员：<br><r>room_create</r><id>roomid<
+		 * /id><secret>secret</secret></b> client收到这个消息以后，重新获取聊天室名单
+		 * 聊天室建立失败<b><r>failed</r></b>
+		 */
+		HashMap<String, String> xmlMap;
+		// xmlMap = roomCreate2(sOwner);
+		xmlMap = roomCreate3(roomName);
+		if (xmlMap != null && !xmlMap.isEmpty()) {
+			if (xmlMap.get("r").equals("room_create")) {
+				String[] roomspre = new String[] { xmlMap.get("id"), xmlMap.get("secret"), "-1" };
+				return roomspre;
+			} else {
+				return null;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * 匿名群创建
+	 * @param sRoomSubject
+	 * @param sRoomMember
+	 * @param sRoomValidity
+	 * @param advanced
+	 * @param allowchange
+	 * @return
+	 * @throws Exception
+	 */
+	public HashMap<String, String> maskroomCreate(String sRoomSubject, String sRoomMember, String sRoomValidity,
+			boolean advanced, boolean allowchange) throws Exception {
+		Map<String, Object> values = new HashMap<String, Object>();
+		values.put("subject", sRoomSubject);
+		values.put("members", sRoomMember);
+		values.put("validity", sRoomValidity);
+		if (advanced) {
+			values.put("level", "advanced");
+		}
+		if (!allowchange) {
+			values.put("rolechange", "limited");
+		}
+		 return XmlUtil.instance().parseXmltoMap(postRequest(
+						"/maskroom/create/" + SConfig.getInstance().getProfile().getSession() + "/call.xml",
+						values),"UTF-8");
+	}
+	
+	public String[] getCreateMaskRoomResultFromServer(String roomName, String roomMember, String roomValidity,
+			boolean advanced, boolean allowchange) throws Exception {
+		// 建立一个聊天室
+		/*
+		 * 聊天室建立成功<b><r>room_create</r><id>roomid</id><secret>secret<
+		 * /secret></b> 对room内成员：<br><r>room_create</r><id>roomid<
+		 * /id><secret>secret</secret></b> client收到这个消息以后，重新获取聊天室名单
+		 * 聊天室建立失败<b><r>failed</r></b>
+		 */
+		HashMap<String, String> xmlMap;
+		// xmlMap = roomCreate2(sOwner);
+		//LOG.v("wjy", roomName + "||" + roomMember + "||" + roomValidity);
+		xmlMap = maskroomCreate(roomName, roomMember, roomValidity, advanced, allowchange);
+		if (xmlMap != null && !xmlMap.isEmpty()) {
+			if (xmlMap.get("r").equals("maskroom_create")) {
+
+				String[] roomspre = new String[] { xmlMap.get("roomid"), xmlMap.get("secret"), xmlMap.get("omaskid") };
+				return roomspre;
+			} else {
+				return null;
+			}
+		}
+		return null;
+	}
+
+
 }
