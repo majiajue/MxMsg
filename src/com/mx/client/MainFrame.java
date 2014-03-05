@@ -1010,11 +1010,7 @@ public class MainFrame extends JFrame {
 								dg.setVisible(true);
 								
 							  
-							} else if(response==2){   
-							  
-							
-							  
-							}    
+							} 
 
 					
 						// else {
@@ -1190,6 +1186,18 @@ public class MainFrame extends JFrame {
 		}
 	}
     
+	/**
+	 * 刷新当前group的数据
+	 */
+	public void reloadGroupStore(){
+		
+		groupCollection = new GroupLocationCollection(
+				GenDao.getInstance()
+						.getArrayList(
+								SConfig.getInstance().getProfile().myPeerBean.PPeerid));
+		groupJList.setListData(groupCollection.getLocations().toArray());
+		
+	}
 	
 	
 	// public void initMainTree(List<MsgFriendGroup> groupList){

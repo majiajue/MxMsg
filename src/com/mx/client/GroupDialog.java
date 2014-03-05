@@ -87,6 +87,38 @@ public class GroupDialog extends JDialog {
 				JButton cancelButton = new JButton("\u53D6\u6D88");
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
+				cancelButton.addMouseListener(new MouseListener() {
+					
+					@Override
+					public void mouseReleased(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mousePressed(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mouseExited(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mouseEntered(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mouseClicked(MouseEvent arg0) {
+						// TODO Auto-generated method stub
+						   setVisible(false);
+					}
+				});
 			
 		String roomName ="";
 		
@@ -137,7 +169,8 @@ public class GroupDialog extends JDialog {
 						String [] room= ConnectionUtils.getInstance().getCreateRoomResultFromServer3(roomName);
 						System.out.println("room--->"+room);
 						createChatRoom(room[0], SConfig.getInstance().getProfile().myPeerBean.PPeerid, roomName, room[1], "我创建群", String.valueOf(new Date().getTime()), roomtype, "", new Boolean(false));
-						
+						MainFrame.getInstance().reloadGroupStore();
+						setVisible(false);
 					} catch (Exception e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();

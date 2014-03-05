@@ -138,8 +138,10 @@ public class Form extends JDialog {
 						}
 						String roomValidity = String.valueOf(validity);
 						try {
-							String [] r = ConnectionUtils.getInstance().getCreateMaskRoomResultFromServer(roomName,"mask",roomValidity, new Boolean(level), new Boolean(allow));
+							String [] r = ConnectionUtils.getInstance().getCreateMaskRoomResultFromServer(roomName,"108",roomValidity, new Boolean(level), new Boolean(allow));
 							createChatRoom(r[0], SConfig.getInstance().getProfile().myPeerBean.PPeerid, roomName, r[1], "我创建群", String.valueOf(new Date().getTime()), "mask", r[2], new Boolean(allow));
+							MainFrame.getInstance().reloadGroupStore();
+							setVisible(false);
 						} catch (Exception e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
@@ -150,6 +152,38 @@ public class Form extends JDialog {
 				JButton cancelButton = new JButton("\u53D6\u6D88");
 				cancelButton.setActionCommand("Cancel");
 				buttonPane.add(cancelButton);
+				cancelButton.addMouseListener(new MouseListener() {
+					
+					@Override
+					public void mouseReleased(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mousePressed(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mouseExited(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mouseEntered(MouseEvent e) {
+						// TODO Auto-generated method stub
+						
+					}
+					
+					@Override
+					public void mouseClicked(MouseEvent e) {
+						// TODO Auto-generated method stub
+						 setVisible(false);
+					}
+				});
 	            
 		}
 	
