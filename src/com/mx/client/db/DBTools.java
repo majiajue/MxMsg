@@ -165,9 +165,13 @@ public class DBTools {
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_PREFERENCE_INDEX);
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_MASKS);
 		DBTools.excuteSql(DBDataSQL.SQL_CREATE_MASKS_INDEX);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_TB_ROOM_NOTICE);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_ROOMS_INDEX);
+		DBTools.excuteSql(DBDataSQL.SQL_CREATE_ROOM_NOTICE_INDEX);
 		for(int i=0;i<DBDataSQL.MASKNAME.length;i++){
 			GenDao.getInstance().executeInsert(DBDataSQL.TB_MASKS, new String[]{DBDataSQL.COL_MASK_MASKID,DBDataSQL.COL_MASK_MASKNAME}, new Object[]{i+"",DBDataSQL.MASKNAME[i]});
 		}
+		
 		
 	}
 

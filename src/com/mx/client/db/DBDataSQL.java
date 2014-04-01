@@ -333,5 +333,33 @@ public class DBDataSQL {
 				"金钱豹子 汤隆 ", "鬼脸儿 杜兴 ", "出林龙 邹渊 ", "独角龙 邹润 ", "旱地忽律 朱贵 ", "笑面虎 朱富 ", "金眼彪 施恩 ", "鉄臂膊 蔡福 ", "一枝花 蔡庆 ",
 				"催命判官 李立 ", "青眼虎 李云 ", "没面目 焦挺 ", "石将军 石勇 ", "小尉遅 孙新 ", "母大虫 顾大嫂 ", "菜园子 张青 ", "母夜叉 孙二娘 ", "活闪婆 王定六 ",
 				"険道神 郁保四 ", "白日鼠 白胜 ", "鼓上蚤 时迁 ", "金毛犬 段景住" };
+		/**
+		 * TABLE room_notice { 　　　　
+		 * _id INTEGER PRIMARY KEY AUTOINCREMENT;
+		 * M_peerid TEXT NOT NULL; 发公告人的peerid 　　　　
+		 * M_roomid TEXT NOT NULL; 聊天室ID
+		 * M_content TEXT NOT NULL; 公告的内容 　　　
+		 * M_uuid TEXT NOT NULL; 公告的uuid 　　　　
+		 * M_read BOOL NOT　NULL; 公告是否已经阅读过
+		 * M_status BOOL NOT NULL; 公告的状态，发布成功或者失败 　　　　
+		 * M_time TEXT NOT NULL; 公告发布的时间 　　　　
+		 * }
+		 */
+		public final static String TB_ROOM_NOTICE = "tb_room_notice";
+		public final static String COL_ROOM_NOTICE_PEERID = "M_peerid";// 发公告人的peerid 
+		public final static String COL_ROOM_NOTICE_ROOMID = "M_roomid";// roomid
+		public final static String COL_ROOM_NOTICE_CONTENT = "M_content";// 公告的内容 　
+		public final static String COL_ROOM_NOTICE_STATUS = "M_status";// 公告的发送状态，成功或失败
+		public final static String COL_ROOM_NOTICE_TIME = "M_time";// 公告发送的时间
+		public final static String COL_ROOM_NOTICE_READ = "M_read";
+		public final static String COL_ROOM_NOTICE_UUID = "M_uuid";
+		public final static String SQL_CREATE_TB_ROOM_NOTICE = "CREATE TABLE IF NOT EXISTS " + TB_ROOM_NOTICE + " ("
+				+ _id + "  INTEGER PRIMARY KEY AUTO_INCREMENT, " + COL_ROOM_NOTICE_PEERID + " VARCHAR2(4000) NOT NULL, " + COL_ROOM_NOTICE_ROOMID
+				+ " VARCHAR2(4000) NOT NULL, " + COL_ROOM_NOTICE_CONTENT + " VARCHAR2(4000) NOT NULL, " + COL_ROOM_NOTICE_UUID 
+				+ " VARCHAR2(4000) NOT NULL, " + COL_ROOM_NOTICE_STATUS + " VARCHAR2(4000) NOT NULL, " + COL_ROOM_NOTICE_READ
+				+ " VARCHAR2(4000) NOT NULL, " + COL_ROOM_NOTICE_TIME + " VARCHAR2(4000) NOT NULL)";
+		public final static String SQL_CREATE_ROOM_NOTICE_INDEX = "CREATE INDEX IF NOT EXISTS iroomnotice ON "
+				+ TB_ROOM_NOTICE + " ( " + COL_ROOM_NOTICE_PEERID + "," + COL_ROOM_NOTICE_ROOMID + "," + COL_ROOM_NOTICE_CONTENT + ","
+				+ COL_ROOM_NOTICE_STATUS + "," + COL_ROOM_NOTICE_TIME + "," + COL_ROOM_NOTICE_READ + "," + COL_ROOM_NOTICE_UUID + ")";
 		
 }

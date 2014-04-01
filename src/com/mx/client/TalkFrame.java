@@ -94,6 +94,7 @@ public class TalkFrame extends JFrame implements Runnable {
 	private JLabel label;// 关闭窗口
 	private JLabel label_2;// 窗口最小化
 	private JLabel label_7;
+	private JLabel label_8;//群设置
 	private Cryptor mCryptor;
 	private MessageLocationCollection collection = null;
 	private JTextPane textPane;// 显示聊天窗口
@@ -109,6 +110,7 @@ public class TalkFrame extends JFrame implements Runnable {
 	private List<PicInfo> receivdPicInfo = new LinkedList<PicInfo>();
 	private StyledDocument docMsg = null;
 	private FontAndText myFont = null;
+	private GroupAdmin ga;//群设置
 	/* 表情框 */
 	private PicsJWindow picWindow;
 	int pos1, pos2;
@@ -171,6 +173,7 @@ public class TalkFrame extends JFrame implements Runnable {
 			}
 
 		});
+		ga = new GroupAdmin();
 		collection = new MessageLocationCollection(GenDao.getInstance()
 				.getMessageArrayValue(
 						SConfig.getInstance().getProfile().myPeerBean.PPeerid));
@@ -227,6 +230,12 @@ public class TalkFrame extends JFrame implements Runnable {
 								new String[] { DBDataSQL.COL_PROOM_AESKEY },
 								DBDataSQL.COL_PROOM_AESKEY, condition);
 						System.out.println("key-->" + key);
+						label_8.setVisible(true);
+						String RoomId = GenDao.getInstance().getValue(
+								DBDataSQL.TB_ROOMS,
+								new String[] {DBDataSQL.COL_PROOM_ROOMID},
+								DBDataSQL.COL_PROOM_ROOMID, condition);
+						ga.setRoomId(RoomId);//用于u传递roomid
 						try {
 							mCryptor = new Cryptor(key);
 						} catch (CryptorException e1) {
@@ -538,6 +547,43 @@ public class TalkFrame extends JFrame implements Runnable {
 		g.dispose();
 		// label = new JLabel(new ImageIcon(bi), JLabel.LEFT);
 		label_7 = new JLabel("\u7528\u6237\u540D");
+		
+		label_8 = new JLabel("\u7fa4\u8bbe\u7f6e");
+		//label_8.setVisible(false);
+		label_8.addMouseListener(new MouseListener() {
+			
+			@Override
+			public void mouseReleased(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mousePressed(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseExited(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseEntered(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void mouseClicked(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				 
+				
+				 ga.frame.setVisible(true);
+			}
+		});
 		lblNewLabel_1.setIcon(new ImageIcon(bi));
 		// lblNewLabel_1.setIcon(null);
 		lblNewLabel_2 = new JLabel("");// 最大化窗口
@@ -704,9 +750,9 @@ public class TalkFrame extends JFrame implements Runnable {
 						.addComponent(lblNewLabel_1,
 								GroupLayout.PREFERRED_SIZE, 50,
 								GroupLayout.PREFERRED_SIZE)
-						.addComponent(label_7).addGap(368)
-						.addComponent(label_2)
-
+						.addComponent(label_7).addGap(300).addComponent(label_8)
+						.addGap(50).addComponent(label_2)
+                        
 						.addComponent(lblNewLabel_2)
 
 						.addComponent(label)));
@@ -729,9 +775,18 @@ public class TalkFrame extends JFrame implements Runnable {
 												.addGroup(
 														Alignment.TRAILING,
 														gl_panel.createSequentialGroup()
-																.addGap(5)
+																.addGap(15)
 																.addComponent(
 																		label_7,
+																		GroupLayout.DEFAULT_SIZE,
+																		48,
+																		Short.MAX_VALUE))
+																		.addGroup(
+														Alignment.TRAILING,
+														gl_panel.createSequentialGroup()
+																.addGap(5)
+																.addComponent(
+																		label_8,
 																		GroupLayout.DEFAULT_SIZE,
 																		48,
 																		Short.MAX_VALUE))

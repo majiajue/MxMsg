@@ -21,9 +21,13 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.xml.parsers.ParserConfigurationException;
 
+
+
+
 import com.mx.clent.vo.AnPeersBean;
 import com.mx.client.db.DBDataSQL;
 import com.mx.client.webtools.MySSLSocketFactory;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.configuration.MapConfiguration;
 import org.apache.http.HttpResponse;
@@ -618,7 +622,7 @@ public class ConnectionUtils {
 			}
 		return null;
 	}
-    
+
 	/**
 	 * 获取匿名群信息
 	 * 
@@ -646,6 +650,7 @@ public class ConnectionUtils {
 			}
 		return null;
 	}
+
 	/**
 	 * 发送群聊信息
 	 */
@@ -674,32 +679,36 @@ public class ConnectionUtils {
 		HashMap<String, String> map = new HashMap<String, String>();
 		String message;
 		try {
-			message = postRequest(url, postContent,
-					"https://www.han2011.com");
+			message = postRequest(url, postContent, "https://www.han2011.com");
 			map = XmlUtil.instance().parseXmltoMap(message, "UTF-8");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 
 		return map;
 	};
+
 	/**
 	 * 正常群聊天室创建
+	 * 
 	 * @param sRoomSubject
 	 * @return
 	 * @throws Exception
 	 */
-	public HashMap<String, String> roomCreate3(String sRoomSubject) throws Exception {
+	public HashMap<String, String> roomCreate3(String sRoomSubject)
+			throws Exception {
 		Map<String, Object> postContent = new HashMap<String, Object>();
-		
+
 		postContent.put("subject", sRoomSubject);
-		return XmlUtil.instance().parseXmltoMap(postRequest(
-				"/room/create/" + SConfig.getInstance().getProfile().getSession() + "/call.aspx", postContent),"UTF-8");
+		return XmlUtil.instance().parseXmltoMap(
+				postRequest("/room/create/"
+						+ SConfig.getInstance().getProfile().getSession()
+						+ "/call.aspx", postContent), "UTF-8");
 	}
-	
-	public String[] getCreateRoomResultFromServer3(String roomName) throws Exception {
+
+	public String[] getCreateRoomResultFromServer3(String roomName)
+			throws Exception {
 		// 建立一个聊天室
 		/*
 		 * 聊天室建立成功<b><r>room_create</r><id>roomid</id><secret>secret<
@@ -712,7 +721,8 @@ public class ConnectionUtils {
 		xmlMap = roomCreate3(roomName);
 		if (xmlMap != null && !xmlMap.isEmpty()) {
 			if (xmlMap.get("r").equals("room_create")) {
-				String[] roomspre = new String[] { xmlMap.get("id"), xmlMap.get("secret"), "-1" };
+				String[] roomspre = new String[] { xmlMap.get("id"),
+						xmlMap.get("secret"), "-1" };
 				return roomspre;
 			} else {
 				return null;
@@ -720,9 +730,10 @@ public class ConnectionUtils {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * 匿名群创建
+	 * 
 	 * @param sRoomSubject
 	 * @param sRoomMember
 	 * @param sRoomValidity
@@ -731,8 +742,9 @@ public class ConnectionUtils {
 	 * @return
 	 * @throws Exception
 	 */
-	public HashMap<String, String> maskroomCreate(String sRoomSubject, String sRoomMember, String sRoomValidity,
-			boolean advanced, boolean allowchange) throws Exception {
+	public HashMap<String, String> maskroomCreate(String sRoomSubject,
+			String sRoomMember, String sRoomValidity, boolean advanced,
+			boolean allowchange) throws Exception {
 		Map<String, Object> values = new HashMap<String, Object>();
 		values.put("subject", sRoomSubject);
 		values.put("members", sRoomMember);
@@ -743,13 +755,15 @@ public class ConnectionUtils {
 		if (!allowchange) {
 			values.put("rolechange", "limited");
 		}
-		 return XmlUtil.instance().parseXmltoMap(postRequest(
-						"/maskroom/create/" + SConfig.getInstance().getProfile().getSession() + "/call.xml",
-						values),"UTF-8");
+		return XmlUtil.instance().parseXmltoMap(
+				postRequest("/maskroom/create/"
+						+ SConfig.getInstance().getProfile().getSession()
+						+ "/call.xml", values), "UTF-8");
 	}
-	
-	public String[] getCreateMaskRoomResultFromServer(String roomName, String roomMember, String roomValidity,
-			boolean advanced, boolean allowchange) throws Exception {
+
+	public String[] getCreateMaskRoomResultFromServer(String roomName,
+			String roomMember, String roomValidity, boolean advanced,
+			boolean allowchange) throws Exception {
 		// 建立一个聊天室
 		/*
 		 * 聊天室建立成功<b><r>room_create</r><id>roomid</id><secret>secret<
@@ -759,12 +773,14 @@ public class ConnectionUtils {
 		 */
 		HashMap<String, String> xmlMap;
 		// xmlMap = roomCreate2(sOwner);
-		//LOG.v("wjy", roomName + "||" + roomMember + "||" + roomValidity);
-		xmlMap = maskroomCreate(roomName, roomMember, roomValidity, advanced, allowchange);
+		// LOG.v("wjy", roomName + "||" + roomMember + "||" + roomValidity);
+		xmlMap = maskroomCreate(roomName, roomMember, roomValidity, advanced,
+				allowchange);
 		if (xmlMap != null && !xmlMap.isEmpty()) {
 			if (xmlMap.get("r").equals("maskroom_create")) {
 
-				String[] roomspre = new String[] { xmlMap.get("roomid"), xmlMap.get("secret"), xmlMap.get("omaskid") };
+				String[] roomspre = new String[] { xmlMap.get("roomid"),
+						xmlMap.get("secret"), xmlMap.get("omaskid") };
 				return roomspre;
 			} else {
 				return null;
@@ -773,5 +789,91 @@ public class ConnectionUtils {
 		return null;
 	}
 
+	/**
+	 * 添加公告
+	 */
+	public HashMap<String, String> addNotice(String roomId, String peerId,
+			String content) {
+		Map<String, Object> postContent = new HashMap<String, Object>();
+		postContent.put("peerid", peerId);
+		postContent.put("content", content);
+		HashMap<String, String> xmlMap = new HashMap<String, String>();
+		try {
+			return XmlUtil.instance()
+					.parseXmltoMap(
+							postRequest("/room/notice/add/"
+									+ SConfig.getInstance().getProfile()
+											.getSession() + "/" + roomId
+									+ "/call.xml", postContent), "UTF-8");
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 
+	}
+	/**
+	 * 修改公告
+	 * @param roomId
+	 * @param peerId
+	 * @param uuid
+	 * @param content
+	 * @return
+	 */
+	public  HashMap<String, String>  editNotice(String roomId, String peerId, String uuid,
+			String content) {
+		Map<String, Object> postContent = new HashMap<String, Object>();
+		
+		postContent.put("peerid", peerId);
+		postContent.put("uuid", uuid);
+		postContent.put("content", content);
+		try {
+			return XmlUtil.instance().parseXmltoMap(postRequest("/room/notice/edit/"
+										+ SConfig.getInstance().getProfile()
+												.getSession() + "/" + roomId
+										+ "/call.xml", postContent), "UTF-8");
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+		
+	}
+    
+	/**
+	 * 修改公告
+	 * @param roomId
+	 * @param peerId
+	 * @param uuid
+	 * @param content
+	 * @return
+	 */
+	public  HashMap<String, String>  deleteNotice(String roomId, String peerId, String uuid) {
+		Map<String, Object> postContent = new HashMap<String, Object>();
+		postContent.put("peerid", peerId);
+		postContent.put("uuid", uuid);
+	
+		try {
+			return XmlUtil.instance().parseXmltoMap(postRequest("/room/notice/delete/"
+										+ SConfig.getInstance().getProfile()
+												.getSession() + "/" + roomId
+										+ "/call.xml", postContent), "UTF-8");
+		} catch (ParserConfigurationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return null;
+		
+	}
 }
