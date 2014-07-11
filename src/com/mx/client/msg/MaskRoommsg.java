@@ -65,6 +65,7 @@ public class MaskRoommsg implements MessagerHandler {
 			Hashtable<String, Object> condition = new Hashtable<String, Object>();
 			condition.put(DBDataSQL.COL_MASK_MASKID, maskid);
 			String maskName = GenDao.getInstance().getValue(DBDataSQL.TB_MASKS, new String[]{DBDataSQL.COL_MASK_MASKNAME}, DBDataSQL.COL_MASK_MASKNAME, condition);
+			System.out.println("maskName---->"+maskName);
 			java.util.Hashtable<String, Object> table = new java.util.Hashtable<String, Object>();
 			table.put(DBDataSQL.COL_PROOM_ROOMID, roomid);
 			ResultSet rs = GenDao.getInstance()
@@ -193,7 +194,7 @@ public class MaskRoommsg implements MessagerHandler {
 								messageBean.PPeerid, messageBean.PMsg, "-1",
 								messageBean.PDirection, "0", messageBean.PMsgtime,
 								String.valueOf(messageBean.PUnread),
-								String.valueOf(msgType),name);
+								String.valueOf(msgType),name,roomid);
 						// Log.v("netty", "TiemOffset=" + NettyStatus.TiemOffset);
 						if (NettyStatus.TiemOffset == 0) {
 							AnMessageBean messageBeanError = new AnMessageBean();

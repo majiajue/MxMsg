@@ -51,7 +51,8 @@ private static Cache instance;
 		TalkFrame frame=talkFrameMap.get(userId);
 		if(null==frame){
 			MsgUser user=this.getUserByID(userId);
-			frame=new TalkFrame(user);
+			frame=TalkFrame.getInstance();
+			frame.setfreind(user);
 			this.addTalkFrame(userId, frame);
 		}
 		return frame;

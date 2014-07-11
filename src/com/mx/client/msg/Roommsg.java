@@ -194,7 +194,8 @@ public class Roommsg implements MessagerHandler {
 								messageBean.PPeerid, messageBean.PMsg, "-1",
 								messageBean.PDirection, "0", messageBean.PMsgtime,
 								String.valueOf(messageBean.PUnread),
-								String.valueOf(msgType),name);
+								String.valueOf(msgType),name,roomid);
+						
 						// Log.v("netty", "TiemOffset=" + NettyStatus.TiemOffset);
 						if (NettyStatus.TiemOffset == 0) {
 							AnMessageBean messageBeanError = new AnMessageBean();
@@ -232,7 +233,7 @@ public class Roommsg implements MessagerHandler {
 
 					}
 					Long time = System.currentTimeMillis();
-
+					SConfig.getInstance().getSub().notify_("来自于群信息"+messageBean.PMsg);
 					if ((time - HandlerHelper.lastRingTime) > 5000) {
 						NoVoice = false;
 					} else {

@@ -4,8 +4,10 @@ import java.util.HashMap;
 import java.util.Hashtable;
 
 import org.h2.util.DbDriverActivator;
+
 import com.mx.client.db.DBDataSQL;
 import com.mx.client.db.GenDao;
+import com.mx.client.webtools.SConfig;
 
 public class AnMessageBean {
 	public long _id = -1;
@@ -299,7 +301,7 @@ public class AnMessageBean {
 				DBDataSQL.COL_MES_DIRECTION, DBDataSQL.COL_MES_MSG,
 				DBDataSQL.COL_MES_MSG_EXTRA, DBDataSQL.COL_MES_MSGTIME,
 				DBDataSQL.COL_MES_MSGTYPE, DBDataSQL.COL_MES_STATUS,
-				DBDataSQL.COL_MES_UNREAD };
+				DBDataSQL.COL_MES_UNREAD,DBDataSQL.COL_MES_OWNER,DBDataSQL.COL_MES_GROUP};
 
 		Hashtable<String, Object> table = new Hashtable<String, Object>();
 		table.put(DBDataSQL.COL_MES_PEERID, peerid);
@@ -313,7 +315,7 @@ public class AnMessageBean {
 				DBDataSQL.TB_MESSAGE,
 				columns,
 				new Object[] { peerid, direction, msg, msg_extra, msgtime,
-						msgType, status, unread });
+						msgType, status, unread,SConfig.getInstance().getProfile().myPeerBean.PPeerid,peerid});
 	   return a;
 
 	}
@@ -331,12 +333,12 @@ public class AnMessageBean {
 	 */
 	public int saveMessage(String peerid, String msg, String msg_extra,
 			String direction, String status, String msgtime, String unread,
-			String msgType,String group) {
+			String msgType,String group,String roomId) {
 		String[] columns = new String[] { DBDataSQL.COL_MES_PEERID,
 				DBDataSQL.COL_MES_DIRECTION, DBDataSQL.COL_MES_MSG,
 				DBDataSQL.COL_MES_MSG_EXTRA, DBDataSQL.COL_MES_MSGTIME,
 				DBDataSQL.COL_MES_MSGTYPE, DBDataSQL.COL_MES_STATUS,
-				DBDataSQL.COL_MES_UNREAD,DBDataSQL.COL_MES_GROUP};
+				DBDataSQL.COL_MES_UNREAD,DBDataSQL.COL_MES_GROUP,DBDataSQL.COL_MES_ROOMID,DBDataSQL.COL_MES_OWNER};
 
 		Hashtable<String, Object> table = new Hashtable<String, Object>();
 		table.put(DBDataSQL.COL_MES_PEERID, peerid);
@@ -350,7 +352,7 @@ public class AnMessageBean {
 				DBDataSQL.TB_MESSAGE,
 				columns,
 				new Object[] { peerid, direction, msg, msg_extra, msgtime,
-						msgType, status, unread ,group});
+						msgType, status, unread ,group,roomId,SConfig.getInstance().getProfile().myPeerBean.PPeerid});
 	   return a;
 
 	}

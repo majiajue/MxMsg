@@ -31,16 +31,18 @@ public class DBDataSQL {
 		public final static String COL_MES_UNREAD = "M_unread";// �����Ϣ�Ƿ�δ��
 		public final static String COL_MES_MSGTYPE = "M_msgtype";
 		public final static String COL_MES_GROUP = "M_Group";
+		public final static String COL_MES_ROOMID = "ROOMID";
+		public final static String COL_MES_OWNER = "OWNER";
 		
       
 		public final static String SQL_CREATE_TB_MESSAGE = "CREATE TABLE IF NOT EXISTS " + TB_MESSAGE + " ( " + _id
 				+ " INT PRIMARY KEY AUTO_INCREMENT, " + COL_MES_PEERID + " VARCHAR2(255) NOT NULL, " + COL_MES_MSG
 				+ " VARCHAR2(255) NOT NULL, " + COL_MES_MSG_EXTRA + " VARCHAR2(255) NOT NULL, " + COL_MES_DIRECTION + " VARCHAR2(255) NOT NULL, "
 				+ COL_MES_STATUS + " VARCHAR2(255) NOT NULL, " + COL_MES_MSGTIME + " VARCHAR2(255) NOT NULL, " + COL_MES_UNREAD
-				+ " VARCHAR2(255) NOT NULL, " + COL_MES_MSGTYPE + " VARCHAR2(255) NOT NULL, " +COL_MES_GROUP + " VARCHAR2(255)"+ ")";
+				+ " VARCHAR2(255) NOT NULL, " + COL_MES_MSGTYPE + " VARCHAR2(255) NOT NULL, " +COL_MES_GROUP + " VARCHAR2(255), "+COL_MES_GROUP + " VARCHAR2(4000),"+ COL_MES_ROOMID +" VARCHAR2(4000), "+COL_MES_OWNER+" VARCHAR2(4000)"+")";
 		public final static String SQL_CREATE_MESSAGE_INDEX = "CREATE INDEX IF NOT EXISTS imsg ON " + TB_MESSAGE + " ( "
 				+ COL_MES_PEERID + "," + COL_MES_MSG + "," + COL_MES_MSG_EXTRA + "," + COL_MES_DIRECTION + ","
-				+ COL_MES_STATUS + "," + COL_MES_MSGTIME + "," + COL_MES_UNREAD + "," + COL_MES_MSGTYPE +"," + COL_MES_GROUP + ")";
+				+ COL_MES_STATUS + "," + COL_MES_MSGTIME + "," + COL_MES_UNREAD + "," + COL_MES_MSGTYPE +"," + COL_MES_GROUP +" , "+COL_MES_ROOMID+" , "+COL_MES_OWNER+")";
 		/**
 		 * ��¼�ɹ���½�ĺ���
 		 */

@@ -10,6 +10,7 @@ import java.util.HashMap;
 
 import javax.crypto.NoSuchPaddingException;
 import javax.imageio.ImageIO;
+
 import com.mx.clent.vo.AnMessageBean;
 import com.mx.client.cache.SCache;
 import com.mx.client.db.DBDataSQL;
@@ -20,6 +21,7 @@ import com.mx.client.webtools.FileTransferIdentify;
 import com.mx.client.webtools.ImgErToFileUtil;
 import com.mx.client.webtools.Msg;
 import com.mx.client.webtools.RSAEncryptor;
+import com.mx.client.webtools.SConfig;
 
 public class TextHandler implements MessagerHandler {
 
@@ -148,6 +150,9 @@ public class TextHandler implements MessagerHandler {
 			} else {
 				NoVoice = true;
 			}
+			System.out.println("到底执行了木有----");
+			SConfig.getInstance().getSub().notify_("来自于个人信息"+messageBean.PMsg);
+			System.out.println("到底执行了木有----2");
 			// LOG.v(TAG, time - HandlerHelper.lastRingTime + "      " +
 			// NoVoice);
 		} catch (CryptorException e) {
@@ -190,6 +195,7 @@ public class TextHandler implements MessagerHandler {
 		// }
 
 		// }
+		
 		return true;
 
 	}

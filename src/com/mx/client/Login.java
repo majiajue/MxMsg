@@ -42,6 +42,7 @@ import org.jvnet.substance.skin.SubstanceOfficeBlue2007LookAndFeel;
 
 import com.mx.clent.vo.Profile;
 import com.mx.client.db.DBTools;
+import com.mx.client.observer.Secretary;
 import com.mx.client.webtools.SConfig;
 import com.mx.client.webtools.SLogin;
 import com.sun.awt.AWTUtilities;
@@ -296,8 +297,11 @@ public class Login extends JFrame {
 				try {
 					String userId = textField用户名.getText();
 					String password = new String(pwd密码.getPassword());
+					
 					if (userId.trim() != null && password.trim().length()!=0) {
 						if (loginProcess(userId, password)) {
+							Secretary secretary = new Secretary();
+							SConfig.getInstance().setSub(secretary);
 							if (Profile.isExistProfile(userId)) {
 								System.out.println("Login: 用户(" + userId
 										+ ")profile已经存在，载入一下");
@@ -352,7 +356,7 @@ public class Login extends JFrame {
 		contentPane.add(textField用户名);
 
 		// textField用户名.setColumns(10);
-
+   
 		lbl注册账号 = new JLabel("");
 		// lbl注册账号.setFont(new Font("SansSerif", Font.PLAIN, 13));
 		// lbl注册账号.setForeground(new Color(0, 51, 255));

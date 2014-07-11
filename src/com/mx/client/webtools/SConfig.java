@@ -16,6 +16,7 @@ import org.apache.http.client.ClientProtocolException;
 
 import com.mx.clent.vo.Profile;
 import com.mx.client.db.GenDao;
+import com.mx.client.observer.Secretary;
 
 public class SConfig {
 	public String sessionkey = "";
@@ -29,6 +30,15 @@ public class SConfig {
 	public final static String COL_PRE_KEY = "key";
 	public final static String COL_PRE_VALUE = "value";
 	public Profile profile;
+    private Secretary sub;
+    
+	public Secretary getSub() {
+		return sub;
+	}
+
+	public void setSub(Secretary sub) {
+		this.sub = sub;
+	}
 
 	public Profile getProfile() {
 		return profile;

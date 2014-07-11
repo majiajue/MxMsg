@@ -66,6 +66,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleConstants.CharacterConstants;
 import javax.swing.text.StyleConstants.FontConstants;
 import javax.swing.text.StyledDocument;
+
 import org.h2.table.Table;
 
 import com.mx.clent.vo.AnMessageBean;
@@ -73,16 +74,19 @@ import com.mx.clent.vo.MsgUser;
 import com.mx.client.db.DBDataSQL;
 import com.mx.client.db.GenDao;
 import com.mx.client.msg.ShockMsg;
+import com.mx.client.observer.Observer;
+import com.mx.client.observer.Secretary;
 import com.mx.client.webtools.ConnectionUtils;
 import com.mx.client.webtools.Cryptor;
 import com.mx.client.webtools.CryptorException;
 import com.mx.client.webtools.RSAEncryptor;
 import com.mx.client.webtools.SConfig;
+
 import com.sun.awt.AWTUtilities;
 import com.sun.xml.internal.ws.resources.SenderMessages;
 
-public class TalkFrame extends JFrame implements Runnable {
-
+public class TalkFrame extends JFrame implements Runnable,Observer {
+	private Secretary sub;
 	public com.mx.clent.vo.MsgUser friend; // 聊天的对方的QQ
 	public static com.mx.clent.vo.MsgUser owerUser;
 	private TalkFrame qqTalkFrame;
@@ -110,15 +114,42 @@ public class TalkFrame extends JFrame implements Runnable {
 	private List<PicInfo> receivdPicInfo = new LinkedList<PicInfo>();
 	private StyledDocument docMsg = null;
 	private FontAndText myFont = null;
-	private GroupAdmin ga;//群设置
+	
+	
+
+	/**
+	 * SingletonHolder is loaded on the first execution of
+	 * Singleton.getInstance() or the first access to SingletonHolder.INSTANCE,
+	 * not before.
+	 */
+	private static class SingletonHolder {
+		public static final TalkFrame INSTANCE = new TalkFrame();
+	}
+
+	public static TalkFrame getInstance() {
+		return SingletonHolder.INSTANCE;
+	} 
+    
+	public TalkFrame() throws HeadlessException {
+		super();
+		initComponents();
+	}
+
+	//private GroupAdmin ga;//群设置
 	/* 表情框 */
 	private PicsJWindow picWindow;
 	int pos1, pos2;
 
 	/** Creates new form QQTalkFrame */
-	public TalkFrame(MsgUser friend) {
+	public void setfreind(MsgUser friend) {
 		this.friend = friend;
-		initComponents();
+		
+		qqTalkFrame = this;
+	}
+	
+	public void setSub(Secretary sub) {
+		this.sub = sub;
+		
 		qqTalkFrame = this;
 	}
 
@@ -127,7 +158,6 @@ public class TalkFrame extends JFrame implements Runnable {
 	}
 
 	private void initComponents() {
-
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 776, 532);
 		setUndecorated(true);
@@ -173,7 +203,7 @@ public class TalkFrame extends JFrame implements Runnable {
 			}
 
 		});
-		ga = new GroupAdmin();
+		//ga = new GroupAdmin();
 		collection = new MessageLocationCollection(GenDao.getInstance()
 				.getMessageArrayValue(
 						SConfig.getInstance().getProfile().myPeerBean.PPeerid));
@@ -217,13 +247,16 @@ public class TalkFrame extends JFrame implements Runnable {
 					
 					friend = new MsgUser();
 					friend.setUserID(peerid);
-					friend.setUserName(peerid);
+					
 					friend.setGroup(group);
 					if (group.equals("1")) {
 						String g = ((MessageCollection) sampleJList
 								.getSelectedValue()).getGroup_user();
+						System.out.println("g===>"+g);
+						friend.setUserName(g);
+						System.out.println("peer_id===>"+peerid);
 						Hashtable<String, Object> condition = new Hashtable<String, Object>();
-						condition.put(DBDataSQL.COL_PROOM_ROOMNAME, peerid);
+						condition.put(DBDataSQL.COL_PROOM_ROOMID, g);
 						friend.setUserName(g);
 						String key = GenDao.getInstance().getValue(
 								DBDataSQL.TB_ROOMS,
@@ -231,11 +264,12 @@ public class TalkFrame extends JFrame implements Runnable {
 								DBDataSQL.COL_PROOM_AESKEY, condition);
 						System.out.println("key-->" + key);
 						label_8.setVisible(true);
-						String RoomId = GenDao.getInstance().getValue(
-								DBDataSQL.TB_ROOMS,
-								new String[] {DBDataSQL.COL_PROOM_ROOMID},
-								DBDataSQL.COL_PROOM_ROOMID, condition);
-						ga.setRoomId(RoomId);//用于u传递roomid
+//						String RoomId = GenDao.getInstance().getValue(
+//								DBDataSQL.TB_ROOMS,
+//								new String[] {DBDataSQL.COL_PROOM_ROOMID},
+//								DBDataSQL.COL_PROOM_ROOMID, condition);
+						//System.out.println("roomID===="+RoomId);
+						//ga.setRoomId(RoomId);//用于u传递roomid
 						try {
 							mCryptor = new Cryptor(key);
 						} catch (CryptorException e1) {
@@ -247,6 +281,8 @@ public class TalkFrame extends JFrame implements Runnable {
 					label_7.setText(friend.getUserID());
 					label_7.setFont(new Font("微软雅黑", Font.BOLD, 14));
 					textPane.setText("");
+				
+					update();//刷新当前用户唯未读信息
 				}
 			}
 		});
@@ -581,7 +617,7 @@ public class TalkFrame extends JFrame implements Runnable {
 				// TODO Auto-generated method stub
 				 
 				
-				 ga.frame.setVisible(true);
+				 //ga.frame.setVisible(true);
 			}
 		});
 		lblNewLabel_1.setIcon(new ImageIcon(bi));
@@ -2077,11 +2113,7 @@ public class TalkFrame extends JFrame implements Runnable {
 
 		@Override
 		public void run() {
-			collection = new MessageLocationCollection(
-					GenDao.getInstance()
-							.getMessageArrayValue(
-									SConfig.getInstance().getProfile().myPeerBean.PPeerid));
-			sampleJList.setListData(collection.getLocations().toArray());// 刷新用户消息列表
+			// 刷新用户消息列表
 			Hashtable<String, Object> condition = new Hashtable<String, Object>();
 			List<String> msg = null;
 			List<String> msgtime = null;
@@ -2117,9 +2149,11 @@ public class TalkFrame extends JFrame implements Runnable {
 							condition);
 				}
 			}
+			System.out.println(label_7.getText()+"群=====>"+friend.getUserID());
+			System.out.println(label_7.getText().equals(friend.getUserID())&& friend.getGroup().equals("1"));
 			if (label_7.getText().equals(friend.getUserID())
 					&& friend.getGroup().equals("1")) {
-				condition.put(DBDataSQL.COL_MES_GROUP, friend.getUserID());
+				condition.put(DBDataSQL.COL_MES_ROOMID, friend.getUserName());
 				condition.put(DBDataSQL.COL_MES_UNREAD, "false");
 				msg = GenDao.getInstance().getArrayValue(
 						DBDataSQL.TB_MESSAGE.toUpperCase(),
@@ -2197,10 +2231,7 @@ public class TalkFrame extends JFrame implements Runnable {
 
 	}
 
-	public static void main(String[] args) {
-		TalkFrame frame = new TalkFrame(null);
-		frame.setVisible(true);
-	}
+	
 
 	@Override
 	public void run() {
@@ -2263,6 +2294,17 @@ public class TalkFrame extends JFrame implements Runnable {
 		// att.setColor(new Color(0, 255, 0));
 		// }
 		return att;
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		System.out.println("----进来了"+sub.getAction());
+		collection = new MessageLocationCollection(
+				GenDao.getInstance()
+						.getMessageArrayValue(
+								SConfig.getInstance().getProfile().myPeerBean.PPeerid));
+		sampleJList.setListData(collection.getLocations().toArray());
 	}
 
 }

@@ -8,12 +8,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
 
 import com.mx.client.GroupLocation;
 import com.mx.client.JavaLocation;
 import com.mx.client.MessageCollection;
+import com.mx.client.TempFriend;
 import com.mx.client.db.SQLCommandBuilder.SQLCommandType;
 
 /**
@@ -44,7 +46,8 @@ public class GenDao {
 	 *            SQL参数列表
 	 * @return true-成功/false-失败
 	 */
-	public boolean executeInsert(String tableName, String[] columnName, Object[] param) {
+	public boolean executeInsert(String tableName, String[] columnName,
+			Object[] param) {
 
 		int rowCount = 0; // 保存执行SQL插入数据命令后受影响的行数
 
@@ -53,8 +56,9 @@ public class GenDao {
 			// 获取数据库连接对象
 			this.conn = DBTools.getH2SQLConnection();
 			// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
-			this.ps = this.conn.prepareStatement(SQLCommandBuilder.getInstance().getSQLCommand(SQLCommandType.INSERT,
-					tableName, columnName, param, null));
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder
+					.getInstance().getSQLCommand(SQLCommandType.INSERT,
+							tableName, columnName, param, null));
 
 			// 自动映射SQL参数
 			if (param != null && param.length > 0) {
@@ -65,7 +69,7 @@ public class GenDao {
 			rowCount = this.ps.executeUpdate();
 
 		} catch (SQLException ex) {
-            ex.printStackTrace();
+			ex.printStackTrace();
 			System.err.println("异常信息：执行SQL添加命令时发生错误！\r\n" + ex.getMessage());
 
 		} finally {
@@ -88,7 +92,8 @@ public class GenDao {
 	 *            SQL条件列表
 	 * @return true-成功/false-失败
 	 */
-	public boolean executeDelete(String tableName, Hashtable<String, Object> condition) {
+	public boolean executeDelete(String tableName,
+			Hashtable<String, Object> condition) {
 
 		int rowCount = 0; // 保存执行SQL更新命令受影响的行数
 
@@ -97,12 +102,14 @@ public class GenDao {
 			// 获取数据库连接对象
 			this.conn = DBTools.getH2SQLConnection();
 			// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
-			this.ps = this.conn.prepareStatement(SQLCommandBuilder.getInstance().getSQLCommand(SQLCommandType.DELETE,
-					tableName, null, null, condition));
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder
+					.getInstance().getSQLCommand(SQLCommandType.DELETE,
+							tableName, null, null, condition));
 
 			// 自动映射SQL参数
 			if (condition != null && condition.size() > 0) {
-				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values().toArray(), this.ps);
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
+						.toArray(), this.ps);
 			}
 
 			// 执行SQL更新命令并保存返回的受影响行数
@@ -137,8 +144,8 @@ public class GenDao {
 	 *            SQL条件列表
 	 * @return true-成功/false-失败
 	 */
-	public boolean executeUpdate(String tableName, String[] columnName, Object[] param,
-			Hashtable<String, Object> condition) {
+	public boolean executeUpdate(String tableName, String[] columnName,
+			Object[] param, Hashtable<String, Object> condition) {
 
 		int rowCount = 0; // 保存执行SQL更新命令受影响的行数
 
@@ -147,8 +154,9 @@ public class GenDao {
 			// 获取数据库连接对象
 			this.conn = DBTools.getH2SQLConnection();
 			// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
-			this.ps = this.conn.prepareStatement(SQLCommandBuilder.getInstance().getSQLCommand(SQLCommandType.UPDATE,
-					tableName, columnName, param, condition));
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder
+					.getInstance().getSQLCommand(SQLCommandType.UPDATE,
+							tableName, columnName, param, condition));
 
 			// 自动映射SQL参数
 			if (param != null && param.length > 0) {
@@ -178,7 +186,7 @@ public class GenDao {
 			rowCount = this.ps.executeUpdate();
 
 		} catch (SQLException ex) {
-            ex.printStackTrace();
+			ex.printStackTrace();
 			System.err.println("异常信息：执行SQL修改命令时发生错误！\r\n" + ex.getMessage());
 
 		} finally {
@@ -201,16 +209,18 @@ public class GenDao {
 	 * @param condition
 	 * @return
 	 */
-	public String getValue(String tableName, String[] columnName, String valueColumn,
-			Hashtable<String, Object> condition) {
+	public String getValue(String tableName, String[] columnName,
+			String valueColumn, Hashtable<String, Object> condition) {
 		this.conn = DBTools.getH2SQLConnection();
 		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
 		String value = "";
 		try {
-			this.ps = this.conn.prepareStatement(SQLCommandBuilder.getInstance().getSQLCommand(SQLCommandType.SELECT,
-					tableName, columnName, null, condition));
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder
+					.getInstance().getSQLCommand(SQLCommandType.SELECT,
+							tableName, columnName, null, condition));
 			if (condition != null && condition.size() > 0) {
-				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values().toArray(), this.ps);
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
+						.toArray(), this.ps);
 			}
 
 			// 执行SQL更新命令并保存取回的结果集对象
@@ -237,16 +247,21 @@ public class GenDao {
 	 * @param condition
 	 * @return
 	 */
-	public String getOrderByValue(String tableName, String[] columnName, String valueColumn,
-			Hashtable<String, Object> condition, String orderBySQL) {
+	public String getOrderByValue(String tableName, String[] columnName,
+			String valueColumn, Hashtable<String, Object> condition,
+			String orderBySQL) {
 		this.conn = DBTools.getH2SQLConnection();
 		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
 		String value = "";
 		try {
-			this.ps = this.conn.prepareStatement(SQLCommandBuilder.getInstance().getOrderBySQLCommand(
-					SQLCommandType.SELECT, tableName, columnName, null, condition, orderBySQL));
+			this.ps = this.conn
+					.prepareStatement(SQLCommandBuilder.getInstance()
+							.getOrderBySQLCommand(SQLCommandType.SELECT,
+									tableName, columnName, null, condition,
+									orderBySQL));
 			if (condition != null && condition.size() > 0) {
-				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values().toArray(), this.ps);
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
+						.toArray(), this.ps);
 			}
 
 			// 执行SQL更新命令并保存取回的结果集对象
@@ -273,16 +288,18 @@ public class GenDao {
 	 * @param condition
 	 * @return
 	 */
-	public Blob getBlobValue(String tableName, String[] columnName, String valueColumn,
-			Hashtable<String, Object> condition) {
+	public Blob getBlobValue(String tableName, String[] columnName,
+			String valueColumn, Hashtable<String, Object> condition) {
 		this.conn = DBTools.getH2SQLConnection();
 		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
 		Blob blob = null;
 		try {
-			this.ps = this.conn.prepareStatement(SQLCommandBuilder.getInstance().getSQLCommand(SQLCommandType.SELECT,
-					tableName, columnName, null, condition));
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder
+					.getInstance().getSQLCommand(SQLCommandType.SELECT,
+							tableName, columnName, null, condition));
 			if (condition != null && condition.size() > 0) {
-				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values().toArray(), this.ps);
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
+						.toArray(), this.ps);
 			}
 
 			// 执行SQL更新命令并保存取回的结果集对象
@@ -343,7 +360,8 @@ public class GenDao {
 	 *            SQL参数列表
 	 * @return true-成功/false-失败
 	 */
-	public int executeInsertRId(String tableName, String[] columnName, Object[] param) {
+	public int executeInsertRId(String tableName, String[] columnName,
+			Object[] param) {
 
 		int rowId = 0; // 保存执行SQL插入数据命令后受影响的行数
 
@@ -353,8 +371,9 @@ public class GenDao {
 			this.conn = DBTools.getH2SQLConnection();
 			// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
 			this.ps = this.conn.prepareStatement(
-					SQLCommandBuilder.getInstance().getSQLCommand(SQLCommandType.INSERT, tableName, columnName, param,
-							null), Statement.RETURN_GENERATED_KEYS);
+					SQLCommandBuilder.getInstance().getSQLCommand(
+							SQLCommandType.INSERT, tableName, columnName,
+							param, null), Statement.RETURN_GENERATED_KEYS);
 
 			// 自动映射SQL参数
 			if (param != null && param.length > 0) {
@@ -367,13 +386,13 @@ public class GenDao {
 			ResultSet resultSet = ps.getGeneratedKeys();
 			System.out.println(resultSet.toString());
 			if (resultSet.next()) {
-                
+
 				rowId = resultSet.getInt(1);
-				System.out.println("rowId---"+rowId);
+				System.out.println("rowId---" + rowId);
 			}
 
 		} catch (SQLException ex) {
-            ex.printStackTrace();
+			ex.printStackTrace();
 			System.err.println("异常信息：执行SQL添加命令时发生错误！\r\n" + ex.getMessage());
 
 		} finally {
@@ -411,7 +430,7 @@ public class GenDao {
 			}
 
 			// 执行SQL更新命令并保存取回的结果集对象
-		
+
 			this.rs = this.ps.executeQuery();
 			while (rs.next()) {
 				valList.add(rs.getString(valueColumn));
@@ -419,12 +438,12 @@ public class GenDao {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
 
 		// 自动映射SQL参数
 		return valList;
 	};
-    
+
 	/**
 	 * 获取某一字段条记录的值
 	 * 
@@ -437,33 +456,96 @@ public class GenDao {
 		this.conn = DBTools.getH2SQLConnection();
 		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
 		String value = "";
+
+		List<TempFriend> valFriends = getFriendList(peerId);
+		System.out.println(valFriends.toString() + "-------- "
+				+ valFriends.size());
 		List<MessageCollection> valList = new ArrayList<MessageCollection>();
 		try {
-			Hashtable<String, Object> condition = new Hashtable<String, Object>();
-			condition.put(DBDataSQL.COL_PEER_FROMPEERID, peerId);
-			this.ps = this.conn.prepareStatement(" SELECT a.aVATARID ,M_PEERID ,M_GROUP,b.aVATARID r,count(*) as tj FROM TB_MESSAGE  t, PEERS a,room b where (a.PEERID =t.M_PEERID  or b.roOMNAME = nvl2(m_group,null,not null)) and a.FRIENDID=b.RECENTMSG and a.FRIENDID=? and M_UNREAD='false' group by  M_PEERID , M_grOUP ");
-			ps.setString(1, peerId);
+
+			for (TempFriend vaFriend : valFriends) {
+				Hashtable<String, Object> condition = new Hashtable<String, Object>();
+				condition.put(DBDataSQL.COL_MES_OWNER, peerId);
+				System.out.println("vaFriend.getRoomid()"
+						+ vaFriend.getRoomid());
+				if (vaFriend.getRoomid() != null) {
 			
-//			if (condition != null && condition.size() > 0) {
-//				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
-//						.toArray(), this.ps);
-//			}
+					this.ps = this.conn
+							.prepareStatement(" SELECT t.M_GROUP,t.roomid,t.m_UNREAD,count(t.m_UNREAD) as tj FROM TB_MESSAGE t where t.owner=? and t.ROOMID =?  and t.M_UNREAD ='false' group by t.roomid,t.M_GROUP,t.m_UNREAD ",ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+					ps.setString(1, peerId);
+					ps.setString(2, vaFriend.getRoomid());
+					System.out.println("1--->" + peerId + vaFriend.getRoomid());
+
+				} else {
+                    
+					this.ps = this.conn
+							.prepareStatement(" SELECT t.M_GROUP,t.roomid,t.m_UNREAD,count(t.m_UNREAD) as tj FROM TB_MESSAGE t where t.owner=? and t.m_GROUP=?  and t.M_UNREAD ='false' group by t.roomid,t.M_GROUP,t.m_UNREAD ",ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
+					ps.setString(1, peerId);
+					ps.setString(2, vaFriend.getM_group());
+					System.out
+							.println("2--->" + peerId + vaFriend.getM_group());
+				}
+       
+				this.rs = this.ps.executeQuery();
+				System.out.println("----->" + rs.toString());
+				System.out.println("查询结构" + rs.getFetchSize());
+				System.out.println(rs.wasNull()+"----");
+				if (rs.next()) {
+                    rs.previous();
+					while (rs.next()) {
+
+					
+							if (rs.getString("ROOMID") != null) {
+
+								valList.add(new MessageCollection(rs
+										.getString("M_GROUP"), rs
+										.getString("TJ"), rs
+										.getString("ROOMID"), "1"));
+
+							} else {
+
+								valList.add(new MessageCollection(rs
+										.getString("M_GROUP"), rs
+										.getString("TJ"), rs
+										.getString("ROOMID"), "0"));
+
+							}
+						
+					}
+
+				} else {
+					
+					if (vaFriend.getRoomid() != null) {
+
+						valList.add(new MessageCollection(
+								vaFriend.getM_group(), "0", vaFriend
+										.getRoomid(), "1"));
+
+					} else {
+						valList.add(new MessageCollection(
+								vaFriend.getM_group(), "0", "", "0"));
+
+					}
+
+				
+
+				}
+
+			}
+
+			System.out.println(valList.toString());
+
+			// if (condition != null && condition.size() > 0) {
+			// this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
+			// .toArray(), this.ps);
+			// }
 
 			// 执行SQL更新命令并保存取回的结果集对象
-		
-			this.rs = this.ps.executeQuery();
-			while (rs.next()) {
-				if(rs.getString("M_GROUP")!=null&&!"".equals(rs.getString("M_GROUP"))){
-					valList.add(new MessageCollection(rs.getString("R"), rs.getString("M_GROUP"), rs.getString("TJ"),"1",rs.getString("M_PEERID")));
-				}else{
-					valList.add(new MessageCollection(rs.getString("AVATARID"), rs.getString("M_PEERID"), rs.getString("TJ"),"0",""));
-				}
-				
-			}
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally{
+		} finally {
 			try {
 				rs.close();
 			} catch (SQLException e1) {
@@ -487,8 +569,7 @@ public class GenDao {
 		// 自动映射SQL参数
 		return valList;
 	};
-	
-	
+
 	/**
 	 * 获取某一字段条记录的值
 	 * 
@@ -506,24 +587,31 @@ public class GenDao {
 			Hashtable<String, Object> condition = new Hashtable<String, Object>();
 			condition.put(DBDataSQL.COL_PEER_FROMPEERID, peerId);
 			this.ps = this.conn.prepareStatement(SQLCommandBuilder
-					.getInstance().getSQLCommand(SQLCommandType.SELECT,
-							DBDataSQL.TB_PEERS, new String[]{DBDataSQL.COL_PEER_PEERID,DBDataSQL.COL_PEER_USERNAME}, null, condition));
-			
+					.getInstance().getSQLCommand(
+							SQLCommandType.SELECT,
+							DBDataSQL.TB_PEERS,
+							new String[] { DBDataSQL.COL_PEER_PEERID,
+									DBDataSQL.COL_PEER_USERNAME }, null,
+							condition));
+
 			if (condition != null && condition.size() > 0) {
 				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
 						.toArray(), this.ps);
 			}
 
 			// 执行SQL更新命令并保存取回的结果集对象
-		
+
 			this.rs = this.ps.executeQuery();
 			while (rs.next()) {
-				valList.add(new JavaLocation(rs.getString(DBDataSQL.COL_PEER_PEERID.toUpperCase()), rs.getString(DBDataSQL.COL_PEER_USERNAME.toUpperCase()), "head_boy_01_32.jpg"));
+				valList.add(new JavaLocation(rs
+						.getString(DBDataSQL.COL_PEER_PEERID.toUpperCase()), rs
+						.getString(DBDataSQL.COL_PEER_USERNAME.toUpperCase()),
+						"head_boy_01_32.jpg"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
 
 		// 自动映射SQL参数
 		return valList;
@@ -542,10 +630,12 @@ public class GenDao {
 		this.conn = DBTools.getH2SQLConnection();
 		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
 		try {
-			this.ps = this.conn.prepareStatement(SQLCommandBuilder.getInstance().getSQLCommand(SQLCommandType.SELECT,
-					tableName, columnName, null, condition));
+			this.ps = this.conn.prepareStatement(SQLCommandBuilder
+					.getInstance().getSQLCommand(SQLCommandType.SELECT,
+							tableName, columnName, null, condition));
 			if (condition != null && condition.size() > 0) {
-				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values().toArray(), this.ps);
+				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
+						.toArray(), this.ps);
 			}
 
 			// 执行SQL更新命令并保存取回的结果集对象
@@ -563,7 +653,7 @@ public class GenDao {
 		// 自动映射SQL参数
 		return null;
 	};
-	
+
 	/**
 	 * 获取某一字段条记录的值
 	 * 
@@ -581,24 +671,68 @@ public class GenDao {
 			Hashtable<String, Object> condition = new Hashtable<String, Object>();
 			condition.put(DBDataSQL.COL_PROOM_RECENTMSG, peerId);
 			this.ps = this.conn.prepareStatement(SQLCommandBuilder
-					.getInstance().getSQLCommand(SQLCommandType.SELECT,
-							DBDataSQL.TB_ROOMS, new String[]{DBDataSQL.COL_PROOM_ROOMNAME,DBDataSQL.COL_PROOM_OWNER}, null, condition));
-			
+					.getInstance().getSQLCommand(
+							SQLCommandType.SELECT,
+							DBDataSQL.TB_ROOMS,
+							new String[] { DBDataSQL.COL_PROOM_ROOMNAME,
+									DBDataSQL.COL_PROOM_OWNER }, null,
+							condition));
+
 			if (condition != null && condition.size() > 0) {
 				this.ps = SQLParamHelper.JavaParam2SQLParam(condition.values()
 						.toArray(), this.ps);
 			}
 
 			// 执行SQL更新命令并保存取回的结果集对象
-		
+
 			this.rs = this.ps.executeQuery();
 			while (rs.next()) {
-				valList.add(new GroupLocation(rs.getString(DBDataSQL.COL_PROOM_ROOMNAME.toUpperCase()), rs.getString(DBDataSQL.COL_PROOM_OWNER.toUpperCase()), "head_boy_01_32.jpg"));
+				valList.add(new GroupLocation(rs
+						.getString(DBDataSQL.COL_PROOM_ROOMNAME.toUpperCase()),
+						rs.getString(DBDataSQL.COL_PROOM_OWNER.toUpperCase()),
+						"head_boy_01_32.jpg"));
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} 
+		}
+
+		// 自动映射SQL参数
+		return valList;
+	};
+
+	/**
+	 * 获取某一字段条记录的值
+	 * 
+	 * @param tableName
+	 * @param columnName
+	 * @param condition
+	 * @return
+	 */
+	public List<TempFriend> getFriendList(String peerId) {
+		this.conn = DBTools.getH2SQLConnection();
+		// 获取预编译SQL语句执行对象并根据参数自动构造SQL命令字串
+		String value = "";
+		List<TempFriend> valList = new ArrayList<TempFriend>();
+		try {
+			Hashtable<String, Object> condition = new Hashtable<String, Object>();
+			condition.put(DBDataSQL.COL_MES_OWNER, peerId);
+			this.ps = this.conn
+					.prepareStatement(" Select distinct ROOMID, M_Group From tb_message Where OWNER = ?  ");
+			ps.setString(1, peerId);
+
+			// 执行SQL更新命令并保存取回的结果集对象
+
+			this.rs = this.ps.executeQuery();
+			while (rs.next()) {
+				valList.add(new TempFriend(rs
+						.getString(DBDataSQL.COL_MES_ROOMID.toUpperCase()), rs
+						.getString(DBDataSQL.COL_MES_GROUP.toUpperCase())));
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		// 自动映射SQL参数
 		return valList;

@@ -24,6 +24,11 @@ import javax.xml.parsers.ParserConfigurationException;
 
 
 
+
+
+
+
+
 import com.mx.clent.vo.AnPeersBean;
 import com.mx.client.db.DBDataSQL;
 import com.mx.client.webtools.MySSLSocketFactory;
@@ -876,4 +881,54 @@ public class ConnectionUtils {
 		return null;
 		
 	}
+	
+	
+	/*
+	 * 返回：<b><r>room_friends</r><u1>xxx</u1><u2>xxx</u2>...</b>
+	 */
+	public HashMap<String, String> roomGetFriends(String sRoomId) throws ClientProtocolException, IOException, ParserConfigurationException {
+		String result="";
+		try {
+			result = postRequest(
+					"/room/getlist/" + SConfig.getInstance().getProfile()
+					.getSession() + "/" + sRoomId
+							+ "/call.aspx",new HashMap<String, Object>());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+       System.out.println("1===>"+result);
+		return XmlUtil.instance().parseXmltoMap(result,"UTF-8");
+	}
+	
+	public HashMap<String, String> getMicInfo(String roomid) throws Exception{
+		
+		String result = postRequest(
+				"/room/voice/info/" + SConfig.getInstance().getProfile()
+				.getSession() + "/" + roomid,new HashMap<String, Object>());
+		System.out.println("2===>"+result);
+		return  XmlUtil.instance().parseXmltoMap(result,"UTF-8");
+	}
+	
+	  public String getMicOwner(String roomid) throws Exception{
+			String result = postRequest(
+					"/room/voice/info/" + SConfig.getInstance().getProfile()
+					.getSession() + "/" + roomid,new HashMap<String, Object>());
+			HashMap<String, String> map =  XmlUtil.instance().parseXmltoMap(result,"UTF-8");
+			System.out.println("3===>"+result);
+			if(map.get("r").equals("ok")){
+				return map.get("mic");
+			}else{
+				return null;
+			}
+			
+		}
+	  
+	  public HashMap<String, String> maskroomGetFriends(String sRoomId) throws Exception {
+			String result =  postRequest(
+					"/maskroom/getlist/" + SConfig.getInstance().getProfile()
+					.getSession() + "/" + sRoomId
+							+ "/call.xml",new HashMap<String, Object>());
+			return XmlUtil.instance().parseXmltoMap(result,"UTF-8");
+		}
 }

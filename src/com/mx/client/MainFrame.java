@@ -73,7 +73,7 @@ public class MainFrame extends JFrame {
 	private GroupLocationCollection groupCollection;
 	private static List<MsgFriendGroup> friends = new ArrayList<MsgFriendGroup>();
 	private static MsgUser ower = new MsgUser();
-
+    private TalkFrame talkframe =null;
 	private static MainFrame instance;
 
 	public static MainFrame getInstance() {
@@ -129,7 +129,7 @@ public class MainFrame extends JFrame {
 				this.tray();
 			}
 			mainTray.add(maintrayIcon);
-
+			
 			final JPopupMenu popupMenu = new JPopupMenu();
 			JMenuItem menuItem = new JMenuItem("删除该好友");
 			menuItem.addActionListener(new ActionListener() {
@@ -292,9 +292,12 @@ public class MainFrame extends JFrame {
 						user.setUserName(peerid);
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-
-								TalkFrame frame = new TalkFrame(user);
-								frame.setVisible(true); // 这个就是程序界面初始化
+								talkframe = TalkFrame.getInstance();
+								talkframe.setSub(SConfig.getInstance().getSub());
+								SConfig.getInstance().getSub().add(talkframe);
+								talkframe.setfreind(user);
+								talkframe.setVisible(true); // 这个就是程序界面初始化
+								
 							}
 						});
 
@@ -380,9 +383,12 @@ public class MainFrame extends JFrame {
 						user.setUserName(ownerName);
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-
-								TalkFrame frame = new TalkFrame(user);
-								frame.setVisible(true); // 这个就是程序界面初始化
+								talkframe = TalkFrame.getInstance();
+								talkframe.setSub(SConfig.getInstance().getSub());
+								SConfig.getInstance().getSub().add(talkframe);
+								talkframe.setfreind(user);
+								
+								talkframe.setVisible(true); // 这个就是程序界面初始化
 							}
 						});
 

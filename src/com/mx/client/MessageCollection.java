@@ -22,6 +22,17 @@ public class MessageCollection {
 		super();
 		// TODO Auto-generated constructor stub
 	}
+	
+	
+	public MessageCollection( String m_peerid, String tj,String roomId,String isGroup) {
+		super();
+		this.m_peerid = m_peerid;
+		this.tj = tj;
+		this.group_user = roomId;
+		this.isGroup = isGroup;
+		
+	}
+	
 	public MessageCollection(String avatar, String m_peerid, String tj,String isGroup,String group_user) {
 		super();
 		this.avatar = avatar;
